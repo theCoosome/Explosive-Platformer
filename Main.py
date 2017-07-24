@@ -74,7 +74,7 @@ bombs = [testBomb]
 Running = True
 while Running:
 	screen.fill(WHITE)
-	
+
 	
 	#Player
 	if not player.floor:
@@ -93,9 +93,23 @@ while Running:
 		i.coords[1] += i.vel[1]
 		screen.blit(i.img, i.coords)
 
+
+
 	#Moving Blocks
 	for i in movingblocks:
 		screen.blit(i.img, i.coords)
+
+	bombsExplode = False
+
+	for event in pygame.event.get():
+		if event.type == pygame.KEYDOWN:
+			if event.key == pygame.K_SPACE:
+				bombsExplode = True
+	if bombsExplode:
+		for i in bombs:
+			i.img = getImg("Human")
+		bombsExplode = False
+
 	
 	pygame.display.update()
 	clock.tick(fps)
