@@ -225,7 +225,7 @@ while Running:
 		for i in bombs:
 			i.img = getImg("Human")
 
-
+#hiiii
 
 	#Moving Blocks
 	for i in movingblocks:
