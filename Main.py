@@ -94,10 +94,7 @@ testBomb = bomb(1, [300, 250], (8, 8), getImg("Bomb"))
 
 bombs = [testBomb]
 
-<<<<<<< HEAD
-=======
 
->>>>>>> origin/master
 bricks = []
 
 def createFloor(coordx,coordy,rx,ry):
@@ -105,8 +102,21 @@ def createFloor(coordx,coordy,rx,ry):
 
 		bricks.append(Brick("type",[coordx + (16 * i),coordy],(16,16),brickImg))
 
-createFloor(0, 300, 0, 10)
+def createWall(coordx,coordy,rx,ry,dir):
+	for i in range(rx,ry):
+		if dir == "down":
+			bricks.append(Brick("type", [coordx, coordy - (16 * i)], (16, 16), brickImg))
+		if dir == "up":
+			bricks.append(Brick("type", [coordx, coordy + (16 * i)], (16, 16), brickImg))
 
+createFloor(0, 300, 0, 17)
+createWall(0,300,0,4,"down")
+
+createFloor(200, 200, 0, 8)
+createWall(264,216,0,2,"up")
+
+createFloor(300,332,0,20,)
+#createWall(264,332,0,20,"up")
 #Current main screen, basic level.
 Running = True
 while Running:
@@ -180,7 +190,7 @@ while Running:
 			player.vel[1] = 0
 			player.floor = True
 			if player.vel[1] > 0:
-				player.coords[1] = i.coords[1] - 100
+				player.coords[1] = i.coords[1] - 16
 		screen.blit(i.img,i.coords)
 	screen.blit(player.images[player.img], player.coords)
 	#Bombs
