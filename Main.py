@@ -32,7 +32,7 @@ def getImg(name):
 #SET GET IMAGES HERE
 brickImg = getImg("Brick")
 personimg = getImg("Human")
-
+movingImg = getImg("BrickMoving")
 
 def toggle(bool):
 	if bool:
@@ -76,6 +76,8 @@ class movingBlock(object):
 		self.coords = coords
 		self.size = size
 		self.img = img
+		self.floor = False
+		self.vel = [0,-15]
 class Brick(object):
 	def __init__(self,type,coords,size,img):
 		self.type = type
@@ -101,7 +103,7 @@ bricks = []
 
 def createFloor(coordx,coordy,rx,ry):
 	for i in range(rx,ry):
-		bricks.append(Brick("type",[coordx + (16 * i),coordy],(16,16),brickImg))
+		bricks.append(Brick("type",[coordx + (16 * i),coordy],(16 * rx,16),brickImg))
 
 def createWall(coordx,coordy,rx,ry,dir):
 	for i in range(rx,ry):
@@ -110,12 +112,16 @@ def createWall(coordx,coordy,rx,ry,dir):
 		if dir == "up":
 			bricks.append(Brick("type", [coordx, coordy + (16 * i)], (16, 16), brickImg))
 
+def createMovingBlock(coordx,coordy,rx,ry):
+	for i in range(rx,ry):
+		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
+
 createFloor(0, 300, 0, 17)
 createWall(0,300,0,4,"down")
 
 createFloor(200, 200, 0, 8)
 createWall(264,216,0,2,"up")
-
+createMovingBlock(32,200,0,1)
 #createFloor(300,332,0,20,)
 #createWall(264,332,0,20,"up")
 
@@ -130,7 +136,7 @@ while Running:
 	bombType = 1
 	screen.fill(WHITE)
 
-	#user input
+		#user input
 	for event in pygame.event.get():
 		if event.type == pygame.KEYDOWN:
 			#movement
@@ -206,14 +212,26 @@ while Running:
 	
 	player.floor = False
 	for i in bricks:
-		if collide(i.coords,i.size,player.coords,player.size):
 
-			if player.vel[1] > 0:
-				player.floor = True
-				player.coords[1] = i.coords[1]-player.size[1]
-			if player.vel[1] < 0:
-				player.coords[1] = i.coords[1]+i.size[1]
-			player.vel[1] = 0
+		for f in movingblocks:
+			f.floor =False
+			if collide(i.coords, i.size, f.coords, f.size):
+				if f.vel[1] > 0:
+					f.floor = True
+					f.coords[1] = i.coords[1] - f.size[1]
+				if f.vel[1] < 0:
+					f.coords[1] = i.coords[1] + i.size[1]
+				f.vel[1] = 0
+			screen.blit(f.img, f.coords)
+
+			if collide(i.coords,i.size,player.coords,player.size):
+
+				if player.vel[1] > 0:
+					player.floor = True
+					player.coords[1] = i.coords[1]-player.size[1]
+				if player.vel[1] < 0:
+					player.coords[1] = i.coords[1]+i.size[1]
+				player.vel[1] = 0
 
 		screen.blit(i.img,i.coords)
 	screen.blit(player.images[player.img], player.coords)
@@ -234,7 +252,11 @@ while Running:
 
 	#Moving Blocks
 	for i in movingblocks:
-		screen.blit(i.img, i.coords)
-	
+		i.floor = False
+		if not i.floor:
+			if i.vel[1] < 16:  # Gravity
+				i.vel[1] += 0.5
+		i.coords[0] += i.vel[0]
+		i.coords[1] += i.vel[1]
 	pygame.display.update()
 	clock.tick(fps)
