@@ -106,6 +106,9 @@ while Running:
 				player.vel[1] = -10
 				player.floor = False
 			if event.key == K_g:
+				for i in bombs:
+					i.floor = toggle(player.floor)
+					i.vel[1] = 0
 				player.floor = toggle(player.floor)
 				player.vel[1] = 0
 			
@@ -138,7 +141,7 @@ while Running:
 	
 	player.coords[0] += player.vel[0]
 	player.coords[1] += player.vel[1]
-	
+
 	screen.blit(player.images[player.img], player.coords)
 	#Bombs
 	for i in bombs:
