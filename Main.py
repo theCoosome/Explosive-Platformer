@@ -129,7 +129,6 @@ while Running:
 	bombsExplode = False
 	bombType = 1
 	screen.fill(WHITE)
-	playCoords = player.coords
 
 	#user input
 	for event in pygame.event.get():
@@ -171,9 +170,8 @@ while Running:
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			if bombWaitTime == 0:
-				newBomb = bomb(bombType, playCoords , (8, 8), getImg("Bomb"))
-				newBomb.coords[0] += 10
-				newBomb.coords[1] += 10
+				newBomb = bomb(bombType, [player.coords[0],player.coords[1]], (8, 8), getImg("Bomb"))
+				newBomb.vel[0] = -10
 				newBomb.vel[1] = -10
 				bombs.append(newBomb)
 				bombWaitTime = normalBombWait
@@ -222,7 +220,7 @@ while Running:
 	#Bombs
 	for i in bombs:
 		if not i.floor:
-			if i.vel[1] < 20:
+			if i.vel[1] < 16:
 				i.vel[1] += 0.5
 		i.coords[0] += i.vel[0]
 		i.coords[1] += i.vel[1]
