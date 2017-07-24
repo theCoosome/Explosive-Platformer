@@ -122,6 +122,10 @@ def createMovingBlock(coordx,coordy,rx,ry):
 	for i in range(rx,ry):
 		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
 
+def createMovingBlock(coordx,coordy,rx,ry):
+	for i in range(rx,ry):
+		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
+
 createFloor(0, 300, 0, 17)
 createWall(0,300,0,4,"down")
 
@@ -251,27 +255,33 @@ while Running:
 					player.coords[1] = i.coords[1]-player.size[1]
 				if player.vel[1] < 0:
 					player.coords[1] = i.coords[1]+i.size[1]
+
 				player.vel[1] = 0
 
 		if collide(i.coords, i.size, player.coords, player.size): #COLLISIONS
 			if player.vel[1] < 0: #Up-ing
 				player.coords[1] = i.coords[1]+i.size[1]
+
 				player.vel[1] = 0
-			if collide(player.coords, player.size, (i.coords[0], i.coords[1]+3), (i.size[0], i.size[1]-3)):
-				if player.vel[0] > 0:
-					player.coords[0] = i.coords[0] - player.size[0]
-				if player.vel[0] < 0:
-					player.coords[0] = i.coords[0] + i.size[0]
+	if collide(i.coords, i.size, player.coords, player.size): #COLLISIONS
+		mid = center(i)
+		if collide(player.coords, player.size, (i.coords[0], i.coords[1]+3), (i.size[0], i.size[1]-3)):
+			if player.vel[0] > 0 and player.coords[0] < mid[0]:
+				player.coords[0] = i.coords[0] - player.size[0]
+				player.vel[0] = 0
+			if player.vel[0] < 0 and player.coords[0] > mid[0]:
+				player.coords[0] = i.coords[0] + i.size[0]
 				player.vel[0] = 0
 
-			if player.vel[1] > 0: #Falling
-				player.coords[1] = i.coords[1]-player.size[1]
-				player.vel[1] = 0
-			
+		if player.vel[1] < 0: #Up-ing
+			player.coords[1] = i.coords[1]+i.size[1]
+			player.vel[1] = 0
+		if player.vel[1] > 0: #Falling
+			player.coords[1] = i.coords[1]-player.size[1]
+			player.vel[1] = 0
+
 		if collide(player.coords, (16, 17), i.coords, i.size):
 			player.floor = True
-
-
 		screen.blit(i.img,i.coords)
 	
 	screen.blit(player.images[player.img], player.coords)
