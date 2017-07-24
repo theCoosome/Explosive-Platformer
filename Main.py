@@ -29,21 +29,21 @@ def getImg(name):
 		print "--File not found. Substituting"
 		return pygame.image.load("assets/wip.png")
 
-<<<<<<< HEAD
+
 
 #SET GET IMAGES HERE
 brickImg = getImg("Brick")
 
 
 
-=======
+
 def toggle(bool):
 	if bool:
 		return False
 	else:
 		return True
 		
->>>>>>> master
+
 def center(obj):
 	return (obj.coords[0]+(obj.size[0]/2), obj.coords[1]+(obj.size[1]/2))
 
@@ -101,7 +101,7 @@ testBomb = bomb(1, [300, 250], (8, 8), getImg("Bomb"))
 
 bombs = [testBomb]
 
-<<<<<<< HEAD
+
 bricks = []
 cF = False
 
@@ -114,15 +114,14 @@ def createFloor(coordx,coordy,rx,ry):
 createFloor(0, 300, 0, 10)
 
 #Current main screen, basic level.
-=======
+
 #Current main screen, basic level
->>>>>>> master
+
 Running = True
 while Running:
 	bombsExplode = False
 	screen.fill(WHITE)
-<<<<<<< HEAD
-=======
+
 	
 	#user input
 	for event in pygame.event.get():
@@ -161,7 +160,7 @@ while Running:
 
 
 
->>>>>>> master
+
 
 	#Player
 	if not player.floor:
@@ -194,7 +193,7 @@ while Running:
 	
 	player.coords[0] += player.vel[0]
 	player.coords[1] += player.vel[1]
-<<<<<<< HEAD
+
 	screen.blit(player.img, player.coords)
 
 
@@ -207,10 +206,10 @@ while Running:
 				player.coords[1] = i.coords[1] - 100
 		screen.blit(i.img,i.coords)
 	
-=======
+
 
 	screen.blit(player.images[player.img], player.coords)
->>>>>>> master
+
 	#Bombs
 	for i in bombs:
 		if not i.floor:
