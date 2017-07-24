@@ -170,27 +170,25 @@ while Running:
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			if bombWaitTime == 0:
-				newBomb = bomb(bombType, [player.coords[0] - 5,player.coords[1]], (8, 8), getImg("Bomb"))
+				newBomb = bomb(bombType, [player.coords[0] - 5, player.coords[1]], (8, 8), getImg("Bomb"))
 				x, y = pygame.mouse.get_pos()
-				xChng = x - player.coords[1]
-				yChng = y - player.coords[0]
-				sOverall = 14
-				tot = xChng + yChng
-				if tot != 0:
-					newBomb.vel[0] = (xChng/tot)*14
-					newBomb.vel[1] = -(yChng/tot)*14
-				else:
-					newBomb.vel[0] = -14
+				xChng = player.coords[0] - x
+				yChng = player.coords[1] - y
+
+				hypot = math.hypot(xChng,yChng)
+
+				newBomb.vel[0] = xChng/hypot*14
+				newBomb.vel[1] = yChng/hypot*14
+
 				bombs.append(newBomb)
 				bombWaitTime = normalBombWait
-
 
 
 	#Player
 	if not player.floor:
 		if player.vel[1] < 16: #Gravity
 			player.vel[1] += 0.5
-	
+
 	if (not player.floor):
 		if player.vel[0] < .5 and player.motion[0] > 0:
 			player.vel[0] += player.motion[0]/4
