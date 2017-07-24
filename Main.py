@@ -100,20 +100,19 @@ bombs = [testBomb]
 bricks = []
 
 def createFloor(coordx,coordy,rx,ry):
-	for i in range(rx,ry):
-		bricks.append(Brick("type",[coordx + (16 * i),coordy],(16,16),brickImg))
+	bricks.append(Brick("type",[coordx,coordy],(ry*16,rx*16),brickImg))
 
 def createWall(coordx,coordy,rx,ry,dir):
-	for i in range(rx,ry):
-		if dir == "down":
-			bricks.append(Brick("type", [coordx, coordy - (16 * i)], (16, 16), brickImg))
-		if dir == "up":
-			bricks.append(Brick("type", [coordx, coordy + (16 * i)], (16, 16), brickImg))
 
-createFloor(0, 300, 0, 17)
+		if dir == "down":
+			bricks.append(Brick("type", [coordx, coordy], (ry*16,rx*16), brickImg))
+		if dir == "up":
+			bricks.append(Brick("type", [coordx, coordy], (ry*16,rx*16), brickImg))
+
+createFloor(0, 300, 1, 17)
 createWall(0,300,0,4,"down")
 
-createFloor(200, 200, 0, 8)
+createFloor(200, 200, 1, 8)
 createWall(264,216,0,2,"up")
 
 #createFloor(300,332,0,20,)
