@@ -13,12 +13,12 @@ fontComp = pygame.font.SysFont('couriernew', 16, True)
 smallfont = pygame.font.SysFont('couriernew', 12)
 massive = pygame.font.SysFont('couriernew', 200, True)
 
-size = (995, 259)
+size = (1024, 720)
 screen = pygame.display.set_mode(size)
 
 clock = pygame.time.Clock()
 pygame.display.set_caption("Explosive Platformer")
-pygame.mouse.set_visible(False)
+#pygame.mouse.set_visible(False)
 
 def getImg(name):
 	full = "assets/"+name+".png"
@@ -44,7 +44,7 @@ class Person(object):
 	def __init__(self, coords, size):
 		self.coords = coords
 		self.size = size
-		self.vel = [0, 0]
+		self.vel = [0, -15]
 		self.floor = False #is on ground
 		self.img = getImg("Human")
 player = Person([250, 250], (16, 16))
@@ -75,8 +75,8 @@ while Running:
 	
 	#Player
 	if not player.floor:
-		if player.vel[1] < 50:
-			player.vel[1] += 1
+		if player.vel[1] < 20:
+			player.vel[1] += 0.5
 	player.coords[0] += player.vel[0]
 	player.coords[1] += player.vel[1]
 	screen.blit(player.img, player.coords)
