@@ -31,7 +31,6 @@ def getImg(name):
 
 #SET GET IMAGES HERE
 brickImg = getImg("Brick")
-
 def toggle(bool):
 	if bool:
 		return False
@@ -95,6 +94,10 @@ testBomb = bomb(1, [300, 250], (8, 8), getImg("Bomb"))
 
 bombs = [testBomb]
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master
 bricks = []
 
 def createFloor(coordx,coordy,rx,ry):
@@ -171,8 +174,6 @@ while Running:
 	
 	player.coords[0] += player.vel[0]
 	player.coords[1] += player.vel[1]
-	
-	
 	for i in bricks:
 
 		if collide(i.coords,i.size,player.coords,player.size):
