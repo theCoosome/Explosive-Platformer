@@ -29,21 +29,21 @@ def getImg(name):
 		print "--File not found. Substituting"
 		return pygame.image.load("assets/wip.png")
 
-<<<<<<< HEAD
+
 
 #SET GET IMAGES HERE
 brickImg = getImg("Brick")
 
 
 
-=======
+
 def toggle(bool):
 	if bool:
 		return False
 	else:
 		return True
-		
->>>>>>> master
+
+
 def center(obj):
 	return (obj.coords[0]+(obj.size[0]/2), obj.coords[1]+(obj.size[1]/2))
 
@@ -71,7 +71,7 @@ class Person(object):
 	def unCrouch(self):
 		self.crouch = False
 		self.img -= 1
-		
+
 player = Person([250, 250], (16, 16))
 
 class movingBlock(object):
@@ -88,7 +88,7 @@ class Brick(object):
 		self.img = img
 
 movingblocks = []
-		
+
 class bomb(object):
 	def __init__(self, type, coords, size, img):
 		self.floor = False
@@ -101,7 +101,6 @@ testBomb = bomb(1, [300, 250], (8, 8), getImg("Bomb"))
 
 bombs = [testBomb]
 
-<<<<<<< HEAD
 bricks = []
 cF = False
 
@@ -113,17 +112,15 @@ def createFloor(coordx,coordy,rx,ry):
 
 createFloor(0, 300, 0, 10)
 
-#Current main screen, basic level.
-=======
+
 #Current main screen, basic level
->>>>>>> master
+
 Running = True
 while Running:
 	bombsExplode = False
 	screen.fill(WHITE)
-<<<<<<< HEAD
-=======
-	
+
+
 	#user input
 	for event in pygame.event.get():
 		if event.type == pygame.KEYDOWN:
@@ -144,11 +141,15 @@ while Running:
 					i.vel[1] = 0
 				player.floor = toggle(player.floor)
 				player.vel[1] = 0
-			if event.type == pygame.QUIT:
+			if event.type == QUIT or pygame.key.get_pressed()[K_ESCAPE]:
 				Running = False
+				pygame.quit()
+				sys.exit()
+				break
+
 			if event.key == pygame.K_SPACE:
 				bombsExplode = True
-			
+
 		if event.type == pygame.KEYUP:
 			if event.key in [K_LEFT, K_a]:
 				player.motion[0] += 2.0
@@ -161,23 +162,23 @@ while Running:
 
 
 
->>>>>>> master
+
 
 	#Player
 	if not player.floor:
 		if player.vel[1] < 16: #Gravity
 			player.vel[1] += 0.5
-	
+
 	if player.vel[1] != 0:
 		print player.vel[1]
-		
+
 	print player.motion[0]
 	if (not player.floor):
 		if player.vel[0] < .5 and player.motion[0] > 0:
 			player.vel[0] += player.motion[0]/8
 		if player.vel[0] > -.5 and player.motion[0] < 0:
 			player.vel[0] -= player.motion[0]/8
-		
+
 	else:
 		if player.crouch:
 			if player.vel[0] > player.motion[0]/4:
@@ -191,11 +192,9 @@ while Running:
 				player.vel[0] += 0.5
 		#if player.vel[1] > player.motion[1]:
 		#	player.vel[1] -= 0.5
-	
+
 	player.coords[0] += player.vel[0]
 	player.coords[1] += player.vel[1]
-<<<<<<< HEAD
-	screen.blit(player.img, player.coords)
 
 
 	for i in bricks:
@@ -206,11 +205,11 @@ while Running:
 			if player.vel[1] > 0:
 				player.coords[1] = i.coords[1] - 100
 		screen.blit(i.img,i.coords)
-	
-=======
+
+
 
 	screen.blit(player.images[player.img], player.coords)
->>>>>>> master
+
 	#Bombs
 	for i in bombs:
 		if not i.floor:
@@ -232,3 +231,4 @@ while Running:
 	
 	pygame.display.update()
 	clock.tick(fps)
+
