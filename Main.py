@@ -214,17 +214,26 @@ while Running:
 	
 	player.floor = False
 	for i in bricks:
-		if collide(i.coords,i.size,player.coords,player.size):
+		if collide(i.coords, i.size, player.coords, player.size):
+			if collide(player.coords, player.size, (i.coords[0], i.coords[1]+1), (i.size[0], i.size[1]-1)):
+				if player.vel[0] > 0:
+					player.coords[0] = i.coords[0] - player.size[0]
+				if player.vel[0] < 0:
+					player.coords[0] = i.coords[0] + i.size[0]
+				player.vel[0] = 0
 
-			if player.vel[1] > 0:
-				player.floor = True
+			if player.vel[1] > 0: #Falling
 				player.coords[1] = i.coords[1]-player.size[1]
-			if player.vel[1] < 0:
+			if player.vel[1] < 0: #Up-ing
 				player.coords[1] = i.coords[1]+i.size[1]
 			player.vel[1] = 0
+		if collide(player.coords, (16, 17), i.coords, i.size):
+			player.floor = True
 
 		screen.blit(i.img,i.coords)
+	
 	screen.blit(player.images[player.img], player.coords)
+	print player.floor
 	#Bombs
 	for i in bombs:
 		if not i.floor:
