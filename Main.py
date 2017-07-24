@@ -94,7 +94,10 @@ testBomb = bomb(1, [300, 250], (8, 8), getImg("Bomb"))
 
 bombs = [testBomb]
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
 bricks = []
 
 def createFloor(coordx,coordy,rx,ry):
@@ -119,10 +122,15 @@ createFloor(300,332,0,20,)
 #createWall(264,332,0,20,"up")
 #Current main screen, basic level.
 Running = True
+bombWaitTime = 0
+normalBombWait = 60
 while Running:
+	if bombWaitTime > 0:
+		bombWaitTime -= 1
 	bombsExplode = False
+	bombType = 1
 	screen.fill(WHITE)
-	
+	playCoords = player.coords
 	#user input
 	for event in pygame.event.get():
 		if event.type == pygame.KEYDOWN:
@@ -157,6 +165,15 @@ while Running:
 				player.motion[1] -= 0.5
 				player.unCrouch()
 
+		if event.type == pygame.MOUSEBUTTONDOWN:
+			if bombWaitTime == 0:
+				newBomb = bomb(bombType, playCoords , (16, 16), getImg("Bomb"))
+				newBomb.vel[1] = -30
+				bombs.append(newBomb)
+				bombWaitTime = normalBombWait
+
+
+
 	#Player
 	if not player.floor:
 		if player.vel[1] < 16: #Gravity
@@ -166,7 +183,7 @@ while Running:
 		if player.vel[0] < .5 and player.motion[0] > 0:
 			player.vel[0] += player.motion[0]/4
 		if player.vel[0] > -.5 and player.motion[0] < 0:
-			player.vel[0] -= player.motion[0]/4
+			player.vel[0] += player.motion[0]/4
 		
 	else:
 		if player.crouch:
@@ -179,18 +196,20 @@ while Running:
 				player.vel[0] -= 0.5
 			if player.vel[0] < player.motion[0]:
 				player.vel[0] += 0.5
-		#if player.vel[1] > player.motion[1]:
-		#	player.vel[1] -= 0.5
 	
 	player.coords[0] += player.vel[0]
 	player.coords[1] += player.vel[1]
+	
 	for i in bricks:
-
 		if collide(i.coords,i.size,player.coords,player.size):
-			player.vel[1] = 0
 			player.floor = True
 			if player.vel[1] > 0:
+<<<<<<< HEAD
 				player.coords[1] = i.coords[1] - 16
+=======
+				player.coords[1] = i.coords[1]-player.size[1]
+			player.vel[1] = 0
+>>>>>>> origin/master
 		screen.blit(i.img,i.coords)
 	screen.blit(player.images[player.img], player.coords)
 	#Bombs
