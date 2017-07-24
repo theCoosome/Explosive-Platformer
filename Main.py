@@ -44,7 +44,7 @@ class Person(object):
 	def __init__(self, coords, size):
 		self.coords = coords
 		self.size = size
-		self.vel = vel
+		self.vel = [0, 0]
 		self.floor = False #is on ground
 		self.img = getImg("Human")
 player = Person([250, 250], (16, 16))
@@ -75,7 +75,10 @@ while Running:
 	
 	#Player
 	if not player.floor:
-		pass
+		if player.vel[1] < 50:
+			player.vel[1] += 1
+	player.coords[0] += player.vel[0]
+	player.coords[1] += player.vel[1]
 	screen.blit(player.img, player.coords)
 	
 	#Bombs
