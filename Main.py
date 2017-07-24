@@ -114,11 +114,13 @@ createFloor(0, 300, 0, 10)
 
 
 #Current main screen, basic level
-
+bombWaitTime = 0
+normalBombWait = 60
 Running = True
 while Running:
 	bombsExplode = False
 	screen.fill(WHITE)
+
 	#user input
 	for event in pygame.event.get():
 		if event.type == pygame.KEYDOWN:
