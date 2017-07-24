@@ -88,10 +88,15 @@ bombs = [testBomb]
 
 #Current main screen, basic level
 Running = True
+bombWaitTime = 0
+normalBombWait = 60
 while Running:
+	if bombWaitTime > 0:
+		bombWaitTime -= 1
 	bombsExplode = False
+	bombType = 1
 	screen.fill(WHITE)
-	
+	playCoords = player.coords
 	#user input
 	for event in pygame.event.get():
 		if event.type == pygame.KEYDOWN:
@@ -123,6 +128,13 @@ while Running:
 			if event.key in [K_DOWN, K_s]:
 				player.motion[1] -= 0.5
 				player.unCrouch()
+
+		if event.type == pygame.MOUSEBUTTONDOWN:
+			if bombWaitTime == 0:
+				newBomb = bomb(bombType, playCoords , (16, 16), getImg("Bomb"))
+				newBomb.vel[1] = -30
+				bombs.append(newBomb)
+				bombWaitTime = normalBombWait
 
 
 
