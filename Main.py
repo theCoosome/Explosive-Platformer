@@ -89,6 +89,7 @@ bombs = [testBomb]
 #Current main screen, basic level
 Running = True
 while Running:
+	bombsExplode = False
 	screen.fill(WHITE)
 	
 	#user input
@@ -106,10 +107,15 @@ while Running:
 				player.vel[1] = -10
 				player.floor = False
 			if event.key == K_g:
+				for i in bombs:
+					i.floor = toggle(player.floor)
+					i.vel[1] = 0
 				player.floor = toggle(player.floor)
 				player.vel[1] = 0
 			if event.type == pygame.QUIT:
 				Running = False
+			if event.key == pygame.K_SPACE:
+				bombsExplode = True
 			
 		if event.type == pygame.KEYUP:
 			if event.key in [K_LEFT, K_a]:
@@ -119,8 +125,11 @@ while Running:
 			if event.key in [K_DOWN, K_s]:
 				player.motion[1] -= 0.5
 				player.unCrouch()
-				
-				
+
+
+
+
+
 	#Player
 	if not player.floor:
 		if player.vel[1] < 20: #Gravity
@@ -142,7 +151,7 @@ while Running:
 	
 	player.coords[0] += player.vel[0]
 	player.coords[1] += player.vel[1]
-	
+
 	screen.blit(player.images[player.img], player.coords)
 	#Bombs
 	for i in bombs:
@@ -152,6 +161,12 @@ while Running:
 		i.coords[0] += i.vel[0]
 		i.coords[1] += i.vel[1]
 		screen.blit(i.img, i.coords)
+
+	if bombsExplode:
+		for i in bombs:
+			i.img = getImg("Human")
+
+
 
 	#Moving Blocks
 	for i in movingblocks:
