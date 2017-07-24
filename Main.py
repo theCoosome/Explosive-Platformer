@@ -18,6 +18,14 @@ clock = pygame.time.Clock()
 pygame.display.set_caption("Explosive Platformer")
 pygame.mouse.set_visible(False)
 
+def getImg(name):
+	full = "assets/"+name+".png"
+	print "Loading: "+full
+	try:
+		return pygame.image.load(full)
+	except pygame.error:
+		print "--File not found. Substituting"
+		return pygame.image.load("assets/wip.png")
 
 def center(obj):
 	return (obj.coords[0]+(obj.size[0]/2), obj.coords[1]+(obj.size[1]/2))
@@ -35,7 +43,19 @@ class Person(object):
 		self.coords = coords
 		self.size = size
 		self.vel = vel
+		self.img = getImg("Human")
 
+class movingBlock(object):
+	def __init__(self, type, coords, size, img):
+		self.type = type
+		self.coords = coords
+		self.size = size
+		
+class bomb(object):
+	def __init__(self, type, coords, size, img):
+		self.type = type
+		self.coords = coords
+		self.size = size
 
 #Current main screen, basic level.
 Running = True
