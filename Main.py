@@ -147,6 +147,11 @@ while Running:
 			if event.key in [K_DOWN, K_s]:
 				player.motion[1] += 0.5
 				player.Crouch()
+			if event.key == K_r:
+				fps = 10
+			if event.key == K_f:
+				fps = 60
+				
 			if event.key in [K_UP, K_w] and player.floor:
 				player.vel[1] = -10
 				player.floor = False
@@ -176,9 +181,17 @@ while Running:
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			if bombWaitTime == 0:
-				newBomb = bomb(bombType, [player.coords[0],player.coords[1]], (8, 8), getImg("Bomb"))
-				newBomb.vel[0] = -10
-				newBomb.vel[1] = -10
+				newBomb = bomb(bombType, [player.coords[0] - 5,player.coords[1]], (8, 8), getImg("Bomb"))
+				x, y = pygame.mouse.get_pos()
+				xChng = x - player.coords[1]
+				yChng = y - player.coords[0]
+				sOverall = 14
+				tot = xChng + yChng
+				if tot != 0:
+					newBomb.vel[0] = (xChng/tot)*14
+					newBomb.vel[1] = -(yChng/tot)*14
+				else:
+					newBomb.vel[0] = -14
 				bombs.append(newBomb)
 				bombWaitTime = normalBombWait
 
@@ -209,9 +222,12 @@ while Running:
 	
 	player.coords[0] += player.vel[0]
 	player.coords[1] += player.vel[1]
+	if not collide(player.coords, player.size, (0, 0), size):
+		player.coords = [50, 250]
 	
 	player.floor = False
 	for i in bricks:
+<<<<<<< HEAD
 
 		for f in movingblocks:
 			f.floor =False
@@ -232,8 +248,28 @@ while Running:
 				if player.vel[1] < 0:
 					player.coords[1] = i.coords[1]+i.size[1]
 				player.vel[1] = 0
+=======
+		if collide(i.coords, i.size, player.coords, player.size): #COLLISIONS
+			if player.vel[1] < 0: #Up-ing
+				player.coords[1] = i.coords[1]+i.size[1]
+				player.vel[1] = 0
+			if collide(player.coords, player.size, (i.coords[0], i.coords[1]+3), (i.size[0], i.size[1]-3)):
+				if player.vel[0] > 0:
+					player.coords[0] = i.coords[0] - player.size[0]
+				if player.vel[0] < 0:
+					player.coords[0] = i.coords[0] + i.size[0]
+				player.vel[0] = 0
+
+			if player.vel[1] > 0: #Falling
+				player.coords[1] = i.coords[1]-player.size[1]
+				player.vel[1] = 0
+			
+		if collide(player.coords, (16, 17), i.coords, i.size):
+			player.floor = True
+>>>>>>> origin/master
 
 		screen.blit(i.img,i.coords)
+	
 	screen.blit(player.images[player.img], player.coords)
 	#Bombs
 	for i in bombs:
