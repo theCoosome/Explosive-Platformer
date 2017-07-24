@@ -117,6 +117,7 @@ createFloor(0, 300, 0, 10)
 bombWaitTime = 0
 normalBombWait = 60
 Running = True
+bombType = 1
 while Running:
 	bombsExplode = False
 	screen.fill(WHITE)
