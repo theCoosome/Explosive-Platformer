@@ -31,6 +31,8 @@ def getImg(name):
 
 #SET GET IMAGES HERE
 brickImg = getImg("Brick")
+personimg = getImg("Human")
+
 def toggle(bool):
 	if bool:
 		return False
@@ -98,7 +100,6 @@ bricks = []
 
 def createFloor(coordx,coordy,rx,ry):
 	for i in range(rx,ry):
-
 		bricks.append(Brick("type",[coordx + (16 * i),coordy],(16,16),brickImg))
 
 def createWall(coordx,coordy,rx,ry,dir):
@@ -219,8 +220,7 @@ while Running:
 
 	if bombsExplode:
 		for i in bombs:
-			i.img = getImg("Human")
-
+			i.img = personimg
 
 
 	#Moving Blocks
