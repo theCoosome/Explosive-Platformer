@@ -165,8 +165,10 @@ while Running:
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			if bombWaitTime == 0:
-				newBomb = bomb(bombType, playCoords , (16, 16), getImg("Bomb"))
-				newBomb.vel[1] = -30
+				newBomb = bomb(bombType, playCoords , (8, 8), getImg("Bomb"))
+				newBomb.coords[0] += 10
+				newBomb.coords[1] += 10
+				newBomb.vel[1] = -10
 				bombs.append(newBomb)
 				bombWaitTime = normalBombWait
 
