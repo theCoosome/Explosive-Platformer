@@ -76,14 +76,17 @@ movingblocks = []
 		
 class bomb(object):
 	def __init__(self, type, coords, size, img):
+		self.floor = False
 		self.type = type
 		self.coords = coords
 		self.size = size
 		self.img = img
+		self.vel = [0, -15]
+testBomb = bomb(1, [300, 250], (16, 16), getImg("Bomb"))
 
-bombs = []
+bombs = [testBomb]
 
-#Current main screen, basic level.
+#Current main screen, basic level
 Running = True
 while Running:
 	screen.fill(WHITE)
@@ -135,12 +138,17 @@ while Running:
 	
 	player.coords[0] += player.vel[0]
 	player.coords[1] += player.vel[1]
-	screen.blit(player.images[player.img], player.coords)
 	
+	screen.blit(player.images[player.img], player.coords)
 	#Bombs
 	for i in bombs:
+		if not i.floor:
+			if i.vel[1] < 20:
+				i.vel[1] += 0.5
+		i.coords[0] += i.vel[0]
+		i.coords[1] += i.vel[1]
 		screen.blit(i.img, i.coords)
-		
+
 	#Moving Blocks
 	for i in movingblocks:
 		screen.blit(i.img, i.coords)
