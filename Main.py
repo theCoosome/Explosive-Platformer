@@ -248,16 +248,18 @@ while Running:
 				player.vel[1] = 0
 =======
 		if collide(i.coords, i.size, player.coords, player.size): #COLLISIONS
+			mid = center(i)
+			if collide(player.coords, player.size, (i.coords[0], i.coords[1]+3), (i.size[0], i.size[1]-3)):
+				if player.vel[0] > 0 and player.coords[0] < mid[0]:
+					player.coords[0] = i.coords[0] - player.size[0]
+					player.vel[0] = 0
+				if player.vel[0] < 0 and player.coords[0] > mid[0]:
+					player.coords[0] = i.coords[0] + i.size[0]
+					player.vel[0] = 0
+
 			if player.vel[1] < 0: #Up-ing
 				player.coords[1] = i.coords[1]+i.size[1]
 				player.vel[1] = 0
-			if collide(player.coords, player.size, (i.coords[0], i.coords[1]+3), (i.size[0], i.size[1]-3)):
-				if player.vel[0] > 0:
-					player.coords[0] = i.coords[0] - player.size[0]
-				if player.vel[0] < 0:
-					player.coords[0] = i.coords[0] + i.size[0]
-				player.vel[0] = 0
-
 			if player.vel[1] > 0: #Falling
 				player.coords[1] = i.coords[1]-player.size[1]
 				player.vel[1] = 0
