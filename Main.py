@@ -65,7 +65,7 @@ class Person(object):
 		self.crouch = False
 		self.img -= 1
 		
-player = Person([250, 250], (16, 16))
+player = Person([50, 250], (16, 16))
 
 class movingBlock(object):
 	def __init__(self, type, coords, size, img):
@@ -200,6 +200,7 @@ while Running:
 	player.coords[0] += player.vel[0]
 	player.coords[1] += player.vel[1]
 	
+	player.floor = False
 	for i in bricks:
 		if collide(i.coords,i.size,player.coords,player.size):
 			player.floor = True
