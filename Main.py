@@ -6,6 +6,8 @@ from decimal import *
 pygame.init()
 fps = 60
 
+WHITE = pygame.Color(255,255,255)
+
 font = pygame.font.SysFont('couriernew', 13)
 fontComp = pygame.font.SysFont('couriernew', 16, True)
 smallfont = pygame.font.SysFont('couriernew', 12)
@@ -43,26 +45,46 @@ class Person(object):
 		self.coords = coords
 		self.size = size
 		self.vel = vel
+		self.floor = False #is on ground
 		self.img = getImg("Human")
+player = Person([250, 250], (16, 16))
 
 class movingBlock(object):
 	def __init__(self, type, coords, size, img):
 		self.type = type
 		self.coords = coords
 		self.size = size
+		self.img = img
+		
+movingblocks = []
 		
 class bomb(object):
 	def __init__(self, type, coords, size, img):
 		self.type = type
 		self.coords = coords
 		self.size = size
+		self.img = img
+
+bombs = []
 
 #Current main screen, basic level.
 Running = True
 while Running:
+	screen.fill(WHITE)
 	
 	
+	#Player
+	if not player.floor:
+		pass
+	screen.blit(player.img, player.coords)
 	
-
+	#Bombs
+	for i in bombs:
+		screen.blit(i.img, i.coords)
+		
+	#Moving Blocks
+	for i in movingblocks:
+		screen.blit(i.img, i.coords)
+	
 	pygame.display.update()
 	clock.tick(fps)
