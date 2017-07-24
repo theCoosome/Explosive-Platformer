@@ -94,10 +94,7 @@ testBomb = bomb(1, [300, 250], (8, 8), getImg("Bomb"))
 
 bombs = [testBomb]
 
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/master
 bricks = []
 
 def createFloor(coordx,coordy,rx,ry):
@@ -205,12 +202,12 @@ while Running:
 		if collide(i.coords,i.size,player.coords,player.size):
 			player.floor = True
 			if player.vel[1] > 0:
-<<<<<<< HEAD
+
 				player.coords[1] = i.coords[1] - 16
-=======
+
 				player.coords[1] = i.coords[1]-player.size[1]
 			player.vel[1] = 0
->>>>>>> origin/master
+
 		screen.blit(i.img,i.coords)
 	screen.blit(player.images[player.img], player.coords)
 	#Bombs
