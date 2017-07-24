@@ -108,6 +108,8 @@ while Running:
 			if event.key == K_g:
 				player.floor = toggle(player.floor)
 				player.vel[1] = 0
+			if event.type == pygame.QUIT:
+				Running = False
 			
 		if event.type == pygame.KEYUP:
 			if event.key in [K_LEFT, K_a]:
@@ -121,12 +123,14 @@ while Running:
 				
 	#Player
 	if not player.floor:
-		if player.vel[0] > player.motion[0]/2:
-			player.vel[0] -= 0.5
-		if player.vel[0] < player.motion[0]/2:
-			player.vel[0] += 0.5
 		if player.vel[1] < 20: #Gravity
 			player.vel[1] += 0.5
+	
+	if not player.floor or player.crouch:
+		if player.vel[0] < player.motion[0]/2:
+			player.vel[0] += 0.5
+		if player.vel[0] > player.motion[0]/2:
+			player.vel[0] -= 0.5
 		
 	else:
 		if player.vel[0] > player.motion[0]:
