@@ -60,7 +60,7 @@ class Person(object):
 		self.coords = coords
 		self.size = size
 		self.vel = [0, -15]
-		self.motion = [0, 0] #attempted motion, xy direction
+		self.motion = [0.0, 0.0] #attempted motion, xy direction
 		self.floor = False #is on ground
 		self.crouch = False
 		self.images = [getImg("Human"), getImg("HumanCrouch")]
@@ -97,7 +97,7 @@ class bomb(object):
 		self.size = size
 		self.img = img
 		self.vel = [0, -15]
-testBomb = bomb(1, [300, 250], (16, 16), getImg("Bomb"))
+testBomb = bomb(1, [300, 250], (8, 8), getImg("Bomb"))
 
 bombs = [testBomb]
 
@@ -129,9 +129,9 @@ while Running:
 		if event.type == pygame.KEYDOWN:
 			#movement
 			if event.key in [K_LEFT, K_a]:
-				player.motion[0] -= 2
+				player.motion[0] -= 2.0
 			if event.key in [K_RIGHT, K_d]:
-				player.motion[0] += 2
+				player.motion[0] += 2.0
 			if event.key in [K_DOWN, K_s]:
 				player.motion[1] += 0.5
 				player.Crouch()
@@ -151,9 +151,9 @@ while Running:
 			
 		if event.type == pygame.KEYUP:
 			if event.key in [K_LEFT, K_a]:
-				player.motion[0] += 2
+				player.motion[0] += 2.0
 			if event.key in [K_RIGHT, K_d]:
-				player.motion[0] -= 2
+				player.motion[0] -= 2.0
 			if event.key in [K_DOWN, K_s]:
 				player.motion[1] -= 0.5
 				player.unCrouch()
@@ -165,20 +165,30 @@ while Running:
 
 	#Player
 	if not player.floor:
-		if player.vel[1] < 20: #Gravity
+		if player.vel[1] < 16: #Gravity
 			player.vel[1] += 0.5
 	
-	if not player.floor or player.crouch:
-		if player.vel[0] < player.motion[0]/2:
-			player.vel[0] += 0.5
-		if player.vel[0] > player.motion[0]/2:
-			player.vel[0] -= 0.5
+	if player.vel[1] != 0:
+		print player.vel[1]
+		
+	print player.motion[0]
+	if (not player.floor):
+		if player.vel[0] < .5 and player.motion[0] > 0:
+			player.vel[0] += player.motion[0]/8
+		if player.vel[0] > -.5 and player.motion[0] < 0:
+			player.vel[0] -= player.motion[0]/8
 		
 	else:
-		if player.vel[0] > player.motion[0]:
-			player.vel[0] -= 0.5
-		if player.vel[0] < player.motion[0]:
-			player.vel[0] += 0.5
+		if player.crouch:
+			if player.vel[0] > player.motion[0]/4:
+				player.vel[0] -= 0.5
+			if player.vel[0] < player.motion[0]/4:
+				player.vel[0] += 0.5
+		else:
+			if player.vel[0] > player.motion[0]:
+				player.vel[0] -= 0.5
+			if player.vel[0] < player.motion[0]:
+				player.vel[0] += 0.5
 		#if player.vel[1] > player.motion[1]:
 		#	player.vel[1] -= 0.5
 	
