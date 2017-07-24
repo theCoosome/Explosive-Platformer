@@ -116,7 +116,9 @@ createFloor(200, 200, 0, 8)
 createWall(264,216,0,2,"up")
 
 createFloor(300,332,0,20,)
-#createWall(264,332,0,20,"up")
+createWall(232,332,0,20,"up")
+
+#createFloor(232,256,0,20,)
 #Current main screen, basic level.
 Running = True
 bombWaitTime = 0
