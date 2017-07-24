@@ -29,12 +29,21 @@ def getImg(name):
 		print "--File not found. Substituting"
 		return pygame.image.load("assets/wip.png")
 
+<<<<<<< HEAD
 
 #SET GET IMAGES HERE
 brickImg = getImg("Brick")
 
 
 
+=======
+def toggle(bool):
+	if bool:
+		return False
+	else:
+		return True
+		
+>>>>>>> master
 def center(obj):
 	return (obj.coords[0]+(obj.size[0]/2), obj.coords[1]+(obj.size[1]/2))
 
@@ -51,8 +60,18 @@ class Person(object):
 		self.coords = coords
 		self.size = size
 		self.vel = [0, -15]
+		self.motion = [0, 0] #attempted motion, xy direction
 		self.floor = False #is on ground
-		self.img = getImg("Human")
+		self.crouch = False
+		self.images = [getImg("Human"), getImg("HumanCrouch")]
+		self.img = 0
+	def Crouch(self):
+		self.crouch = True
+		self.img += 1
+	def unCrouch(self):
+		self.crouch = False
+		self.img -= 1
+		
 player = Person([250, 250], (16, 16))
 
 class movingBlock(object):
@@ -72,13 +91,17 @@ movingblocks = []
 		
 class bomb(object):
 	def __init__(self, type, coords, size, img):
+		self.floor = False
 		self.type = type
 		self.coords = coords
 		self.size = size
 		self.img = img
+		self.vel = [0, -15]
+testBomb = bomb(1, [300, 250], (16, 16), getImg("Bomb"))
 
-bombs = []
+bombs = [testBomb]
 
+<<<<<<< HEAD
 bricks = []
 cF = False
 
@@ -91,16 +114,77 @@ def createFloor(coordx,coordy,rx,ry):
 createFloor(0, 300, 0, 10)
 
 #Current main screen, basic level.
+=======
+#Current main screen, basic level
+>>>>>>> master
 Running = True
 while Running:
+	bombsExplode = False
 	screen.fill(WHITE)
+<<<<<<< HEAD
+=======
+	
+	#user input
+	for event in pygame.event.get():
+		if event.type == pygame.KEYDOWN:
+			#movement
+			if event.key in [K_LEFT, K_a]:
+				player.motion[0] -= 2
+			if event.key in [K_RIGHT, K_d]:
+				player.motion[0] += 2
+			if event.key in [K_DOWN, K_s]:
+				player.motion[1] += 0.5
+				player.Crouch()
+			if event.key in [K_UP, K_w] and player.floor:
+				player.vel[1] = -10
+				player.floor = False
+			if event.key == K_g:
+				for i in bombs:
+					i.floor = toggle(player.floor)
+					i.vel[1] = 0
+				player.floor = toggle(player.floor)
+				player.vel[1] = 0
+			if event.type == pygame.QUIT:
+				Running = False
+			if event.key == pygame.K_SPACE:
+				bombsExplode = True
+			
+		if event.type == pygame.KEYUP:
+			if event.key in [K_LEFT, K_a]:
+				player.motion[0] += 2
+			if event.key in [K_RIGHT, K_d]:
+				player.motion[0] -= 2
+			if event.key in [K_DOWN, K_s]:
+				player.motion[1] -= 0.5
+				player.unCrouch()
+
+
+
+
+>>>>>>> master
 
 	#Player
 	if not player.floor:
-		if player.vel[1] < 20:
+		if player.vel[1] < 20: #Gravity
 			player.vel[1] += 0.5
+	
+	if not player.floor or player.crouch:
+		if player.vel[0] < player.motion[0]/2:
+			player.vel[0] += 0.5
+		if player.vel[0] > player.motion[0]/2:
+			player.vel[0] -= 0.5
+		
+	else:
+		if player.vel[0] > player.motion[0]:
+			player.vel[0] -= 0.5
+		if player.vel[0] < player.motion[0]:
+			player.vel[0] += 0.5
+		#if player.vel[1] > player.motion[1]:
+		#	player.vel[1] -= 0.5
+	
 	player.coords[0] += player.vel[0]
 	player.coords[1] += player.vel[1]
+<<<<<<< HEAD
 	screen.blit(player.img, player.coords)
 
 
@@ -113,10 +197,25 @@ while Running:
 				player.coords[1] = i.coords[1] - 100
 		screen.blit(i.img,i.coords)
 	
+=======
+
+	screen.blit(player.images[player.img], player.coords)
+>>>>>>> master
 	#Bombs
 	for i in bombs:
+		if not i.floor:
+			if i.vel[1] < 20:
+				i.vel[1] += 0.5
+		i.coords[0] += i.vel[0]
+		i.coords[1] += i.vel[1]
 		screen.blit(i.img, i.coords)
-		
+
+	if bombsExplode:
+		for i in bombs:
+			i.img = getImg("Human")
+
+
+
 	#Moving Blocks
 	for i in movingblocks:
 		screen.blit(i.img, i.coords)
