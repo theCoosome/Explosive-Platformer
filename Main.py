@@ -166,7 +166,7 @@ while Running:
 		if player.vel[0] < .5 and player.motion[0] > 0:
 			player.vel[0] += player.motion[0]/4
 		if player.vel[0] > -.5 and player.motion[0] < 0:
-			player.vel[0] -= player.motion[0]/4
+			player.vel[0] += player.motion[0]/4
 		
 	else:
 		if player.crouch:
@@ -179,18 +179,16 @@ while Running:
 				player.vel[0] -= 0.5
 			if player.vel[0] < player.motion[0]:
 				player.vel[0] += 0.5
-		#if player.vel[1] > player.motion[1]:
-		#	player.vel[1] -= 0.5
 	
 	player.coords[0] += player.vel[0]
 	player.coords[1] += player.vel[1]
+	
 	for i in bricks:
-
 		if collide(i.coords,i.size,player.coords,player.size):
-			player.vel[1] = 0
 			player.floor = True
 			if player.vel[1] > 0:
-				player.coords[1] = i.coords[1] - 100
+				player.coords[1] = i.coords[1]-player.size[1]
+			player.vel[1] = 0
 		screen.blit(i.img,i.coords)
 	screen.blit(player.images[player.img], player.coords)
 	#Bombs
