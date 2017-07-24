@@ -94,10 +94,6 @@ testBomb = bomb(1, [300, 250], (8, 8), getImg("Bomb"))
 
 bombs = [testBomb]
 
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/master
 bricks = []
 
 def createFloor(coordx,coordy,rx,ry):
