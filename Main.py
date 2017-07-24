@@ -29,6 +29,12 @@ def getImg(name):
 		print "--File not found. Substituting"
 		return pygame.image.load("assets/wip.png")
 
+
+#SET GET IMAGES HERE
+brickImg = getImg("Brick")
+
+
+
 def center(obj):
 	return (obj.coords[0]+(obj.size[0]/2), obj.coords[1]+(obj.size[1]/2))
 
@@ -55,7 +61,13 @@ class movingBlock(object):
 		self.coords = coords
 		self.size = size
 		self.img = img
-		
+class Brick(object):
+	def __init__(self,type,coords,size,img):
+		self.type = type
+		self.coords = coords
+		self.size = size
+		self.img = img
+
 movingblocks = []
 		
 class bomb(object):
@@ -67,12 +79,22 @@ class bomb(object):
 
 bombs = []
 
+bricks = []
+cF = False
+
+
+def createFloor(coordx,coordy,rx,ry):
+	for i in range(rx,ry):
+
+		bricks.append(Brick("type",[coordx + (16 * i),coordy],(16,16),brickImg))
+
+createFloor(0, 300, 0, 10)
+
 #Current main screen, basic level.
 Running = True
 while Running:
 	screen.fill(WHITE)
-	
-	
+
 	#Player
 	if not player.floor:
 		if player.vel[1] < 20:
@@ -80,6 +102,16 @@ while Running:
 	player.coords[0] += player.vel[0]
 	player.coords[1] += player.vel[1]
 	screen.blit(player.img, player.coords)
+
+
+	for i in bricks:
+
+		if collide(i.coords,i.size,player.coords,player.size):
+			player.vel[1] = 0
+			player.floor = True
+			if player.vel[1] > 0:
+				player.coords[1] = i.coords[1] - 100
+		screen.blit(i.img,i.coords)
 	
 	#Bombs
 	for i in bombs:
