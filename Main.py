@@ -102,15 +102,25 @@ bombs = [testBomb]
 bricks = []
 
 def createFloor(coordx,coordy,rx,ry):
+
+	bricks.append(Brick("type",[coordx,coordy],(ry*16,rx*16),brickImg))
+
 	for i in range(rx,ry):
 		bricks.append(Brick("type",[coordx + (16 * i),coordy],(16 * rx,16),brickImg))
 
+
 def createWall(coordx,coordy,rx,ry,dir):
-	for i in range(rx,ry):
+
 		if dir == "down":
-			bricks.append(Brick("type", [coordx, coordy - (16 * i)], (16, 16), brickImg))
+			bricks.append(Brick("type", [coordx, coordy], (ry*16,rx*16), brickImg))
 		if dir == "up":
-			bricks.append(Brick("type", [coordx, coordy + (16 * i)], (16, 16), brickImg))
+			bricks.append(Brick("type", [coordx, coordy], (ry*16,rx*16), brickImg))
+
+
+createFloor(0, 300, 1, 17)
+def createMovingBlock(coordx,coordy,rx,ry):
+	for i in range(rx,ry):
+		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
 
 def createMovingBlock(coordx,coordy,rx,ry):
 	for i in range(rx,ry):
@@ -119,7 +129,7 @@ def createMovingBlock(coordx,coordy,rx,ry):
 createFloor(0, 300, 0, 17)
 createWall(0,300,0,4,"down")
 
-createFloor(200, 200, 0, 8)
+createFloor(200, 200, 1, 8)
 createWall(264,216,0,2,"up")
 createMovingBlock(32,200,0,1)
 #createFloor(300,332,0,20,)
@@ -181,27 +191,25 @@ while Running:
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			if bombWaitTime == 0:
-				newBomb = bomb(bombType, [player.coords[0] - 5,player.coords[1]], (8, 8), getImg("Bomb"))
+				newBomb = bomb(bombType, [player.coords[0] - 5, player.coords[1]], (8, 8), getImg("Bomb"))
 				x, y = pygame.mouse.get_pos()
-				xChng = x - player.coords[1]
-				yChng = y - player.coords[0]
-				sOverall = 14
-				tot = xChng + yChng
-				if tot != 0:
-					newBomb.vel[0] = (xChng/tot)*14
-					newBomb.vel[1] = -(yChng/tot)*14
-				else:
-					newBomb.vel[0] = -14
+				xChng = player.coords[0] - x
+				yChng = player.coords[1] - y
+
+				hypot = math.hypot(xChng,yChng)
+
+				newBomb.vel[0] = xChng/hypot*14
+				newBomb.vel[1] = yChng/hypot*14
+
 				bombs.append(newBomb)
 				bombWaitTime = normalBombWait
-
 
 
 	#Player
 	if not player.floor:
 		if player.vel[1] < 16: #Gravity
 			player.vel[1] += 0.5
-	
+
 	if (not player.floor):
 		if player.vel[0] < .5 and player.motion[0] > 0:
 			player.vel[0] += player.motion[0]/4
@@ -227,6 +235,11 @@ while Running:
 	
 	player.floor = False
 	for i in bricks:
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> origin/master
 		for f in movingblocks:
 			f.floor =False
 			if collide(i.coords, i.size, f.coords, f.size):
@@ -238,25 +251,48 @@ while Running:
 				f.vel[1] = 0
 			screen.blit(f.img, f.coords)
 
+<<<<<<< HEAD
+=======
+			if collide(i.coords,i.size,player.coords,player.size):
+
+				if player.vel[1] > 0:
+					player.floor = True
+					player.coords[1] = i.coords[1]-player.size[1]
+				if player.vel[1] < 0:
+					player.coords[1] = i.coords[1]+i.size[1]
+
+				player.vel[1] = 0
+
+>>>>>>> origin/master
 		if collide(i.coords, i.size, player.coords, player.size): #COLLISIONS
 			if player.vel[1] < 0: #Up-ing
 				player.coords[1] = i.coords[1]+i.size[1]
+
 				player.vel[1] = 0
-			if collide(player.coords, player.size, (i.coords[0], i.coords[1]+3), (i.size[0], i.size[1]-3)):
-				if player.vel[0] > 0:
-					player.coords[0] = i.coords[0] - player.size[0]
-				if player.vel[0] < 0:
-					player.coords[0] = i.coords[0] + i.size[0]
+	if collide(i.coords, i.size, player.coords, player.size): #COLLISIONS
+		mid = center(i)
+		if collide(player.coords, player.size, (i.coords[0], i.coords[1]+3), (i.size[0], i.size[1]-3)):
+			if player.vel[0] > 0 and player.coords[0] < mid[0]:
+				player.coords[0] = i.coords[0] - player.size[0]
+				player.vel[0] = 0
+			if player.vel[0] < 0 and player.coords[0] > mid[0]:
+				player.coords[0] = i.coords[0] + i.size[0]
 				player.vel[0] = 0
 
-			if player.vel[1] > 0: #Falling
-				player.coords[1] = i.coords[1]-player.size[1]
-				player.vel[1] = 0
-			
+		if player.vel[1] < 0: #Up-ing
+			player.coords[1] = i.coords[1]+i.size[1]
+			player.vel[1] = 0
+		if player.vel[1] > 0: #Falling
+			player.coords[1] = i.coords[1]-player.size[1]
+			player.vel[1] = 0
+
 		if collide(player.coords, (16, 17), i.coords, i.size):
 			player.floor = True
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> origin/master
 		screen.blit(i.img,i.coords)
 	
 	screen.blit(player.images[player.img], player.coords)
