@@ -73,6 +73,11 @@ class Person(object):
 		self.img = 0
 		
 player = Person([50, 250], (standardSize))
+=======
+		self.img -= 1
+
+player = Person([50, 250], (16, 16))
+>>>>>>> b1a3c082c1a56fba2d67fd122ea745d15b644f34
 
 class movingBlock(object):
 	def __init__(self, type, coords, size, img):
@@ -81,7 +86,7 @@ class movingBlock(object):
 		self.size = size
 		self.img = img
 		self.floor = False
-		self.vel = [0,-30]
+		self.vel = [0,-15]
 class Brick(object):
 	def __init__(self,type,coords,size,img):
 		self.type = type
@@ -90,7 +95,7 @@ class Brick(object):
 		self.img = img
 
 movingblocks = []
-		
+
 class bomb(object):
 	def __init__(self, type, coords, size, img):
 		self.floor = False
@@ -104,6 +109,14 @@ testBomb = bomb(1, [300, 250], (bombSize), getImg("Bomb"))
 bombs = [testBomb]
 
 bricks = []
+
+def detonatorStandard(bomb, detRange, player):
+	px, py = player.coords
+	bx, by = bomb.coords
+	xd = px - bx
+	yd = py - by
+	td = hypot(xd, yd)
+
 
 def createFloor(coordx,coordy,rx,ry):
 
@@ -143,6 +156,10 @@ createMovingBlock(32,200,0,1)
 Running = True
 bombWaitTime = 0
 normalBombWait = 60
+detRange = 48
+standardPower = 16
+gravity = 11
+
 while Running:
 	if bombWaitTime > 0:
 		bombWaitTime -= 1
@@ -165,7 +182,7 @@ while Running:
 				fps = 10
 			if event.key == K_f:
 				fps = 60
-				
+
 			if event.key in [K_UP, K_w] and player.floor:
 				player.vel[1] = -10
 				player.floor = False
@@ -183,7 +200,7 @@ while Running:
 				Running = False
 			if event.key == pygame.K_SPACE:
 				bombsExplode = True
-			
+
 		if event.type == pygame.KEYUP:
 			if event.key in [K_LEFT, K_a]:
 				player.motion[0] += 2.0
@@ -197,21 +214,32 @@ while Running:
 			if bombWaitTime == 0:
 				newBomb = bomb(bombType, [player.coords[0] - 5, player.coords[1]], (8, 8), getImg("Bomb"))
 				x, y = pygame.mouse.get_pos()
+
+
 				xChng = x - player.coords[0]
 				yChng = y - player.coords[1]
 
 				hypot = math.hypot(xChng,yChng)
 
-				newBomb.vel[0] = (xChng/hypot)*14
-				newBomb.vel[1] = (yChng/hypot)*14
+				if(hypot != 0):
+					newBomb.vel[0] = (xChng/hypot)*14
+					newBomb.vel[1] = (yChng/hypot)*14
+
+				xChng = player.coords[0] - x
+				yChng = player.coords[1] - y
+
+				hypot = math.hypot(xChng,yChng)
+
+				newBomb.vel[0] = xChng/hypot*14
+				newBomb.vel[1] = yChng/hypot*14
+
 
 				bombs.append(newBomb)
 				bombWaitTime = normalBombWait
 
-
 	#Player
 	if not player.floor:
-		if player.vel[1] < 16: #Gravity
+		if player.vel[1] < gravity: #Gravity
 			player.vel[1] += 0.5
 
 	if (not player.floor):
@@ -219,7 +247,7 @@ while Running:
 			player.vel[0] += player.motion[0]/4
 		if player.vel[0] > -.5 and player.motion[0] < 0:
 			player.vel[0] += player.motion[0]/4
-		
+
 	else:
 		if player.crouch:
 			if player.vel[0] > player.motion[0]/4:
@@ -231,12 +259,12 @@ while Running:
 				player.vel[0] -= 0.5
 			if player.vel[0] < player.motion[0]:
 				player.vel[0] += 0.5
-	
+
 	player.coords[0] += player.vel[0]
 	player.coords[1] += player.vel[1]
 	if not collide(player.coords, player.size, (0, 0), size):
 		player.coords = [50, 250]
-	
+
 	player.floor = False
 	for i in bricks:
 		for f in movingblocks:
@@ -250,11 +278,16 @@ while Running:
 				f.vel[1] = 0
 			screen.blit(f.img, f.coords)
 
-		if collide(i.coords, i.size, player.coords, player.size): #COLLISIONS
-			if player.vel[1] < 0: #Up-ing
-				player.coords[1] = i.coords[1]+i.size[1]
+			if collide(i.coords,i.size,player.coords,player.size):
+
+				if player.vel[1] > 0:
+					player.floor = True
+					player.coords[1] = i.coords[1]-player.size[1]
+				if player.vel[1] < 0:
+					player.coords[1] = i.coords[1]+i.size[1]
 
 				player.vel[1] = 0
+
 		if collide(i.coords, i.size, player.coords, player.size): #COLLISIONS
 			mid = center(i)
 			if collide(player.coords, player.size, (i.coords[0], i.coords[1]+3), (i.size[0], i.size[1]-3)):
@@ -265,23 +298,60 @@ while Running:
 					player.coords[0] = i.coords[0] + i.size[0]
 					player.vel[0] = 0
 
+
+		if collide(i.coords, i.size, player.coords, player.size): #COLLISIONS
 			if player.vel[1] < 0: #Up-ing
 				player.coords[1] = i.coords[1]+i.size[1]
+
 				player.vel[1] = 0
-			if player.vel[1] > 0: #Falling
-				player.coords[1] = i.coords[1]-player.size[1]
-				player.vel[1] = 0
+	if collide(i.coords, i.size, player.coords, player.size): #COLLISIONS
+		mid = center(i)
+		if collide(player.coords, player.size, (i.coords[0], i.coords[1]+3), (i.size[0], i.size[1]-3)):
+			if player.vel[0] > 0 and player.coords[0] < mid[0]:
+				player.coords[0] = i.coords[0] - player.size[0]
+				player.vel[0] = 0
+			if player.vel[0] < 0 and player.coords[0] > mid[0]:
+				player.coords[0] = i.coords[0] + i.size[0]
+				player.vel[0] = 0
+
+		if player.vel[1] < 0: #Up-ing
+			player.coords[1] = i.coords[1]+i.size[1]
+			player.vel[1] = 0
+		if player.vel[1] > 0: #Falling
+			player.coords[1] = i.coords[1]-player.size[1]
+			player.vel[1] = 0
+			player.floor = True
 
 		if collide(player.coords, (16, 17), i.coords, i.size):
 			player.floor = True
 
 		screen.blit(i.img,i.coords)
-	
+
+
+	'''for f in movingblocks:
+		f.floor = False
+		if collide(i.coords, i.size, f.coords, f.size):
+			if f.vel[1] > 0:
+				f.floor = True
+				f.coords[1] = i.coords[1] - f.size[1]
+			if f.vel[1] < 0:
+				f.coords[1] = i.coords[1] + i.size[1]
+			f.vel[1] = 0
+		screen.blit(f.img, f.coords)
+
+		if collide(i.coords,i.size,player.coords,player.size):
+
+			if player.vel[1] > 0:
+				player.floor = True
+				player.coords[1] = i.coords[1]-player.size[1]
+			if player.vel[1] < 0:
+				player.coords[1] = i.coords[1]+i.size[1]
+			player.vel[1] = 0'''
 	screen.blit(player.images[player.img], player.coords)
 	#Bombs
 	for i in bombs:
 		if not i.floor:
-			if i.vel[1] < 16:
+			if i.vel[1] < gravity:
 				i.vel[1] += 0.5
 		i.coords[0] += i.vel[0]
 		i.coords[1] += i.vel[1]
@@ -297,7 +367,7 @@ while Running:
 	for i in movingblocks:
 		i.floor = False
 		if not i.floor:
-			if i.vel[1] < 16:  # Gravity
+			if i.vel[1] < gravity:  # Gravity
 				i.vel[1] += 0.5
 		i.coords[0] += i.vel[0]
 		i.coords[1] += i.vel[1]
