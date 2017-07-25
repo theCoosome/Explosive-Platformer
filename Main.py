@@ -236,7 +236,7 @@ createFloor(300, 256, 1, 10)
 Running = True
 
 bombWaitTime = 0
-normalBombWait = 60
+normalBombWait = 1
 detRange = 72
 standardPower = 16
 
