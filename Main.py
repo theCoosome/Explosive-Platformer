@@ -297,7 +297,11 @@ def createMovingBlock(coordx, coordy, rx, ry):
 def createMovingBlock(coordx, coordy, rx, ry):
 	for i in range(rx, ry):
 		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
-		
+
+def borderedLevel():
+	createFloor(0, 0, 2, 64)
+	createFloor(0, 688, 2, 64)
+	createFloor(0, 32, 64, 2)
 # creates floors and walls based on coor and size
 
 
@@ -306,17 +310,14 @@ totalLvls = 2	#CHANGE THIS WHEN ADDING LVLS
 def createLevel(lvl):	#Almost all refrences of this should be written createLevel(currLvl). Only use an int for bugtesting.
 	wipeFloor()
 	spawnChar()
-
 	if (lvl == 0):
-		createFloor(0, 0, 1, 64)
-		createFloor(0, 300, 1, 17)
-		createFloor(0, 300, 1, 4)
-		createFloor(0, 300, 1, 17)
+		borderedLevel()
+		createFloor(32, 300, 1, 15)
+		#createFloor(0, 300, 1, 4)
 		createFloor(200, 200, 1, 8)
 		createFloor(264, 216, 1, 2)
 		createMovingBlock(32, 200, 1, 1)
 		createFloor(200, 400, 3, 10)
-		createFloor(0, 704, 1, 34)
 		createFloor(600, 500, 1, 14)
 		createFloor(500, 300, 1, 1)
 		createFloor(300, 170, 1, 15)
@@ -326,33 +327,7 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 	# createFloor(300,332,0,20,)
 	# createWall(264,332,0,20,"up")
 	elif (lvl == 1):
-		createFloor(0, 600, 2, 34)
-
-
-
-
-createFloor(0, 300, 1, 17)
-
-# creates floors and walls based on coor and size
-createFloor(0, 0, 1, 64)
-createFloor(0, 300, 1, 17)
-createFloor(0, 300, 1, 4)
-
-createFloor(200, 200, 1, 8)
-createFloor(264, 216, 1, 2)
-# createMovingBlock(32, 200, 1, 1)
-#movingblocks.append(movingBlock(0, [350, 20], (48, 32), movingImg))
-createFloor(200, 400, 3, 10)
-createFloor(0, 704, 1, 34)
-createFloor(600, 500, 1, 14)
-createFloor(500, 300, 1, 1)
-createFloor(300, 170, 1, 15)
-createFloor(378, 245, 1, 3)
-createFloor(220, 190, 1, 1)
-createFloor(300, 256, 1, 10)
-# createFloor(300,332,0,20,)
-# createWall(264,332,0,20,"up")
-
+		createFloor(0, 688, 2, 64)
 
 # Current main screen, basic level.
 Running = True
