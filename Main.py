@@ -13,7 +13,7 @@ fontComp = pygame.font.SysFont('couriernew', 16, True)
 smallfont = pygame.font.SysFont('couriernew', 12)
 massive = pygame.font.SysFont('couriernew', 200, True)
 
-#sizes so nothinf is hardcoded
+#sizes so nothing is hardcoded
 size = (1024, 720)
 standardSize = (16, 16)
 bombSize = ((standardSize[0]/2),(standardSize[1]/2))
@@ -70,6 +70,7 @@ class Person(object):
 		self.img = 1
 	def unCrouch(self):
 		self.crouch = False
+<<<<<<< HEAD
 		self.img = 0
 		
 player = Person([50, 250], (standardSize))
