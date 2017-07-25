@@ -77,7 +77,7 @@ class movingBlock(object):
 		self.size = size
 		self.img = img
 		self.floor = False
-		self.vel = [0,-15]
+		self.vel = [0,-30]
 class Brick(object):
 	def __init__(self,type,coords,size,img):
 		self.type = type
@@ -235,11 +235,6 @@ while Running:
 	
 	player.floor = False
 	for i in bricks:
-<<<<<<< HEAD
-=======
-
-
->>>>>>> origin/master
 		for f in movingblocks:
 			f.floor =False
 			if collide(i.coords, i.size, f.coords, f.size):
@@ -251,48 +246,31 @@ while Running:
 				f.vel[1] = 0
 			screen.blit(f.img, f.coords)
 
-<<<<<<< HEAD
-=======
-			if collide(i.coords,i.size,player.coords,player.size):
-
-				if player.vel[1] > 0:
-					player.floor = True
-					player.coords[1] = i.coords[1]-player.size[1]
-				if player.vel[1] < 0:
-					player.coords[1] = i.coords[1]+i.size[1]
-
-				player.vel[1] = 0
-
->>>>>>> origin/master
 		if collide(i.coords, i.size, player.coords, player.size): #COLLISIONS
 			if player.vel[1] < 0: #Up-ing
 				player.coords[1] = i.coords[1]+i.size[1]
 
 				player.vel[1] = 0
-	if collide(i.coords, i.size, player.coords, player.size): #COLLISIONS
-		mid = center(i)
-		if collide(player.coords, player.size, (i.coords[0], i.coords[1]+3), (i.size[0], i.size[1]-3)):
-			if player.vel[0] > 0 and player.coords[0] < mid[0]:
-				player.coords[0] = i.coords[0] - player.size[0]
-				player.vel[0] = 0
-			if player.vel[0] < 0 and player.coords[0] > mid[0]:
-				player.coords[0] = i.coords[0] + i.size[0]
-				player.vel[0] = 0
+		if collide(i.coords, i.size, player.coords, player.size): #COLLISIONS
+			mid = center(i)
+			if collide(player.coords, player.size, (i.coords[0], i.coords[1]+3), (i.size[0], i.size[1]-3)):
+				if player.vel[0] > 0 and player.coords[0] < mid[0]:
+					player.coords[0] = i.coords[0] - player.size[0]
+					player.vel[0] = 0
+				if player.vel[0] < 0 and player.coords[0] > mid[0]:
+					player.coords[0] = i.coords[0] + i.size[0]
+					player.vel[0] = 0
 
-		if player.vel[1] < 0: #Up-ing
-			player.coords[1] = i.coords[1]+i.size[1]
-			player.vel[1] = 0
-		if player.vel[1] > 0: #Falling
-			player.coords[1] = i.coords[1]-player.size[1]
-			player.vel[1] = 0
+			if player.vel[1] < 0: #Up-ing
+				player.coords[1] = i.coords[1]+i.size[1]
+				player.vel[1] = 0
+			if player.vel[1] > 0: #Falling
+				player.coords[1] = i.coords[1]-player.size[1]
+				player.vel[1] = 0
 
 		if collide(player.coords, (16, 17), i.coords, i.size):
 			player.floor = True
-<<<<<<< HEAD
 
-
-=======
->>>>>>> origin/master
 		screen.blit(i.img,i.coords)
 	
 	screen.blit(player.images[player.img], player.coords)
