@@ -331,7 +331,7 @@ while Running:
 		if i.isExploding:
 			i.explodeTime -= 1;
 		if i.explodeTime <= 0:
-			i.
+			bombs.remove(i);
 
 
 	#Moving Blocks
