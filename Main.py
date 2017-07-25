@@ -101,6 +101,14 @@ bombs = [testBomb]
 
 bricks = []
 
+def detonatorStandard(bomb, detRange, player):
+	px, py = player.coords
+	bx, by = bomb.coords
+	xd = px - bx
+	yd = py - by
+	td = hypot(xd, yd)
+
+
 def createFloor(coordx,coordy,rx,ry):
 
 	bricks.append(Brick("type",[coordx,coordy],(ry*16,rx*16),brickImg))
@@ -139,6 +147,10 @@ createMovingBlock(32,200,0,1)
 Running = True
 bombWaitTime = 0
 normalBombWait = 60
+detRange = 48
+standardPower = 16
+gravity = 11
+
 while Running:
 	if bombWaitTime > 0:
 		bombWaitTime -= 1
@@ -193,21 +205,22 @@ while Running:
 			if bombWaitTime == 0:
 				newBomb = bomb(bombType, [player.coords[0] - 5, player.coords[1]], (8, 8), getImg("Bomb"))
 				x, y = pygame.mouse.get_pos()
+
 				xChng = x - player.coords[0]
 				yChng = y - player.coords[1]
 
 				hypot = math.hypot(xChng,yChng)
 
-				newBomb.vel[0] = (xChng/hypot)*14
-				newBomb.vel[1] = (yChng/hypot)*14
+				if(hypot != 0):
+					newBomb.vel[0] = (xChng/hypot)*14
+					newBomb.vel[1] = (yChng/hypot)*14
 
 				bombs.append(newBomb)
 				bombWaitTime = normalBombWait
 
-
 	#Player
 	if not player.floor:
-		if player.vel[1] < 16: #Gravity
+		if player.vel[1] < gravity: #Gravity
 			player.vel[1] += 0.5
 
 	if (not player.floor):
@@ -235,11 +248,6 @@ while Running:
 	
 	player.floor = False
 	for i in bricks:
-<<<<<<< HEAD
-=======
-
-
->>>>>>> origin/master
 		for f in movingblocks:
 			f.floor =False
 			if collide(i.coords, i.size, f.coords, f.size):
@@ -251,8 +259,6 @@ while Running:
 				f.vel[1] = 0
 			screen.blit(f.img, f.coords)
 
-<<<<<<< HEAD
-=======
 			if collide(i.coords,i.size,player.coords,player.size):
 
 				if player.vel[1] > 0:
@@ -263,7 +269,6 @@ while Running:
 
 				player.vel[1] = 0
 
->>>>>>> origin/master
 		if collide(i.coords, i.size, player.coords, player.size): #COLLISIONS
 			if player.vel[1] < 0: #Up-ing
 				player.coords[1] = i.coords[1]+i.size[1]
@@ -288,18 +293,14 @@ while Running:
 
 		if collide(player.coords, (16, 17), i.coords, i.size):
 			player.floor = True
-<<<<<<< HEAD
 
-
-=======
->>>>>>> origin/master
 		screen.blit(i.img,i.coords)
 	
 	screen.blit(player.images[player.img], player.coords)
 	#Bombs
 	for i in bombs:
 		if not i.floor:
-			if i.vel[1] < 16:
+			if i.vel[1] < gravity:
 				i.vel[1] += 0.5
 		i.coords[0] += i.vel[0]
 		i.coords[1] += i.vel[1]
@@ -315,7 +316,7 @@ while Running:
 	for i in movingblocks:
 		i.floor = False
 		if not i.floor:
-			if i.vel[1] < 16:  # Gravity
+			if i.vel[1] < gravity:  # Gravity
 				i.vel[1] += 0.5
 		i.coords[0] += i.vel[0]
 		i.coords[1] += i.vel[1]
