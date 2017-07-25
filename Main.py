@@ -13,6 +13,7 @@ fontComp = pygame.font.SysFont('couriernew', 16, True)
 smallfont = pygame.font.SysFont('couriernew', 12)
 massive = pygame.font.SysFont('couriernew', 200, True)
 
+
 # sizes so nothing is hardcoded
 size = (1024, 720)
 standardSize = (16, 16)
@@ -107,7 +108,7 @@ class Person(object):
 				self.vel[1] = 0
 		if collide(self.coords, (self.size[0], self.size[1]+1), i.coords, i.size):
 			self.floor = True
-			
+
 player = Person([50, 250], (standardSize))
 
 
@@ -126,6 +127,7 @@ class Brick(object):
 		self.coords = coords
 		self.size = size
 		self.img = pygame.transform.scale(img, size)
+
 
 
 movingblocks = []
@@ -191,11 +193,24 @@ testBomb = bomb(1, [300, 250], (bombSize), getImg("Bomb"))
 
 bombs = [testBomb]
 
+levelSpawnPts = [[50, 250], [50, 500]]
+
 bricks = []
+
+def drawBricks():
+	for i in bricks:
+		player.Collide(i)
+		screen.blit(i.img,i.coords)
+
+def spawnChar():
+	player.coords = levelSpawnPts[currLvl]
 
 
 def createFloor(coordx, coordy, ry, rx, type=0):
 	bricks.append(Brick(type, [coordx, coordy], (rx * 16, ry * 16), brickImg))
+
+def wipeFloor():
+	del bricks[:]
 
 
 def createWall(coordx, coordy, rx, ry, dir):
@@ -203,9 +218,6 @@ def createWall(coordx, coordy, rx, ry, dir):
 		bricks.append(Brick("type", [coordx, coordy], (ry * 16, rx * 16), brickImg))
 	if dir == "up":
 		bricks.append(Brick("type", [coordx, coordy], (ry * 16, rx * 16), brickImg))
-
-
-createFloor(0, 300, 1, 17)
 
 
 def createMovingBlock(coordx, coordy, rx, ry):
@@ -219,26 +231,34 @@ def createMovingBlock(coordx, coordy, rx, ry):
 
 
 # creates floors and walls based on coor and size
-createFloor(0, 0, 1, 64)
-createFloor(0, 300, 1, 17)
-createFloor(0, 300, 1, 4)
 
-createFloor(200, 200, 1, 8)
-createFloor(264, 216, 1, 2)
-createMovingBlock(32, 200, 1, 1)
-createFloor(200, 400, 3, 10)
-createFloor(0, 704, 1, 34)
-createFloor(600, 500, 1, 14)
-createFloor(500, 300, 1, 1)
-createFloor(300, 170, 1, 15)
-createFloor(378, 245, 1, 3)
-createFloor(220, 190, 1, 1)
-createFloor(300, 256, 1, 10)
-# createFloor(300,332,0,20,)
-# createWall(264,332,0,20,"up")
+def createLevel(lvl):
+	wipeFloor()
+	spawnChar()
+	if(lvl == 0):
+		createFloor(0, 0, 1, 64)
+		createFloor(0, 300, 1, 17)
+		createFloor(0, 300, 1, 4)
+		createFloor(0, 300, 1, 17)
+		createFloor(200, 200, 1, 8)
+		createFloor(264, 216, 1, 2)
+		createMovingBlock(32, 200, 1, 1)
+		createFloor(200, 400, 3, 10)
+		createFloor(0, 704, 1, 34)
+		createFloor(600, 500, 1, 14)
+		createFloor(500, 300, 1, 1)
+		createFloor(300, 170, 1, 15)
+		createFloor(378, 245, 1, 3)
+		createFloor(220, 190, 1, 1)
+		createFloor(300, 256, 1, 10)
+		# createFloor(300,332,0,20,)
+		# createWall(264,332,0,20,"up")
+	elif(lvl == 1):
+		createFloor(0,600,2,34)
 
 # Current main screen, basic level.
 Running = True
+
 
 bombWaitTime = 0
 normalBombWait = 1
@@ -253,6 +273,11 @@ gravity = 0.5
 
 affectedByBombs = [player]
 
+currLvl = 0
+totalLvls = 2
+
+createLevel(currLvl)
+
 while Running:
 	if bombWaitTime > 0:  # sets off bomb
 		bombWaitTime -= 1
@@ -264,6 +289,7 @@ while Running:
 	for event in pygame.event.get():
 		if event.type == pygame.KEYDOWN:
 			# movement
+
 			if event.key in [K_LEFT, K_a]:  # move <-
 				player.motion[0] -= 2.0
 			if event.key in [K_RIGHT, K_d]:  # move ->
@@ -286,6 +312,16 @@ while Running:
 				player.vel[1] = 0
 			if event.key == pygame.K_q:  # quiting
 				Running = False
+			if event.key == K_p:	#Increment level by 1
+				currLvl += 1
+				if currLvl >= totalLvls:
+					currLvl = 0
+				createLevel(currLvl)
+			if event.key == K_o:
+				currLvl -= 1
+				if currLvl < 0:
+					currLvl = totalLvls-1
+				createLevel(currLvl)
 			if event.key == pygame.K_SPACE:  # exploding
 				bombsExplode = True
 
@@ -338,6 +374,7 @@ while Running:
 			elif player.vel[0] < player.motion[0]:
 				player.vel[0] += 0.5
 
+
 	if player.vel[0]  <=-31:
 		player.vel[0] = -31
 
@@ -352,15 +389,15 @@ while Running:
 
 	player.coords[0] += player.vel[0]
 	player.coords[1] += player.vel[1]
-	
+
 	if not collide(player.coords, player.size, (0, 0), size):
-		player.coords = [50, 250]
+		player.coords = levelSpawnPts[currLvl]
+		player.vel[1] = 0
+		player.vel[0] = 0
 
 	player.floor = False
 	plamid = center(player)
-	for i in bricks:
-		player.Collide(i)
-		screen.blit(i.img,i.coords)
+	drawBricks()
 	screen.blit(player.images[player.img], player.coords)
 	# Bombs
 	for i in bombs:
@@ -371,7 +408,7 @@ while Running:
 			i.coords[1] += i.vel[1]
 			for p in bricks:
 				i.Collide(p)
-			
+
 		screen.blit(i.img, i.coords)
 
 	if bombsExplode:
