@@ -8,6 +8,7 @@ fps = 60
 
 WHITE = pygame.Color(255, 255, 255)
 
+pygame.mouse.set_visible(False)
 font = pygame.font.SysFont('couriernew', 13)
 fontComp = pygame.font.SysFont('couriernew', 16, True)
 smallfont = pygame.font.SysFont('couriernew', 12)
@@ -41,6 +42,13 @@ brickImg = getImg("Brick")
 personimg = getImg("Derek")
 movingImg = getImg("BrickMoving")
 destructableImg = getImg("BrickDestructable")
+bombImg = getImg("Bomb")
+
+#Mice
+AimImg = getImg("Mouse/Aim")
+mouseImg = AimImg
+
+#Anim
 derek = getImg("Derek")
 left = [getImg("anim1l"),getImg("anim2l"),getImg("anim3l")]
 right = [getImg("anim1r"),getImg("Derek"),getImg("anim2r")]
@@ -127,11 +135,13 @@ class movingBlock(object):
 		self.vel = [0, 0]
 		if type == 0: #Movable
 			self.img = pygame.transform.scale(movingImg, size)
+			
 		if type == 1: #Destructable
 			self.img = pygame.transform.scale(destructableImg, size)
 			
 		if type == 2: #Movable and Destructable
 			self.img = pygame.transform.scale(destructableImg, size)
+			
 	def Collide(self, i):
 		if collide(self.coords, self.size, i.coords, i.size):  # LEFT / RIGHT
 			if self.vel[0] > 0 and self.coords[0] <= i.coords[0]:
@@ -267,6 +277,7 @@ def createWall(coordx, coordy, rx, ry, dir):
 def createMovingBlock(coordx, coordy, rx, ry):
 	for i in range(rx, ry):
 		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
+		
 # creates floors and walls based on coor and size
 
 def createLevel(lvl):
@@ -337,6 +348,7 @@ createLevel(currLvl)
 
 
 while Running:
+	mousepos = pygame.mouse.get_pos()
 	if bombWaitTime > 0:  # sets off bomb
 		bombWaitTime -= 1
 	bombsExplode = False
@@ -392,9 +404,6 @@ while Running:
 			if event.key == pygame.K_t:  # print cursor location, useful for putting stuff in the right spot
 				x, y = pygame.mouse.get_pos()
 				print "Absolute: ", x, y
-
-				print "16 base:", x / 16, y / 16
-
 				print "16 base:", x/16, y/16, "("+str((x/16)*16), str((y/16)*16)+")"
 
 		if event.type == pygame.KEYUP:
@@ -498,9 +507,8 @@ while Running:
 				counter = 0
 			if player.index >= len(left):
 				player.index = 0
-
 			personimg = left[player.index]
-
+			
 	screen.blit(personimg, player.coords)
 	# Bombs
 	for i in bombs:
@@ -508,14 +516,14 @@ while Running:
 			i.explodeTime -= 1
 		if i.explodeTime <= 0:
 			bombs.remove(i)
-
+			
 		if not i.stuck:
 			if i.vel[1] < maxFallSpeed:
 				i.vel[1] += gravity
 			i.coords[0] += i.vel[0]
 			i.coords[1] += i.vel[1]
 		screen.blit(i.img, i.coords)
-
+		
 		if i.stuckOn != None: #Follow what it is stuck to
 			pass
 
@@ -536,6 +544,8 @@ while Running:
 			for p in movingblocks:
 				if i.type == 1:
 					i.detonatorStandard(detRange, p, standardPower)
+			i.stuck = True
+			i.vel = [0, 0]
 
 	for i in bombs:
 		if i.isExploding:
@@ -544,22 +554,6 @@ while Running:
 		if i.explodeTime <= 0:
 			bombs.remove(i)
 
-	# Moving Blocks
-	for i in movingblocks:
-		player.Collide(i)
-		i.floor = False
-		if i.vel[1] < maxFallSpeed:  # Gravity
-			i.vel[1] += gravity
-		i.coords[0] += i.vel[0]
-		i.coords[1] += i.vel[1]
-		for p in bricks:
-			i.Collide(p)
-		if i.floor:
-			i.vel[0] = Zero(i.vel[0], friction)
-		screen.blit(i.img, i.coords)
-	# Moving Blocks
-	for i in movingblocks:
-		player.Collide(i)
 	# Moving Blocks
 	for i in movingblocks:
 		player.Collide(i)
@@ -574,5 +568,7 @@ while Running:
 			if i.floor:
 				i.vel[0] = Zero(i.vel[0], friction)
 		screen.blit(i.img,i.coords)
+			
+	screen.blit(mouseImg, (mousepos[0]-3, mousepos[1]-3))
 	pygame.display.update()
 	clock.tick(fps)
