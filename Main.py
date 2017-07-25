@@ -206,6 +206,7 @@ while Running:
 				newBomb = bomb(bombType, [player.coords[0] - 5, player.coords[1]], (8, 8), getImg("Bomb"))
 				x, y = pygame.mouse.get_pos()
 
+
 				xChng = x - player.coords[0]
 				yChng = y - player.coords[1]
 
@@ -214,6 +215,15 @@ while Running:
 				if(hypot != 0):
 					newBomb.vel[0] = (xChng/hypot)*14
 					newBomb.vel[1] = (yChng/hypot)*14
+
+				xChng = player.coords[0] - x
+				yChng = player.coords[1] - y
+
+				hypot = math.hypot(xChng,yChng)
+
+				newBomb.vel[0] = xChng/hypot*14
+				newBomb.vel[1] = yChng/hypot*14
+
 
 				bombs.append(newBomb)
 				bombWaitTime = normalBombWait
@@ -270,6 +280,17 @@ while Running:
 				player.vel[1] = 0
 
 		if collide(i.coords, i.size, player.coords, player.size): #COLLISIONS
+			mid = center(i)
+			if collide(player.coords, player.size, (i.coords[0], i.coords[1]+3), (i.size[0], i.size[1]-3)):
+				if player.vel[0] > 0 and player.coords[0] < mid[0]:
+					player.coords[0] = i.coords[0] - player.size[0]
+					player.vel[0] = 0
+				if player.vel[0] < 0 and player.coords[0] > mid[0]:
+					player.coords[0] = i.coords[0] + i.size[0]
+					player.vel[0] = 0
+
+
+		if collide(i.coords, i.size, player.coords, player.size): #COLLISIONS
 			if player.vel[1] < 0: #Up-ing
 				player.coords[1] = i.coords[1]+i.size[1]
 
@@ -290,12 +311,33 @@ while Running:
 		if player.vel[1] > 0: #Falling
 			player.coords[1] = i.coords[1]-player.size[1]
 			player.vel[1] = 0
+			player.floor = True
 
 		if collide(player.coords, (16, 17), i.coords, i.size):
 			player.floor = True
 
 		screen.blit(i.img,i.coords)
-	
+		
+		
+	'''for f in movingblocks:
+		f.floor = False
+		if collide(i.coords, i.size, f.coords, f.size):
+			if f.vel[1] > 0:
+				f.floor = True
+				f.coords[1] = i.coords[1] - f.size[1]
+			if f.vel[1] < 0:
+				f.coords[1] = i.coords[1] + i.size[1]
+			f.vel[1] = 0
+		screen.blit(f.img, f.coords)
+
+		if collide(i.coords,i.size,player.coords,player.size):
+
+			if player.vel[1] > 0:
+				player.floor = True
+				player.coords[1] = i.coords[1]-player.size[1]
+			if player.vel[1] < 0:
+				player.coords[1] = i.coords[1]+i.size[1]
+			player.vel[1] = 0'''
 	screen.blit(player.images[player.img], player.coords)
 	#Bombs
 	for i in bombs:
