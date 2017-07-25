@@ -235,8 +235,11 @@ while Running:
 	
 	player.floor = False
 	for i in bricks:
+<<<<<<< HEAD
+=======
 
 
+>>>>>>> origin/master
 		for f in movingblocks:
 			f.floor =False
 			if collide(i.coords, i.size, f.coords, f.size):
@@ -248,6 +251,8 @@ while Running:
 				f.vel[1] = 0
 			screen.blit(f.img, f.coords)
 
+<<<<<<< HEAD
+=======
 			if collide(i.coords,i.size,player.coords,player.size):
 
 				if player.vel[1] > 0:
@@ -258,6 +263,7 @@ while Running:
 
 				player.vel[1] = 0
 
+>>>>>>> origin/master
 		if collide(i.coords, i.size, player.coords, player.size): #COLLISIONS
 			if player.vel[1] < 0: #Up-ing
 				player.coords[1] = i.coords[1]+i.size[1]
@@ -282,6 +288,11 @@ while Running:
 
 		if collide(player.coords, (16, 17), i.coords, i.size):
 			player.floor = True
+<<<<<<< HEAD
+
+
+=======
+>>>>>>> origin/master
 		screen.blit(i.img,i.coords)
 	
 	screen.blit(player.images[player.img], player.coords)
