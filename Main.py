@@ -94,9 +94,8 @@ class Person(object):
 				self.coords[1] = i.coords[1]+i.size[1]
 				self.vel[1] = 0
 
-
-		if collide(player.coords, (16, 17), i.coords, i.size):
-			player.floor = True
+		if collide(self.coords, (self.size[0], self.size[1]+1), i.coords, i.size):
+			self.floor = True
 		
 player = Person([50, 250], (standardSize))
 
@@ -108,6 +107,7 @@ class movingBlock(object):
 		self.img = pygame.transform.scale(img, size)
 		self.floor = False
 		self.vel = [0,-15]
+		
 class Brick(object):
 	def __init__(self,type,coords,size,img):
 		self.type = type
@@ -122,6 +122,7 @@ class bomb(object):
 		self.explodeTime = 10
 		self.isExploding = False
 		self.floor = False
+		self.stuck = False
 		self.type = type
 		self.coords = coords
 		self.size = size
@@ -129,23 +130,29 @@ class bomb(object):
 		self.vel = [0, -15]
 
 	def Collide(self, i):
-		if collide(i.coords, i.size, self.coords, self.size): #DOWN
-			#if self.vel[1] > 0: #Falling
-			if center(self)[1] < center(i):
-				self.coords[1] = i.coords[1]-self.size[1]
-				self.vel[1] = 0
-				self.floor = True
-		if collide(self.coords, self.size, (i.coords[0], i.coords[1]+3), (i.size[0], i.size[1]-3)): #LEFT / RIGHT
+		if collide(self.coords, self.size, i.coords, i.size): #LEFT / RIGHT
 			if self.vel[0] > 0 and self.coords[0] <= i.coords[0]:
 				self.coords[0] = i.coords[0] - self.size[0]
 				self.vel[0] = 0
+				self.stuck = True
 			if self.vel[0] < 0 and self.coords[0]+self.size[0] >= i.coords[0]+i.size[0]:
 				self.coords[0] = i.coords[0] + i.size[0]
 				self.vel[0] = 0
+				self.stuck = True
+		if collide(i.coords, i.size, self.coords, self.size): #DOWN
+			if center(self)[1] < center(i)[1]:
+				self.coords[1] = i.coords[1]-self.size[1]
+				self.vel[1] = 0
+				self.floor = True
+				self.stuck = True
 		if collide(i.coords, i.size, self.coords, self.size): #UP
-			if self.vel[1] < 0: #Up-ing
+			if center(self)[1] > center(i)[1]: #Up-ing
 				self.coords[1] = i.coords[1]+i.size[1]
 				self.vel[1] = 0
+				self.stuck = True
+
+		if collide(self.coords, (self.size[0], self.size[1]+1), i.coords, i.size):
+			self.floor = True
 
 	def detonatorStandard(self, detRange, mob, standardPower):
 
@@ -319,6 +326,7 @@ while Running:
 
 	player.coords[0] += player.vel[0]
 	player.coords[1] += player.vel[1]
+	
 	if not collide(player.coords, player.size, (0, 0), size):
 		player.coords = [50, 250]
 
@@ -326,18 +334,19 @@ while Running:
 	plamid = center(player)
 	for i in bricks:
 		player.Collide(i)
-		for p in bombs:
-			p.Collide(i)
 		screen.blit(i.img,i.coords)
 		
 	screen.blit(player.images[player.img], player.coords)
 	#Bombs
 	for i in bombs:
-		if not i.floor:
+		if not i.stuck:
 			if i.vel[1] < maxFallSpeed:
 				i.vel[1] += gravity
-		i.coords[0] += i.vel[0]
-		i.coords[1] += i.vel[1]
+			i.coords[0] += i.vel[0]
+			i.coords[1] += i.vel[1]
+			for p in bricks:
+				i.Collide(p)
+			
 		screen.blit(i.img, i.coords)
 
 	if bombsExplode:
