@@ -8,7 +8,9 @@ pygame.init()
 fps = 60
 
 WHITE = pygame.Color(255, 255, 255)
+BLACK = pygame.Color(0, 0, 0)
 
+pygame.mouse.set_visible(False)
 font = pygame.font.SysFont('couriernew', 13)
 fontComp = pygame.font.SysFont('couriernew', 16, True)
 smallfont = pygame.font.SysFont('couriernew', 12)
@@ -42,6 +44,24 @@ brickImg = getImg("Brick")
 personimg = getImg("Derek")
 movingImg = getImg("BrickMoving")
 destructableImg = getImg("BrickDestructable")
+
+#Bombs
+bombImg = getImg("Bomb")
+normalBombImgs = []
+i = 0
+while i < 10:
+	normalBombImgs.append(getImg("Explosion_Normal/sprite_0" + str(i)))
+	i+=1
+while i < 17:
+	normalBombImgs.append(getImg("Explosion_Normal/sprite_" + str(i)))
+	i+=1
+normalExplode = [getImg("")]
+
+#Mice
+AimImg = getImg("Mouse/Aim")
+mouseImg = AimImg
+
+#Anim
 derek = getImg("Derek")
 left = [getImg("anim1l"),getImg("anim2l"),getImg("anim3l")]
 right = [getImg("anim1r"),getImg("Derek"),getImg("anim2r")]
@@ -126,11 +146,8 @@ class movingBlock(object):
 		self.size = size
 		self.floor = False
 		self.vel = [0, 0]
-
-		
 		if type == 0: #Movable
 			self.img = pygame.transform.scale(movingImg, size)
-		
 
 		if type == 1: #Destructable
 			self.img = pygame.transform.scale(destructableImg, size)
@@ -186,10 +203,7 @@ class bomb(object):
 
 	def incrementSprite(self, number, curr):
 		curr = 16 - curr
-		if curr < 10:
-			self.img = getImg("Explosion_Normal/sprite_0" + str(curr))
-		else:
-			self.img = getImg("Explosion_Normal/sprite_" + str(curr))
+		self.img = normalBombImgs[curr]
 
 	def Collide(self, i):
 		if collide(self.coords, self.size, i.coords, i.size):  # LEFT / RIGHT
@@ -239,8 +253,6 @@ testBomb = bomb(1, [300, 250], (bombSize), getImg("Bomb"))
 
 bombs = []
 
-levelSpawnPts = [[50, 250], [50, 500]]
-
 bricks = []
 
 
@@ -251,12 +263,17 @@ def drawBricks():
 
 
 def spawnChar():
-	player.coords = levelSpawnPts[currLvl]
+	if currLvl == 0:
+		player.coords = [50, 250]
+	elif currLvl == 1:
+		player.coords = [50, 500]
+	print currLvl
+	player.vel[1] = 0
+	player.vel[0] = 0
 
 
 def createFloor(coordx, coordy, ry, rx, type=0):
 	bricks.append(Brick(type, [coordx, coordy], (rx * 16, ry * 16), brickImg))
-
 
 def wipeFloor():
 	del bricks[:]
@@ -269,18 +286,22 @@ def createWall(coordx, coordy, rx, ry, dir):
 		bricks.append(Brick("type", [coordx, coordy], (ry * 16, rx * 16), brickImg))
 
 
-def createMovingBlock(coordx, coordy, rx, ry):
-	for i in range(rx, ry):
-		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
-
 
 def createMovingBlock(coordx, coordy, rx, ry):
 	for i in range(rx, ry):
 		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
 
+
+def createMovingBlock(coordx, coordy, rx, ry):
+	for i in range(rx, ry):
+		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
+		
 # creates floors and walls based on coor and size
 
-def createLevel(lvl):
+
+currLvl = 0
+totalLvls = 2	#CHANGE THIS WHEN ADDING LVLS
+def createLevel(lvl):	#Almost all refrences of this should be written createLevel(currLvl). Only use an int for bugtesting.
 	wipeFloor()
 	spawnChar()
 	if (lvl == 0):
@@ -329,6 +350,7 @@ createFloor(300, 256, 1, 10)
 # createFloor(300,332,0,20,)
 # createWall(264,332,0,20,"up")
 
+
 # Current main screen, basic level.
 Running = True
 
@@ -366,13 +388,13 @@ gL = 0
 isCrouching = False
 counter = 0
 
-currLvl = 0
-totalLvls = 2
+
 
 createLevel(currLvl)
 
 
 while Running:
+	mousepos = pygame.mouse.get_pos()
 	if bombWaitTime > 0:  # sets off bomb
 		bombWaitTime -= 1
 	bombsExplode = False
@@ -431,6 +453,11 @@ while Running:
 			if event.key == pygame.K_t:  # print cursor location, useful for putting stuff in the right spot
 				x, y = pygame.mouse.get_pos()
 
+
+				print "16 base:", x/16, y/16, "("+str((x/16)*16), str((y/16)*16)+")"
+
+
+				print "Absolute: ", x, y
 				print "16 base:", x/16, y/16, "("+str((x/16)*16), str((y/16)*16)+")"
 
 
@@ -445,7 +472,7 @@ while Running:
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			if bombWaitTime == 0:
-				newBomb = bomb(bombType, [player.coords[0], player.coords[1]], (8, 8), getImg("Bomb"))
+				newBomb = bomb(bombType, [player.coords[0], player.coords[1]], (8, 8), bombImg)
 				x, y = pygame.mouse.get_pos()
 
 				xChng = x - player.coords[0]
@@ -501,9 +528,8 @@ while Running:
 	player.coords[1] += player.vel[1]
 
 	if not collide(player.coords, player.size, (0, 0), size):
-		player.coords = levelSpawnPts[currLvl]
-		player.vel[1] = 0
-		player.vel[0] = 0
+		createLevel(currLvl)
+
 
 	player.floor = False
 	drawBricks()
@@ -538,6 +564,7 @@ while Running:
 			if player.index >= len(left):
 				player.index = 0
 
+
 			personimg = left[player.index]
 
 
@@ -546,6 +573,12 @@ while Running:
 	for i in bombs:
 		if i.isExploding:
 			i.explodeTime -= 1
+			if i.explodeTime > 10:
+				pygame.draw.circle(screen, 
+				BLACK, 
+				(int(center(i)[0]), int(center(i)[1])), 
+				detRange-player.size[0], 1)
+		
 		if i.explodeTime <= 0:
 			bombs.remove(i)
 
@@ -555,8 +588,8 @@ while Running:
 			i.coords[0] += i.vel[0]
 			i.coords[1] += i.vel[1]
 
-		screen.blit(i.img, i.coords)
 
+		screen.blit(i.img, i.coords)
 
 
 		if i.stuckOn != None: #Follow what it is stuck to
@@ -579,6 +612,8 @@ while Running:
 			for p in movingblocks:
 				if i.type == 1:
 					i.detonatorStandard(detRange, p, standardPower)
+			i.stuck = True
+			i.vel = [0, 0]
 
 
 	for i in bombs:
@@ -593,6 +628,7 @@ while Running:
 	# Moving Blocks
 	for i in movingblocks:
 		player.Collide(i)
+
 		i.floor = False
 		if i.vel[1] < maxFallSpeed:  # Gravity
 			i.vel[1] += gravity
@@ -611,6 +647,7 @@ while Running:
 	for i in movingblocks:
 		player.Collide(i)
 
+
 		if i.type in [0, 2]:
 			i.floor = False
 			if i.vel[1] < maxFallSpeed:  # Gravity
@@ -622,5 +659,7 @@ while Running:
 			if i.floor:
 				i.vel[0] = Zero(i.vel[0], friction)
 		screen.blit(i.img,i.coords)
+			
+	screen.blit(mouseImg, (mousepos[0]-3, mousepos[1]-3))
 	pygame.display.update()
 	clock.tick(fps)
