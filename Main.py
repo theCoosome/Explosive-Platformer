@@ -255,19 +255,19 @@ while Running:
 	if (not player.floor):
 		if player.vel[0] < .5 and player.motion[0] > 0:
 			player.vel[0] += player.motion[0]/4
-		if player.vel[0] > -.5 and player.motion[0] < 0:
+		elif player.vel[0] > -.5 and player.motion[0] < 0:
 			player.vel[0] += player.motion[0]/4
 
 	else:
 		if player.crouch:
 			if player.vel[0] > player.motion[0]/4:
 				player.vel[0] -= 0.5
-			if player.vel[0] < player.motion[0]/4:
+			elif player.vel[0] < player.motion[0]/4:
 				player.vel[0] += 0.5
 		else:
 			if player.vel[0] > player.motion[0]:
 				player.vel[0] -= 0.5
-			if player.vel[0] < player.motion[0]:
+			elif player.vel[0] < player.motion[0]:
 				player.vel[0] += 0.5
 
 	player.coords[0] += player.vel[0]
