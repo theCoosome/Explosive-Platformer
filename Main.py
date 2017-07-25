@@ -241,7 +241,7 @@ createFloor(300, 256, 1, 10)
 Running = True
 
 bombWaitTime = 0
-normalBombWait = 60
+normalBombWait = 1
 detRange = 72
 standardPower = 16
 
@@ -372,9 +372,9 @@ while Running:
 
 	for i in bombs:
 		if i.isExploding:
-			i.explodeTime -= 1;
+			i.explodeTime -= 1
 		if i.explodeTime <= 0:
-			bombs.remove(i);
+			bombs.remove(i)
 
 	# Moving Blocks
 	for i in movingblocks:
