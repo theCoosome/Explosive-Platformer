@@ -67,7 +67,7 @@ class Person(object):
 	def unCrouch(self):
 		self.crouch = False
 		self.img -= 1
-		
+
 player = Person([50, 250], (16, 16))
 
 class movingBlock(object):
@@ -86,7 +86,7 @@ class Brick(object):
 		self.img = img
 
 movingblocks = []
-		
+
 class bomb(object):
 	def __init__(self, type, coords, size, img):
 		self.floor = False
@@ -173,7 +173,7 @@ while Running:
 				fps = 10
 			if event.key == K_f:
 				fps = 60
-				
+
 			if event.key in [K_UP, K_w] and player.floor:
 				player.vel[1] = -10
 				player.floor = False
@@ -191,7 +191,7 @@ while Running:
 				Running = False
 			if event.key == pygame.K_SPACE:
 				bombsExplode = True
-			
+
 		if event.type == pygame.KEYUP:
 			if event.key in [K_LEFT, K_a]:
 				player.motion[0] += 2.0
@@ -238,7 +238,7 @@ while Running:
 			player.vel[0] += player.motion[0]/4
 		if player.vel[0] > -.5 and player.motion[0] < 0:
 			player.vel[0] += player.motion[0]/4
-		
+
 	else:
 		if player.crouch:
 			if player.vel[0] > player.motion[0]/4:
@@ -250,12 +250,12 @@ while Running:
 				player.vel[0] -= 0.5
 			if player.vel[0] < player.motion[0]:
 				player.vel[0] += 0.5
-	
+
 	player.coords[0] += player.vel[0]
 	player.coords[1] += player.vel[1]
 	if not collide(player.coords, player.size, (0, 0), size):
 		player.coords = [50, 250]
-	
+
 	player.floor = False
 	for i in bricks:
 		for f in movingblocks:
@@ -317,8 +317,8 @@ while Running:
 			player.floor = True
 
 		screen.blit(i.img,i.coords)
-		
-		
+
+
 	'''for f in movingblocks:
 		f.floor = False
 		if collide(i.coords, i.size, f.coords, f.size):
