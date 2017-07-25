@@ -157,11 +157,12 @@ bombWaitTime = 0
 normalBombWait = 60
 detRange = 48
 standardPower = 16
+#maxFallSpeed != gravity!!
 maxFallSpeed = 16
 gravity = 0.5
 
 while Running:
-	if bombWaitTime > 0:
+	if bombWaitTime > 0: #sets off bomb
 		bombWaitTime -= 1
 	bombsExplode = False
 	bombType = 1
@@ -171,21 +172,20 @@ while Running:
 	for event in pygame.event.get():
 		if event.type == pygame.KEYDOWN:
 			#movement
-			if event.key in [K_LEFT, K_a]:
+			if event.key in [K_LEFT, K_a]: #move <-
 				player.motion[0] -= 2.0
-			if event.key in [K_RIGHT, K_d]:
+			if event.key in [K_RIGHT, K_d]: #move ->
 				player.motion[0] += 2.0
-			if event.key in [K_DOWN, K_s]:
+			if event.key in [K_DOWN, K_s]: #v
 				player.motion[1] += 0.5
 				player.Crouch()
-			if event.key == K_r:
-				fps = 10
-			if event.key == K_f:
-				fps = 60
-
-			if event.key in [K_UP, K_w] and player.floor:
+			if event.key in [K_UP, K_w] and player.floor: #^
 				player.vel[1] = -10
 				player.floor = False
+			if event.key == K_r: #slow down
+				fps = 10
+			if event.key == K_f: #speed up
+				fps = 60
 			if event.key == K_g:
 				for i in bombs:
 					i.floor = toggle(player.floor)
