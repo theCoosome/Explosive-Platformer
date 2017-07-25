@@ -193,13 +193,13 @@ while Running:
 			if bombWaitTime == 0:
 				newBomb = bomb(bombType, [player.coords[0] - 5, player.coords[1]], (8, 8), getImg("Bomb"))
 				x, y = pygame.mouse.get_pos()
-				xChng = player.coords[0] - x
-				yChng = player.coords[1] - y
+				xChng = x - player.coords[0]
+				yChng = y - player.coords[1]
 
 				hypot = math.hypot(xChng,yChng)
 
-				newBomb.vel[0] = xChng/hypot*14
-				newBomb.vel[1] = yChng/hypot*14
+				newBomb.vel[0] = (xChng/hypot)*14
+				newBomb.vel[1] = (yChng/hypot)*14
 
 				bombs.append(newBomb)
 				bombWaitTime = normalBombWait
