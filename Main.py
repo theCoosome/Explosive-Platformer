@@ -70,7 +70,6 @@ class Person(object):
 		self.img = 1
 	def unCrouch(self):
 		self.crouch = False
-<<<<<<< HEAD
 		self.img = 0
 		
 player = Person([50, 250], (standardSize))
