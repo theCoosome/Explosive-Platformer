@@ -102,15 +102,25 @@ bombs = [testBomb]
 bricks = []
 
 def createFloor(coordx,coordy,rx,ry):
+
+	bricks.append(Brick("type",[coordx,coordy],(ry*16,rx*16),brickImg))
+
 	for i in range(rx,ry):
 		bricks.append(Brick("type",[coordx + (16 * i),coordy],(16 * rx,16),brickImg))
 
+
 def createWall(coordx,coordy,rx,ry,dir):
-	for i in range(rx,ry):
+
 		if dir == "down":
-			bricks.append(Brick("type", [coordx, coordy - (16 * i)], (16, 16), brickImg))
+			bricks.append(Brick("type", [coordx, coordy], (ry*16,rx*16), brickImg))
 		if dir == "up":
-			bricks.append(Brick("type", [coordx, coordy + (16 * i)], (16, 16), brickImg))
+			bricks.append(Brick("type", [coordx, coordy], (ry*16,rx*16), brickImg))
+
+
+createFloor(0, 300, 1, 17)
+def createMovingBlock(coordx,coordy,rx,ry):
+	for i in range(rx,ry):
+		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
 
 def createMovingBlock(coordx,coordy,rx,ry):
 	for i in range(rx,ry):
@@ -119,7 +129,7 @@ def createMovingBlock(coordx,coordy,rx,ry):
 createFloor(0, 300, 0, 17)
 createWall(0,300,0,4,"down")
 
-createFloor(200, 200, 0, 8)
+createFloor(200, 200, 1, 8)
 createWall(264,216,0,2,"up")
 createMovingBlock(32,200,0,1)
 #createFloor(300,332,0,20,)
@@ -235,13 +245,29 @@ while Running:
 					player.coords[0] = i.coords[0] + i.size[0]
 					player.vel[0] = 0
 
+		if collide(i.coords, i.size, player.coords, player.size): #COLLISIONS
 			if player.vel[1] < 0: #Up-ing
 				player.coords[1] = i.coords[1]+i.size[1]
+
 				player.vel[1] = 0
-			if player.vel[1] > 0: #Falling
-				player.coords[1] = i.coords[1]-player.size[1]
-				player.vel[1] = 0
-			
+	if collide(i.coords, i.size, player.coords, player.size): #COLLISIONS
+		mid = center(i)
+		if collide(player.coords, player.size, (i.coords[0], i.coords[1]+3), (i.size[0], i.size[1]-3)):
+			if player.vel[0] > 0 and player.coords[0] < mid[0]:
+				player.coords[0] = i.coords[0] - player.size[0]
+				player.vel[0] = 0
+			if player.vel[0] < 0 and player.coords[0] > mid[0]:
+				player.coords[0] = i.coords[0] + i.size[0]
+				player.vel[0] = 0
+
+		if player.vel[1] < 0: #Up-ing
+			player.coords[1] = i.coords[1]+i.size[1]
+			player.vel[1] = 0
+		if player.vel[1] > 0: #Falling
+			player.coords[1] = i.coords[1]-player.size[1]
+			player.vel[1] = 0
+			player.floor = True
+
 		if collide(player.coords, (16, 17), i.coords, i.size):
 			player.floor = True
 
