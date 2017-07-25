@@ -50,7 +50,6 @@ def collide(p1, p2, p3, p4):
 		#if bottom is below top and top is above bottom
 		if p1[0] + p2[0] > p3[0] and p1[0] < p3[0] + p4[0]:
 			return True
-
 class Person(object):
 	def __init__(self, coords, size):
 		self.coords = coords
@@ -85,19 +84,21 @@ class Brick(object):
 		self.size = size
 		self.img = img
 
+
 movingblocks = []
 		
 class bomb(object):
-	def __init__(self, type, coords, size, img):
+	def __init__(self, type, coords, size, img,stuck):
 		self.floor = False
 		self.type = type
 		self.coords = coords
 		self.size = size
 		self.img = img
 		self.vel = [0, -15]
-testBomb = bomb(1, [300, 250], (8, 8), getImg("Bomb"))
+		self.stuck = stuck
 
-bombs = [testBomb]
+
+bombs = []
 
 bricks = []
 
@@ -139,6 +140,7 @@ createMovingBlock(32,200,0,1)
 Running = True
 bombWaitTime = 0
 normalBombWait = 60
+
 while Running:
 	if bombWaitTime > 0:
 		bombWaitTime -= 1
@@ -191,7 +193,7 @@ while Running:
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			if bombWaitTime == 0:
-				newBomb = bomb(bombType, [player.coords[0] - 5, player.coords[1]], (8, 8), getImg("Bomb"))
+				newBomb = bomb(bombType, [player.coords[0] - 5, player.coords[1]], (8, 8), getImg("Bomb"),False)
 				x, y = pygame.mouse.get_pos()
 				xChng = x - player.coords[0]
 				yChng = y - player.coords[1]
@@ -235,6 +237,9 @@ while Running:
 	
 	player.floor = False
 	for i in bricks:
+		#for b in bombs:
+			#if collide(b.coords,b.size,i.coords,i.size):
+
 		for f in movingblocks:
 			f.floor =False
 			if collide(i.coords, i.size, f.coords, f.size):
@@ -297,5 +302,6 @@ while Running:
 				i.vel[1] += 0.5
 		i.coords[0] += i.vel[0]
 		i.coords[1] += i.vel[1]
+
 	pygame.display.update()
 	clock.tick(fps)
