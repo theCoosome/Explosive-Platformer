@@ -35,7 +35,7 @@ def getImg(name): #gets images and prints their retrieval
 
 #SET GET IMAGES HERE
 brickImg = getImg("Brick")
-personimg = getImg("Human")
+personimg = getImg("Derek")
 movingImg = getImg("BrickMoving")
 
 def toggle(bool): #is used to make bomb and players stop when in contact with floor
@@ -63,7 +63,7 @@ class Person(object):
 		self.motion = [0.0, 0.0] #attempted motion, xy direction
 		self.floor = False #is on ground
 		self.crouch = False
-		self.images = [getImg("Human"), getImg("HumanCrouch")]
+		self.images = [getImg("Derek"), getImg("DerekCrouch")]
 		self.img = 0
 	def Crouch(self):
 		self.crouch = True
@@ -105,12 +105,13 @@ bombs = [testBomb]
 
 bricks = []
 
-def detonatorStandard(bomb, detRange, player):
+def detonatorStandard(bomb, detRange, player, standardPower):
 	px, py = player.coords
 	bx, by = bomb.coords
 	xd = px - bx
 	yd = py - by
 	td = hypot(xd, yd)
+	pow = standardPower
 
 
 def createFloor(coordx,coordy,rx,ry):
