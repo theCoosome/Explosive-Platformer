@@ -41,8 +41,9 @@ brickImg = getImg("Brick")
 personimg = getImg("Derek")
 movingImg = getImg("BrickMoving")
 destructableImg = getImg("BrickDestructable")
-
-
+derek = getImg("Derek")
+left = [getImg("anim1l"),getImg("anim2l"),getImg("anim3l")]
+right = [getImg("anim1r"),getImg("Derek"),getImg("anim2r")]
 def toggle(bool):  # is used to make bomb and players stop when in contact with floor
 	if bool:
 		return False
@@ -77,8 +78,9 @@ class Person(object):
 		self.motion = [0.0, 0.0]  # attempted motion, xy direction
 		self.floor = False  # is on ground
 		self.crouch = False
-		self.images = [getImg("Derek"), getImg("DerekCrouch")]
+		self.index = 0
 		self.img = 0
+
 
 	def Crouch(self):
 		self.crouch = True
@@ -277,7 +279,12 @@ def Zero(num, rate, goal = 0):
 	return num
 
 affectedByBombs = [player]
-
+movingLeft = False
+movingRight = False
+gR = 0
+gL = 0
+isCrouching = False
+counter = 0
 while Running:
 	if bombWaitTime > 0:  # sets off bomb
 		bombWaitTime -= 1
@@ -290,9 +297,15 @@ while Running:
 		if event.type == pygame.KEYDOWN:
 			# movement
 			if event.key in [K_LEFT, K_a]:  # move <-
+				gL =0
+				movingLeft = True
+				movingRight = False
 				player.motion[0] -= 2.0
 			if event.key in [K_RIGHT, K_d]:  # move ->
 				player.motion[0] += 2.0
+				gR = 0
+				movingRight = True
+				movingLeft = False
 			if event.key in [K_DOWN, K_s]:  # v
 				player.motion[1] += 0.5
 				player.Crouch()
@@ -349,6 +362,7 @@ while Running:
 	if player.vel[1] < maxFallSpeed:  # maxFallSpeed
 		player.vel[1] += gravity
 
+
 	if (not player.floor):
 		if player.vel[0] < .5 and player.motion[0] > 0:
 			player.vel[0] += player.motion[0] / 4
@@ -392,8 +406,34 @@ while Running:
 	
 	if player.floor:
 		player.vel[0] = Zero(player.vel[0], friction)
-		
-	screen.blit(player.images[player.img], player.coords)
+	if player.vel[0] == 0 and player.vel[1] == 0:
+		movingLeft = False
+		movingRight = False
+	if player.motion > 0:
+		if movingRight:
+			counter += 1
+			if counter == 10:
+				player.index += 1
+				counter = 0
+			if player.index >= len(right):
+				player.index = 0
+
+			personimg = right[player.index]
+		else:
+			personimg = right[1]
+		if movingLeft:
+			counter += 1
+			if counter == 10:
+				player.index += 1
+				counter = 0
+			if player.index >= len(left):
+				player.index = 0
+
+			personimg = left[player.index]
+
+
+
+	screen.blit(personimg, player.coords)
 	# Bombs
 	for i in bombs:
 		if not i.stuck:
