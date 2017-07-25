@@ -389,6 +389,10 @@ while Running:
 	for i in bricks:
 		player.Collide(i)
 		screen.blit(i.img,i.coords)
+	
+	if player.floor:
+		player.vel[0] = Zero(player.vel[0], friction)
+		
 	screen.blit(player.images[player.img], player.coords)
 	# Bombs
 	for i in bombs:
@@ -435,6 +439,8 @@ while Running:
 		i.coords[1] += i.vel[1]
 		for p in bricks:
 			i.Collide(p)
+		if i.floor:
+			i.vel[0] = Zero(i.vel[0], friction)
 		screen.blit(i.img,i.coords)
 			
 	pygame.display.update()
