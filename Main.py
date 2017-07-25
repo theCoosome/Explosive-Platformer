@@ -3,6 +3,7 @@ from pygame.locals import *
 import math
 from decimal import *
 
+pygame.mixer.pre_init(44100, -16, 2, 2048)
 pygame.init()
 fps = 60
 
@@ -147,13 +148,13 @@ class movingBlock(object):
 		self.vel = [0, 0]
 		if type == 0: #Movable
 			self.img = pygame.transform.scale(movingImg, size)
-			
+
 		if type == 1: #Destructable
 			self.img = pygame.transform.scale(destructableImg, size)
 			
 		if type == 2: #Movable and Destructable
 			self.img = pygame.transform.scale(destructableImg, size)
-			
+
 	def Collide(self, i):
 		if collide(self.coords, self.size, i.coords, i.size):  # LEFT / RIGHT
 			if self.vel[0] > 0 and self.coords[0] <= i.coords[0]:
@@ -276,6 +277,8 @@ def createFloor(coordx, coordy, ry, rx, type=0):
 
 def wipeFloor():
 	del bricks[:]
+	del bombs[:]
+	del movingblocks[:]
 
 
 def createWall(coordx, coordy, rx, ry, dir):
@@ -283,6 +286,13 @@ def createWall(coordx, coordy, rx, ry, dir):
 		bricks.append(Brick("type", [coordx, coordy], (ry * 16, rx * 16), brickImg))
 	if dir == "up":
 		bricks.append(Brick("type", [coordx, coordy], (ry * 16, rx * 16), brickImg))
+
+
+
+def createMovingBlock(coordx, coordy, rx, ry):
+	for i in range(rx, ry):
+		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
+
 
 def createMovingBlock(coordx, coordy, rx, ry):
 	for i in range(rx, ry):
@@ -296,6 +306,7 @@ totalLvls = 2	#CHANGE THIS WHEN ADDING LVLS
 def createLevel(lvl):	#Almost all refrences of this should be written createLevel(currLvl). Only use an int for bugtesting.
 	wipeFloor()
 	spawnChar()
+
 	if (lvl == 0):
 		createFloor(0, 0, 1, 64)
 		createFloor(0, 300, 1, 17)
@@ -316,6 +327,32 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 	# createWall(264,332,0,20,"up")
 	elif (lvl == 1):
 		createFloor(0, 600, 2, 34)
+
+
+
+
+createFloor(0, 300, 1, 17)
+
+# creates floors and walls based on coor and size
+createFloor(0, 0, 1, 64)
+createFloor(0, 300, 1, 17)
+createFloor(0, 300, 1, 4)
+
+createFloor(200, 200, 1, 8)
+createFloor(264, 216, 1, 2)
+# createMovingBlock(32, 200, 1, 1)
+#movingblocks.append(movingBlock(0, [350, 20], (48, 32), movingImg))
+createFloor(200, 400, 3, 10)
+createFloor(0, 704, 1, 34)
+createFloor(600, 500, 1, 14)
+createFloor(500, 300, 1, 1)
+createFloor(300, 170, 1, 15)
+createFloor(378, 245, 1, 3)
+createFloor(220, 190, 1, 1)
+createFloor(300, 256, 1, 10)
+# createFloor(300,332,0,20,)
+# createWall(264,332,0,20,"up")
+
 
 # Current main screen, basic level.
 Running = True
@@ -384,15 +421,20 @@ while Running:
 				movingLeft = False
 			if event.key in [K_DOWN, K_s]:  # v
 				player.motion[1] += 0.5
+
 				isCrouching = True
 				player.Crouch()
 			if event.key in [K_UP, K_w] and player.floor:  # ^
 				player.vel[1] = -8
+				effect = pygame.mixer.Sound("assets/Jump3.wav")
+				effect.play()
 				player.floor = False
 			if event.key == K_r:  # slow down
 				fps = 10
 			if event.key == K_f:  # speed up
 				fps = 60
+			if event.key == K_x:
+				createLevel(currLvl)
 			if event.key == K_g:  # defunct?gravty on and off
 				for i in bombs:
 					i.floor = toggle(player.floor)
@@ -415,8 +457,14 @@ while Running:
 				bombsExplode = True
 			if event.key == pygame.K_t:  # print cursor location, useful for putting stuff in the right spot
 				x, y = pygame.mouse.get_pos()
+
+
+				print "16 base:", x/16, y/16, "("+str((x/16)*16), str((y/16)*16)+")"
+
+
 				print "Absolute: ", x, y
 				print "16 base:", x/16, y/16, "("+str((x/16)*16), str((y/16)*16)+")"
+
 
 		if event.type == pygame.KEYUP:
 			if event.key in [K_LEFT, K_a]:
@@ -440,7 +488,8 @@ while Running:
 				if (hy != 0):
 					newBomb.vel[0] = (xChng / hy) * throwPower
 					newBomb.vel[1] = (yChng / hy) * throwPower
-
+				effect = pygame.mixer.Sound("assets/throw.wav")
+				effect.play()
 				bombs.append(newBomb)
 				bombWaitTime = normalBombWait
 
@@ -519,8 +568,11 @@ while Running:
 				counter = 0
 			if player.index >= len(left):
 				player.index = 0
+
+
 			personimg = left[player.index]
-			
+
+
 	screen.blit(personimg, player.coords)
 	# Bombs
 	for i in bombs:
@@ -534,14 +586,17 @@ while Running:
 		
 		if i.explodeTime <= 0:
 			bombs.remove(i)
-			
+
 		if not i.stuck:
 			if i.vel[1] < maxFallSpeed:
 				i.vel[1] += gravity
 			i.coords[0] += i.vel[0]
 			i.coords[1] += i.vel[1]
+
+
 		screen.blit(i.img, i.coords)
-		
+
+
 		if i.stuckOn != None: #Follow what it is stuck to
 			pass
 
@@ -565,16 +620,39 @@ while Running:
 			i.stuck = True
 			i.vel = [0, 0]
 
+
 	for i in bombs:
 		if i.isExploding:
 			i.explodeTime -= 1
 			i.incrementSprite(1, i.explodeTime)
+			effect = pygame.mixer.Sound("assets/Explosion.wav")
+			effect.play()
 		if i.explodeTime <= 0:
 			bombs.remove(i)
 
 	# Moving Blocks
 	for i in movingblocks:
 		player.Collide(i)
+
+		i.floor = False
+		if i.vel[1] < maxFallSpeed:  # Gravity
+			i.vel[1] += gravity
+		i.coords[0] += i.vel[0]
+		i.coords[1] += i.vel[1]
+		for p in bricks:
+			i.Collide(p)
+		if i.floor:
+			i.vel[0] = Zero(i.vel[0], friction)
+		screen.blit(i.img, i.coords)
+	# Moving Blocks
+	for i in movingblocks:
+		player.Collide(i)
+
+	# Moving Blocks
+	for i in movingblocks:
+		player.Collide(i)
+
+
 		if i.type in [0, 2]:
 			i.floor = False
 			if i.vel[1] < maxFallSpeed:  # Gravity
