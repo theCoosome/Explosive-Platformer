@@ -52,6 +52,7 @@ mouseImg = AimImg
 derek = getImg("Derek")
 left = [getImg("anim1l"),getImg("anim2l"),getImg("anim3l")]
 right = [getImg("anim1r"),getImg("Derek"),getImg("anim2r")]
+crouchImg = getImg("DerekCrouch")
 
 def toggle(bool):  # is used to make bomb and players stop when in contact with floor
 	if bool:
@@ -132,8 +133,6 @@ class movingBlock(object):
 		self.size = size
 		self.floor = False
 		self.vel = [0, 0]
-
-		
 		if type == 0: #Movable
 			self.img = pygame.transform.scale(movingImg, size)
 			
@@ -142,7 +141,6 @@ class movingBlock(object):
 			
 		if type == 2: #Movable and Destructable
 			self.img = pygame.transform.scale(destructableImg, size)
-			
 			
 	def Collide(self, i):
 		if collide(self.coords, self.size, i.coords, i.size):  # LEFT / RIGHT
@@ -277,7 +275,7 @@ def createWall(coordx, coordy, rx, ry, dir):
 def createMovingBlock(coordx, coordy, rx, ry):
 	for i in range(rx, ry):
 		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
-
+		
 # creates floors and walls based on coor and size
 
 def createLevel(lvl):
@@ -303,7 +301,6 @@ def createLevel(lvl):
 	# createWall(264,332,0,20,"up")
 	elif (lvl == 1):
 		createFloor(0, 600, 2, 34)
-
 
 # Current main screen, basic level.
 Running = True
@@ -373,6 +370,7 @@ while Running:
 				movingLeft = False
 			if event.key in [K_DOWN, K_s]:  # v
 				player.motion[1] += 0.5
+				isCrouching = True
 				player.Crouch()
 			if event.key in [K_UP, K_w] and player.floor:  # ^
 				player.vel[1] = -8
@@ -487,6 +485,8 @@ while Running:
 	if player.vel[0] == 0 and player.vel[1] == 0:
 		movingLeft = False
 		movingRight = False
+	if isCrouching:
+		personimg = crouchImg;
 	if player.motion > 0:
 		if movingRight:
 			counter += 1
@@ -507,6 +507,7 @@ while Running:
 			if player.index >= len(left):
 				player.index = 0
 			personimg = left[player.index]
+			
 	screen.blit(personimg, player.coords)
 	# Bombs
 	for i in bombs:
@@ -514,12 +515,14 @@ while Running:
 			i.explodeTime -= 1
 		if i.explodeTime <= 0:
 			bombs.remove(i)
+			
 		if not i.stuck:
 			if i.vel[1] < maxFallSpeed:
 				i.vel[1] += gravity
 			i.coords[0] += i.vel[0]
 			i.coords[1] += i.vel[1]
 		screen.blit(i.img, i.coords)
+		
 		if i.stuckOn != None: #Follow what it is stuck to
 			pass
 
@@ -542,6 +545,13 @@ while Running:
 					i.detonatorStandard(detRange, p, standardPower)
 			i.stuck = True
 			i.vel = [0, 0]
+
+	for i in bombs:
+		if i.isExploding:
+			i.explodeTime -= 1
+			i.incrementSprite(1, i.explodeTime)
+		if i.explodeTime <= 0:
+			bombs.remove(i)
 
 	# Moving Blocks
 	for i in movingblocks:
