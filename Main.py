@@ -243,7 +243,7 @@ def createWall(coordx, coordy, rx, ry, dir):
 		bricks.append(Brick("type", [coordx, coordy], (ry * 16, rx * 16), brickImg))
 
 
-<<<<<<< HEAD
+
 def createMovingBlock(coordx, coordy, rx, ry):
 	for i in range(rx, ry):
 		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
@@ -279,7 +279,7 @@ def createLevel(lvl):
 		# createWall(264,332,0,20,"up")
 	elif(lvl == 1):
 		createFloor(0,600,2,34)
-=======
+
 createFloor(0, 300, 1, 17)
 
 # creates floors and walls based on coor and size
@@ -301,7 +301,7 @@ createFloor(220, 190, 1, 1)
 createFloor(300, 256, 1, 10)
 # createFloor(300,332,0,20,)
 # createWall(264,332,0,20,"up")
->>>>>>> ec5e9270f9ff5ef6c76cc374f6d41a1dab72cdfa
+
 
 # Current main screen, basic level.
 Running = True
@@ -459,18 +459,16 @@ while Running:
 		player.vel[0] = 0
 
 	player.floor = False
-<<<<<<< HEAD
 	plamid = center(player)
 	drawBricks()
-=======
+
 	for i in bricks:
 		player.Collide(i)
 		screen.blit(i.img,i.coords)
 	
 	if player.floor:
 		player.vel[0] = Zero(player.vel[0], friction)
-		
->>>>>>> ec5e9270f9ff5ef6c76cc374f6d41a1dab72cdfa
+
 	screen.blit(player.images[player.img], player.coords)
 	# Bombs
 	for i in bombs:
@@ -479,14 +477,12 @@ while Running:
 				i.vel[1] += gravity
 			i.coords[0] += i.vel[0]
 			i.coords[1] += i.vel[1]
-<<<<<<< HEAD
+
 			for p in bricks:
 				i.Collide(p)
 
 		screen.blit(i.img, i.coords)
 
-=======
-		
 		if i.stuckOn != None: #Follow what it is stuck to
 			pass
 		
@@ -495,8 +491,7 @@ while Running:
 		for p in movingblocks:
 			i.Collide(p)
 		screen.blit(i.img,i.coords)
-	
->>>>>>> ec5e9270f9ff5ef6c76cc374f6d41a1dab72cdfa
+
 	if bombsExplode:
 		for i in bombs:
 			i.isExploding = True
