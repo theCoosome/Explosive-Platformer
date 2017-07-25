@@ -366,9 +366,9 @@ while Running:
 
 	for i in bombs:
 		if i.isExploding:
-			i.explodeTime -= 1;
+			i.explodeTime -= 1
 		if i.explodeTime <= 0:
-			bombs.remove(i);
+			bombs.remove(i)
 
 	# Moving Blocks
 	for i in movingblocks:
