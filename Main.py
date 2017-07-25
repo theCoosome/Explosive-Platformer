@@ -129,6 +129,25 @@ class bomb(object):
 		self.img = img
 		self.vel = [0, -15]
 
+	def Collide(self, i):
+		if collide(i.coords, i.size, self.coords, self.size): #DOWN
+			#if self.vel[1] > 0: #Falling
+			if center(self)[1] < center(i):
+				self.coords[1] = i.coords[1]-self.size[1]
+				self.vel[1] = 0
+				self.floor = True
+		if collide(self.coords, self.size, (i.coords[0], i.coords[1]+3), (i.size[0], i.size[1]-3)): #LEFT / RIGHT
+			if self.vel[0] > 0 and self.coords[0] <= i.coords[0]:
+				self.coords[0] = i.coords[0] - self.size[0]
+				self.vel[0] = 0
+			if self.vel[0] < 0 and self.coords[0]+self.size[0] >= i.coords[0]+i.size[0]:
+				self.coords[0] = i.coords[0] + i.size[0]
+				self.vel[0] = 0
+		if collide(i.coords, i.size, self.coords, self.size): #UP
+			if self.vel[1] < 0: #Up-ing
+				self.coords[1] = i.coords[1]+i.size[1]
+				self.vel[1] = 0
+
 	def detonatorStandard(self, detRange, mob, standardPower):
 
 		px, py = mob.coords
@@ -306,6 +325,8 @@ while Running:
 	plamid = center(player)
 	for i in bricks:
 		player.Collide(i)
+		for p in bombs:
+			p.Collide(i)
 		screen.blit(i.img,i.coords)
 		
 	screen.blit(player.images[player.img], player.coords)
