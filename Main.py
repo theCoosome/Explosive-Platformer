@@ -130,21 +130,21 @@ class bomb(object):
 
 	def detonatorStandard(self, detRange, mob, standardPower):
 
-		px, py = player.coords
+		px, py = mob.coords
 		bx, by = self.coords
 
 		xd = px - bx
 		yd = py - by
 
 		td = math.hypot(xd, yd)
-		pow = standardPower * (detRange/(detRange - td))
+		pow = standardPower * ((detRange - td)/detRange)
 
 		if pow < 0:
 			pow = 0
 
 		if (td != 0):
-			mob.vel[0] = (xd / td) * pow
-			mob.vel[1] = (yd / td) * pow
+			mob.vel[0] += (xd / td) * pow
+			mob.vel[1] += (yd / td) * pow
 
 testBomb = bomb(1, [300, 250], (bombSize), getImg("Bomb"))
 
@@ -201,10 +201,14 @@ createWall(300,256,0,10,"down")
 
 #Current main screen, basic level.
 Running = True
+
 bombWaitTime = 0
 normalBombWait = 60
-detRange = 48
-standardPower = 4
+detRange = 72
+standardPower = 16
+
+throwPower = 10
+
 #maxFallSpeed != gravity!!
 maxFallSpeed = 16
 gravity = 0.5
@@ -267,8 +271,8 @@ while Running:
 				hy = math.hypot(xChng,yChng)
 
 				if(hy != 0):
-					newBomb.vel[0] = (xChng/hy)*14
-					newBomb.vel[1] = (yChng/hy)*14
+					newBomb.vel[0] = (xChng/hy)*throwPower
+					newBomb.vel[1] = (yChng/hy)*throwPower
 
 				bombs.append(newBomb)
 				bombWaitTime = normalBombWait
@@ -329,7 +333,8 @@ while Running:
 	for i in bombs:
 		if i.isExploding:
 			i.explodeTime -= 1;
-		#if i.explodeTime <= 0:
+		if i.explodeTime <= 0:
+			i.
 
 
 	#Moving Blocks
