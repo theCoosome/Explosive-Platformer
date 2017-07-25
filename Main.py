@@ -111,14 +111,14 @@ class bomb(object):
 		yd = py - by
 
 		td = math.hypot(xd, yd)
-		pow = standardPower * (detRange - td)
+		pow = standardPower * (detRange/(detRange - td))
 
 		if pow < 0:
 			pow = 0
 
 		if (td != 0):
-			player.vel[0] = (xd / td) * pow
-			player.vel[1] = (yd / td) * pow
+			mob.vel[0] = (xd / td) * pow
+			mob.vel[1] = (yd / td) * pow
 
 testBomb = bomb(1, [300, 250], (bombSize), getImg("Bomb"))
 
@@ -178,7 +178,7 @@ Running = True
 bombWaitTime = 0
 normalBombWait = 60
 detRange = 48
-standardPower = 16
+standardPower = 4
 #maxFallSpeed != gravity!!
 maxFallSpeed = 16
 gravity = 0.5
