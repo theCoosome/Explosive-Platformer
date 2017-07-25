@@ -40,6 +40,7 @@ def getImg(name):  # gets images and prints their retrieval
 brickImg = getImg("Brick")
 personimg = getImg("Derek")
 movingImg = getImg("BrickMoving")
+destructableImg = getImg("BrickDestructable")
 
 
 def toggle(bool):  # is used to make bomb and players stop when in contact with floor
@@ -90,7 +91,7 @@ class Person(object):
 	def Collide(self, i):
 		if collide(i.coords, i.size, self.coords, self.size):  # DOWN
 			# if self.vel[1] > 0: #Falling
-			if center(self)[1] < center(i):
+			if center(self)[1] < center(i)[1]:
 				self.coords[1] = i.coords[1] - self.size[1]
 				self.vel[1] = 0
 				self.floor = True
@@ -102,7 +103,7 @@ class Person(object):
 				self.coords[0] = i.coords[0] + i.size[0]
 				self.vel[0] = 0
 		if collide(i.coords, i.size, self.coords, self.size):  # UP
-			if self.vel[1] < 0:  # Up-ing
+			if center(self)[1] > center(i)[1]:
 				self.coords[1] = i.coords[1] + i.size[1]
 				self.vel[1] = 0
 		if collide(self.coords, (self.size[0], self.size[1]+1), i.coords, i.size):
@@ -119,6 +120,27 @@ class movingBlock(object):
 		self.img = pygame.transform.scale(img, size)
 		self.floor = False
 		self.vel = [0, 0]
+		
+	def Collide(self, i):
+		if collide(self.coords, self.size, i.coords, i.size): #LEFT / RIGHT
+			if self.vel[0] > 0 and self.coords[0] <= i.coords[0]:
+				self.coords[0] = i.coords[0] - self.size[0]
+				self.vel[0] = 0
+			if self.vel[0] < 0 and self.coords[0]+self.size[0] >= i.coords[0]+i.size[0]:
+				self.coords[0] = i.coords[0] + i.size[0]
+				self.vel[0] = 0
+		if collide(i.coords, i.size, self.coords, self.size): #DOWN
+			if center(self)[1] < center(i)[1]:
+				self.coords[1] = i.coords[1]-self.size[1]
+				self.vel[1] = 0
+				self.floor = True
+		if collide(i.coords, i.size, self.coords, self.size): #UP
+			if center(self)[1] > center(i)[1]: #Up-ing
+				self.coords[1] = i.coords[1]+i.size[1]
+				self.vel[1] = 0
+
+		if collide(self.coords, (self.size[0], self.size[1]+1), i.coords, i.size):
+			self.floor = True
 
 class Brick(object):
 	def __init__(self, type, coords, size, img):
@@ -137,6 +159,7 @@ class bomb(object):
 		self.isExploding = False
 		self.floor = False
 		self.stuck = False
+		self.stuckOn = None
 		self.type = type
 		self.coords = coords
 		self.size = size
@@ -189,7 +212,7 @@ class bomb(object):
 
 testBomb = bomb(1, [300, 250], (bombSize), getImg("Bomb"))
 
-bombs = [testBomb]
+bombs = []
 
 bricks = []
 
@@ -207,17 +230,6 @@ def createWall(coordx, coordy, rx, ry, dir):
 
 createFloor(0, 300, 1, 17)
 
-
-def createMovingBlock(coordx, coordy, rx, ry):
-	for i in range(rx, ry):
-		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
-
-
-def createMovingBlock(coordx, coordy, rx, ry):
-	for i in range(rx, ry):
-		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
-
-
 # creates floors and walls based on coor and size
 createFloor(0, 0, 1, 64)
 createFloor(0, 300, 1, 17)
@@ -225,7 +237,8 @@ createFloor(0, 300, 1, 4)
 
 createFloor(200, 200, 1, 8)
 createFloor(264, 216, 1, 2)
-createMovingBlock(32, 200, 1, 1)
+#createMovingBlock(32, 200, 1, 1)
+movingblocks.append(movingBlock(0, [350, 20], (48, 32), movingImg))
 createFloor(200, 400, 3, 10)
 createFloor(0, 704, 1, 34)
 createFloor(600, 500, 1, 14)
@@ -249,7 +262,19 @@ throwPower = 10
 
 # maxFallSpeed != gravity!!
 maxFallSpeed = 16
-gravity = 0.5
+gravity = 0.5 #pixels per frame
+friction = 0.25 #pixels per frame
+
+def Zero(num, rate, goal = 0):
+	if num > goal:
+		num -= rate
+		if num < goal:
+			num = goal	
+	if num < goal:
+		num += rate
+		if num > goal:
+			num = goal
+	return num
 
 affectedByBombs = [player]
 
@@ -288,6 +313,10 @@ while Running:
 				Running = False
 			if event.key == pygame.K_SPACE:  # exploding
 				bombsExplode = True
+			if event.key == pygame.K_t: #print cursor location, useful for putting stuff in the right spot
+				x, y = pygame.mouse.get_pos()
+				print "Absolute: ", x, y
+				print "16 base:", x/16, y/16
 
 		if event.type == pygame.KEYUP:
 			if event.key in [K_LEFT, K_a]:
@@ -345,7 +374,6 @@ while Running:
 		player.coords = [50, 250]
 
 	player.floor = False
-	plamid = center(player)
 	for i in bricks:
 		player.Collide(i)
 		screen.blit(i.img,i.coords)
@@ -357,11 +385,16 @@ while Running:
 				i.vel[1] += gravity
 			i.coords[0] += i.vel[0]
 			i.coords[1] += i.vel[1]
-			for p in bricks:
-				i.Collide(p)
-			
-		screen.blit(i.img, i.coords)
-
+		
+		if i.stuckOn != None: #Follow what it is stuck to
+			pass
+		
+		for p in bricks:
+			i.Collide(p)
+		for p in movingblocks:
+			i.Collide(p)
+		screen.blit(i.img,i.coords)
+	
 	if bombsExplode:
 		for i in bombs:
 			i.isExploding = True
@@ -369,6 +402,10 @@ while Running:
 			for p in affectedByBombs:
 				if i.type == 1:
 					i.detonatorStandard(detRange, p, standardPower)
+			for p in movingblocks:
+				if i.type == 1:
+					i.detonatorStandard(detRange, p, standardPower)
+				
 
 	for i in bombs:
 		if i.isExploding:
@@ -378,11 +415,15 @@ while Running:
 
 	# Moving Blocks
 	for i in movingblocks:
+		player.Collide(i)
 		i.floor = False
-		if not i.floor:
-			if i.vel[1] < maxFallSpeed:  # Gravity
-				i.vel[1] += gravity
+		if i.vel[1] < maxFallSpeed:  # Gravity
+			i.vel[1] += gravity
 		i.coords[0] += i.vel[0]
 		i.coords[1] += i.vel[1]
+		for p in bricks:
+			i.Collide(p)
+		screen.blit(i.img,i.coords)
+			
 	pygame.display.update()
 	clock.tick(fps)
