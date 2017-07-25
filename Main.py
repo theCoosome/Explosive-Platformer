@@ -70,15 +70,9 @@ class Person(object):
 		self.img = 1
 	def unCrouch(self):
 		self.crouch = False
-<<<<<<< HEAD
 		self.img = 0
 		
 player = Person([50, 250], (standardSize))
-=======
-		self.img -= 1
-
-player = Person([50, 250], (16, 16))
->>>>>>> b1a3c082c1a56fba2d67fd122ea745d15b644f34
 
 class movingBlock(object):
 	def __init__(self, type, coords, size, img):
