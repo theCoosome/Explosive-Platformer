@@ -54,6 +54,11 @@ def collide(p1, p2, p3, p4):
 		#if bottom is below top and top is above bottom
 		if p1[0] + p2[0] > p3[0] and p1[0] < p3[0] + p4[0]:
 			return True
+			
+#if point p3 is in p1 with size p2
+def pointCollide(p1, p2, p3):
+	if p1[0] + p2[0] > p3[0] and p1[0] < p3[0] and p1[1] + p2[1] > p3[1] and p1[1] < p3[1]:
+		return True
 
 class Person(object):
 	def __init__(self, coords, size):
@@ -71,6 +76,27 @@ class Person(object):
 	def unCrouch(self):
 		self.crouch = False
 		self.img = 0
+	def Collide(self, i):
+		if collide(i.coords, i.size, self.coords, self.size): #DOWN
+			if self.vel[1] > 0: #Falling
+				self.coords[1] = i.coords[1]-self.size[1]
+				self.vel[1] = 0
+				self.floor = True
+		if collide(self.coords, self.size, (i.coords[0], i.coords[1]+3), (i.size[0], i.size[1]-3)): #LEFT / RIGHT
+			if self.vel[0] > 0 and self.coords[0] <= i.coords[0]:
+				self.coords[0] = i.coords[0] - self.size[0]
+				self.vel[0] = 0
+			if self.vel[0] < 0 and self.coords[0]+self.size[0] >= i.coords[0]+i.size[0]:
+				self.coords[0] = i.coords[0] + i.size[0]
+				self.vel[0] = 0
+		if collide(i.coords, i.size, self.coords, self.size): #UP
+			if self.vel[1] < 0: #Up-ing
+				self.coords[1] = i.coords[1]+i.size[1]
+				self.vel[1] = 0
+
+
+		if collide(player.coords, (16, 17), i.coords, i.size):
+			player.floor = True
 		
 player = Person([50, 250], (standardSize))
 
@@ -250,51 +276,11 @@ while Running:
 		player.coords = [50, 250]
 
 	player.floor = False
+	plamid = center(player)
 	for i in bricks:
-		'''for f in movingblocks:
-			f.floor =False
-			if collide(i.coords, i.size, f.coords, f.size):
-				if f.vel[1] > 0:
-					f.floor = True
-					f.coords[1] = i.coords[1] - f.size[1]
-				if f.vel[1] < 0:
-					f.coords[1] = i.coords[1] + i.size[1]
-				f.vel[1] = 0
-			screen.blit(f.img, f.coords)
-
-			if collide(i.coords,i.size,player.coords,player.size):
-
-				if player.vel[1] > 0:
-					player.floor = True
-					player.coords[1] = i.coords[1]-player.size[1]
-				if player.vel[1] < 0:
-					player.coords[1] = i.coords[1]+i.size[1]
-
-				player.vel[1] = 0'''
-
-		if collide(i.coords, i.size, player.coords, player.size): #COLLISIONS
-			mid = center(i)
-			if player.vel[1] < 0: #Up-ing
-				player.coords[1] = i.coords[1]+i.size[1]
-				player.vel[1] = 0
-			if player.vel[1] > 0: #Falling
-				player.coords[1] = i.coords[1]-player.size[1]
-				player.vel[1] = 0
-				player.floor = True
-			if collide(player.coords, player.size, (i.coords[0], i.coords[1]+3), (i.size[0], i.size[1]-3)):
-				if player.vel[0] > 0 and player.coords[0] < mid[0]:
-					player.coords[0] = i.coords[0] - player.size[0]
-					player.vel[0] = 0
-				if player.vel[0] < 0 and player.coords[0] > mid[0]:
-					player.coords[0] = i.coords[0] + i.size[0]
-					player.vel[0] = 0
-
-
-		if collide(player.coords, (16, 17), i.coords, i.size):
-			player.floor = True
-
+		player.Collide(i)
 		screen.blit(i.img,i.coords)
-
+		
 	screen.blit(player.images[player.img], player.coords)
 	#Bombs
 	for i in bombs:
