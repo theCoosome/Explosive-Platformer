@@ -128,12 +128,23 @@ class movingBlock(object):
 		if type == 0: #Movable
 			self.img = pygame.transform.scale(movingImg, size)
 		
+<<<<<<< HEAD
+=======
+		if type == 0: #Movable
+			self.img = pygame.transform.scale(movingImg, size)
+		
+>>>>>>> 94c2b799865038c90f19d081139caf21ef117cb7
 		if type == 1: #Destructable
 			self.img = pygame.transform.scale(destructableImg, size)
 			
 		if type == 2: #Movable and Destructable
 			self.img = pygame.transform.scale(destructableImg, size)
+<<<<<<< HEAD
 
+=======
+			
+		
+>>>>>>> 94c2b799865038c90f19d081139caf21ef117cb7
 	def Collide(self, i):
 		if collide(self.coords, self.size, i.coords, i.size):  # LEFT / RIGHT
 			if self.vel[0] > 0 and self.coords[0] <= i.coords[0]:
@@ -264,10 +275,13 @@ def createWall(coordx, coordy, rx, ry, dir):
 	if dir == "up":
 		bricks.append(Brick("type", [coordx, coordy], (ry * 16, rx * 16), brickImg))
 
+<<<<<<< HEAD
 def createMovingBlock(coordx, coordy, rx, ry):
 	for i in range(rx, ry):
 		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
 
+=======
+>>>>>>> 94c2b799865038c90f19d081139caf21ef117cb7
 def createMovingBlock(coordx, coordy, rx, ry):
 	for i in range(rx, ry):
 		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
@@ -300,6 +314,7 @@ def createLevel(lvl):
 
 
 
+<<<<<<< HEAD
 createFloor(0, 300, 1, 17)
 
 # creates floors and walls based on coor and size
@@ -322,6 +337,8 @@ createFloor(300, 256, 1, 10)
 # createFloor(300,332,0,20,)
 # createWall(264,332,0,20,"up")
 
+=======
+>>>>>>> 94c2b799865038c90f19d081139caf21ef117cb7
 # Current main screen, basic level.
 Running = True
 
@@ -420,11 +437,15 @@ while Running:
 			if event.key == pygame.K_t:  # print cursor location, useful for putting stuff in the right spot
 				x, y = pygame.mouse.get_pos()
 				print "Absolute: ", x, y
+<<<<<<< HEAD
 
 				print "16 base:", x / 16, y / 16
 
 				print "16 base:", x/16, y/16, "("+str((x/16)*16), str((y/16)*16)+")"
 
+=======
+				print "16 base:", x/16, y/16, "("+str((x/16)*16), str((y/16)*16)+")"
+>>>>>>> 94c2b799865038c90f19d081139caf21ef117cb7
 
 		if event.type == pygame.KEYUP:
 			if event.key in [K_LEFT, K_a]:
@@ -476,6 +497,7 @@ while Running:
 			elif player.vel[0] < player.motion[0]:
 				player.vel[0] += 0.5
 
+<<<<<<< HEAD
 	if player.vel[0] <= -31:
 		player.vel[0] = -31
 
@@ -489,6 +511,15 @@ while Running:
 		player.vel[1] = -30
 
 
+=======
+
+	if player.vel[0]  <=-30:
+		player.vel[0] = -30
+
+	if player.vel[1] <=-30:
+		player.vel[1] = -30
+
+>>>>>>> 94c2b799865038c90f19d081139caf21ef117cb7
 	if player.vel[0] >= 30:
 		player.vel[0] = 30
 
@@ -533,10 +564,17 @@ while Running:
 				counter = 0
 			if player.index >= len(left):
 				player.index = 0
+<<<<<<< HEAD
 
 			personimg = left[player.index]
 
 
+=======
+
+			personimg = left[player.index]
+
+
+>>>>>>> 94c2b799865038c90f19d081139caf21ef117cb7
 
 	screen.blit(personimg, player.coords)
 	# Bombs
@@ -545,15 +583,23 @@ while Running:
 			i.explodeTime -= 1
 		if i.explodeTime <= 0:
 			bombs.remove(i)
+<<<<<<< HEAD
 
+=======
+			
+>>>>>>> 94c2b799865038c90f19d081139caf21ef117cb7
 		if not i.stuck:
 			if i.vel[1] < maxFallSpeed:
 				i.vel[1] += gravity
 			i.coords[0] += i.vel[0]
 			i.coords[1] += i.vel[1]
+<<<<<<< HEAD
 		screen.blit(i.img, i.coords)
 
 
+=======
+			
+>>>>>>> 94c2b799865038c90f19d081139caf21ef117cb7
 		if i.stuckOn != None: #Follow what it is stuck to
 			pass
 
@@ -562,7 +608,8 @@ while Running:
 		for p in movingblocks:
 			i.Collide(p)
 		screen.blit(i.img,i.coords)
-
+		
+		
 	if bombsExplode:
 		for i in bombs:
 			i.isExploding = True
@@ -574,6 +621,7 @@ while Running:
 				if i.type == 1:
 					i.detonatorStandard(detRange, p, standardPower)
 
+<<<<<<< HEAD
 	for i in bombs:
 		if i.isExploding:
 			i.explodeTime -= 1
@@ -597,6 +645,11 @@ while Running:
 	# Moving Blocks
 	for i in movingblocks:
 		player.Collide(i)
+=======
+	# Moving Blocks
+	for i in movingblocks:
+		player.Collide(i)
+>>>>>>> 94c2b799865038c90f19d081139caf21ef117cb7
 		if i.type in [0, 2]:
 			i.floor = False
 			if i.vel[1] < maxFallSpeed:  # Gravity
