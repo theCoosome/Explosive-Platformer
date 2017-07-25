@@ -78,7 +78,8 @@ class Person(object):
 		self.img = 0
 	def Collide(self, i):
 		if collide(i.coords, i.size, self.coords, self.size): #DOWN
-			if self.vel[1] > 0: #Falling
+			#if self.vel[1] > 0: #Falling
+			if center(self)[1] < center(i):
 				self.coords[1] = i.coords[1]-self.size[1]
 				self.vel[1] = 0
 				self.floor = True
@@ -105,7 +106,7 @@ class movingBlock(object):
 		self.type = type
 		self.coords = coords
 		self.size = size
-		self.img = img
+		self.img = pygame.transform.scale(img, size)
 		self.floor = False
 		self.vel = [0,-15]
 class Brick(object):
@@ -113,7 +114,7 @@ class Brick(object):
 		self.type = type
 		self.coords = coords
 		self.size = size
-		self.img = img
+		self.img = pygame.transform.scale(img, size)
 
 movingblocks = []
 
@@ -156,13 +157,9 @@ bricks = []
 
 
 
-def createFloor(coordx,coordy,rx,ry):
+def createFloor(coordx,coordy,ry,rx, type = 0):
 
-	bricks.append(Brick("type",[coordx,coordy],(ry*16,rx*16),brickImg))
-
-	for i in range(rx,ry):
-		bricks.append(Brick("type",[coordx + (16 * i),coordy],(16 * rx,16),brickImg))
-
+	bricks.append(Brick(type,[coordx,coordy],(rx*16,ry*16),brickImg))
 
 def createWall(coordx,coordy,rx,ry,dir):
 
@@ -182,20 +179,20 @@ def createMovingBlock(coordx,coordy,rx,ry):
 		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
 
 #creates floors and walls based on coor and size
-createFloor(0, 300, 0, 17)
-createWall(0,300,0,4,"down")
+createFloor(0, 300, 1, 17)
+createFloor(0,300,1,4)
 
 createFloor(200, 200, 1, 8)
-createWall(264,216,0,2,"up")
-createMovingBlock(32,200,0,1)
+createFloor(264,216,1,2)
+createMovingBlock(32,200,1,1)
 createFloor(200,400,3,10)
-createFloor(0,704,0,34)
-createFloor(600,500,0,14)
-createFloor(500,300,0,1)
-createFloor(300,170,0,15)
-createFloor(378,245,0,3)
-createFloor(220,190,0,1)
-createWall(300,256,0,10,"down")
+createFloor(0,704,1,34)
+createFloor(600,500,1,14)
+createFloor(500,300,1,1)
+createFloor(300,170,1,15)
+createFloor(378,245,1,3)
+createFloor(220,190,1,1)
+createFloor(300,256,1,10)
 #createFloor(300,332,0,20,)
 #createWall(264,332,0,20,"up")
 
@@ -278,9 +275,9 @@ while Running:
 				bombWaitTime = normalBombWait
 
 	#Player
-	if not player.floor:
-		if player.vel[1] < maxFallSpeed: #maxFallSpeed
-			player.vel[1] += gravity
+	#if not player.floor:
+	if player.vel[1] < maxFallSpeed: #maxFallSpeed
+		player.vel[1] += gravity
 
 	if (not player.floor):
 		if player.vel[0] < .5 and player.motion[0] > 0:
