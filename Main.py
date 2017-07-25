@@ -42,6 +42,7 @@ brickImg = getImg("Brick")
 personimg = getImg("Derek")
 movingImg = getImg("BrickMoving")
 destructableImg = getImg("BrickDestructable")
+bombImg = getImg("Bomb")
 
 
 def toggle(bool):  # is used to make bomb and players stop when in contact with floor
@@ -220,6 +221,9 @@ class bomb(object):
 		if (td != 0):
 			mob.vel[0] += (xd / td) * pow
 			mob.vel[1] += (yd / td) * pow
+		
+		self.stuck = True
+		self.vel = [0, 0]
 
 
 testBomb = bomb(1, [300, 250], (bombSize), getImg("Bomb"))
@@ -295,7 +299,7 @@ throwPower = 10
 
 # maxFallSpeed != gravity!!
 maxFallSpeed = 16
-gravity = 0.5 #pixels per frame
+gravity = 0.25 #pixels per frame
 friction = 0.25 #pixels per frame
 
 def Zero(num, rate, goal = 0):
@@ -378,7 +382,7 @@ while Running:
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			if bombWaitTime == 0:
-				newBomb = bomb(bombType, [player.coords[0], player.coords[1]], (8, 8), getImg("Bomb"))
+				newBomb = bomb(bombType, [player.coords[0], player.coords[1]], (8, 8), bombImg)
 				x, y = pygame.mouse.get_pos()
 
 				xChng = x - player.coords[0]
