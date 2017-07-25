@@ -141,6 +141,7 @@ def createMovingBlock(coordx,coordy,rx,ry):
 	for i in range(rx,ry):
 		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
 
+#creates floors and walls based on coor and size
 createFloor(0, 300, 0, 17)
 createWall(0,300,0,4,"down")
 
