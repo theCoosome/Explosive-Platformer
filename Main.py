@@ -186,17 +186,15 @@ while Running:
 				fps = 10
 			if event.key == K_f: #speed up
 				fps = 60
-			if event.key == K_g:
+			if event.key == K_g:  #defunct?gravty on and off
 				for i in bombs:
 					i.floor = toggle(player.floor)
 					i.vel[1] = 0
 				player.floor = toggle(player.floor)
 				player.vel[1] = 0
-
-			if event.key == pygame.K_q:
-
+			if event.key == pygame.K_q: #quiting
 				Running = False
-			if event.key == pygame.K_SPACE:
+			if event.key == pygame.K_SPACE: #exploding
 				bombsExplode = True
 
 		if event.type == pygame.KEYUP:
