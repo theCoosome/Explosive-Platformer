@@ -42,7 +42,18 @@ brickImg = getImg("Brick")
 personimg = getImg("Derek")
 movingImg = getImg("BrickMoving")
 destructableImg = getImg("BrickDestructable")
+
+#Bombs
 bombImg = getImg("Bomb")
+normalBombImgs = []
+i = 0
+while i < 10:
+	normalBombImgs.append(getImg("Explosion_Normal/sprite_0" + str(i)))
+	i+=1
+while i < 17:
+	normalBombImgs.append(getImg("Explosion_Normal/sprite_" + str(i)))
+	i+=1
+normalExplode = [getImg("")]
 
 #Mice
 AimImg = getImg("Mouse/Aim")
@@ -190,10 +201,7 @@ class bomb(object):
 
 	def incrementSprite(self, number, curr):
 		curr = 16 - curr
-		if curr < 10:
-			self.img = getImg("Explosion_Normal/sprite_0" + str(curr))
-		else:
-			self.img = getImg("Explosion_Normal/sprite_" + str(curr))
+		self.img = normalBombImgs[curr]
 
 	def Collide(self, i):
 		if collide(self.coords, self.size, i.coords, i.size):  # LEFT / RIGHT
@@ -243,8 +251,6 @@ testBomb = bomb(1, [300, 250], (bombSize), getImg("Bomb"))
 
 bombs = []
 
-levelSpawnPts = [[50, 250], [50, 500]]
-
 bricks = []
 
 
@@ -255,14 +261,17 @@ def drawBricks():
 
 
 def spawnChar():
-	player.coords = levelSpawnPts[currLvl]
+	if currLvl == 0:
+		player.coords = [50, 250]
+	elif currLvl == 1:
+		player.coords = [50, 500]
+	print currLvl
 	player.vel[1] = 0
 	player.vel[0] = 0
 
 
 def createFloor(coordx, coordy, ry, rx, type=0):
 	bricks.append(Brick(type, [coordx, coordy], (rx * 16, ry * 16), brickImg))
-
 
 def wipeFloor():
 	del bricks[:]
@@ -280,7 +289,10 @@ def createMovingBlock(coordx, coordy, rx, ry):
 		
 # creates floors and walls based on coor and size
 
-def createLevel(lvl):
+
+currLvl = 0
+totalLvls = 2	#CHANGE THIS WHEN ADDING LVLS
+def createLevel(lvl):	#Almost all refrences of this should be written createLevel(currLvl). Only use an int for bugtesting.
 	wipeFloor()
 	spawnChar()
 	if (lvl == 0):
@@ -341,8 +353,7 @@ gL = 0
 isCrouching = False
 counter = 0
 
-currLvl = 0
-totalLvls = 2
+
 
 createLevel(currLvl)
 
@@ -417,7 +428,7 @@ while Running:
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			if bombWaitTime == 0:
-				newBomb = bomb(bombType, [player.coords[0], player.coords[1]], (8, 8), getImg("Bomb"))
+				newBomb = bomb(bombType, [player.coords[0], player.coords[1]], (8, 8), bombImg)
 				x, y = pygame.mouse.get_pos()
 
 				xChng = x - player.coords[0]
@@ -472,7 +483,7 @@ while Running:
 	player.coords[1] += player.vel[1]
 
 	if not collide(player.coords, player.size, (0, 0), size):
-		player.coords = levelSpawnPts[currLvl]
+		createLevel(currLvl)
 
 
 	player.floor = False
