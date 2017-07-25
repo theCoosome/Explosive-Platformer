@@ -13,19 +13,23 @@ fontComp = pygame.font.SysFont('couriernew', 16, True)
 smallfont = pygame.font.SysFont('couriernew', 12)
 massive = pygame.font.SysFont('couriernew', 200, True)
 
+#sizes so nothing is hardcoded
 size = (1024, 720)
+standardSize = (16, 16)
+bombSize = ((standardSize[0]/2),(standardSize[1]/2))
+
 screen = pygame.display.set_mode(size)
 
 clock = pygame.time.Clock()
 pygame.display.set_caption("Explosive Platformer")
 #pygame.mouse.set_visible(False)
 
-def getImg(name):
+def getImg(name): #gets images and prints their retrieval
 	full = "assets/"+name+".png"
 	print "Loading: "+full
 	try:
 		return pygame.image.load(full)
-	except pygame.error:
+	except pygame.error: #if image isnt found, substitutes with writing in progress icon
 		print "--File not found. Substituting"
 		return pygame.image.load("assets/wip.png")
 
@@ -34,13 +38,13 @@ brickImg = getImg("Brick")
 personimg = getImg("Human")
 movingImg = getImg("BrickMoving")
 
-def toggle(bool):
+def toggle(bool): #is used to make bomb and players stop when in contact with floor
 	if bool:
 		return False
 	else:
 		return True
 		
-def center(obj):
+def center(obj): #finds center of object sent to function
 	return (obj.coords[0]+(obj.size[0]/2), obj.coords[1]+(obj.size[1]/2))
 
 #object one coord pair, size, object two coord pair and size
@@ -55,7 +59,7 @@ class Person(object):
 	def __init__(self, coords, size):
 		self.coords = coords
 		self.size = size
-		self.vel = [0, -15]
+		self.vel = [0, -15] # starts going up
 		self.motion = [0.0, 0.0] #attempted motion, xy direction
 		self.floor = False #is on ground
 		self.crouch = False
@@ -63,12 +67,18 @@ class Person(object):
 		self.img = 0
 	def Crouch(self):
 		self.crouch = True
-		self.img += 1
+		self.img = 1
 	def unCrouch(self):
 		self.crouch = False
+<<<<<<< HEAD
+		self.img = 0
+		
+player = Person([50, 250], (standardSize))
+=======
 		self.img -= 1
 
 player = Person([50, 250], (16, 16))
+>>>>>>> b1a3c082c1a56fba2d67fd122ea745d15b644f34
 
 class movingBlock(object):
 	def __init__(self, type, coords, size, img):
@@ -95,7 +105,7 @@ class bomb(object):
 		self.size = size
 		self.img = img
 		self.vel = [0, -15]
-testBomb = bomb(1, [300, 250], (8, 8), getImg("Bomb"))
+testBomb = bomb(1, [300, 250], (bombSize), getImg("Bomb"))
 
 bombs = [testBomb]
 
@@ -149,7 +159,8 @@ bombWaitTime = 0
 normalBombWait = 60
 detRange = 48
 standardPower = 16
-gravity = 11
+maxFallSpeed = 16
+gravity = 0.5
 
 while Running:
 	if bombWaitTime > 0:
@@ -184,8 +195,6 @@ while Running:
 				player.floor = toggle(player.floor)
 				player.vel[1] = 0
 
-
-
 			if event.key == pygame.K_q:
 
 				Running = False
@@ -203,9 +212,8 @@ while Running:
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			if bombWaitTime == 0:
-				newBomb = bomb(bombType, [player.coords[0] - 5, player.coords[1]], (8, 8), getImg("Bomb"))
+				newBomb = bomb(bombType, [player.coords[0], player.coords[1]], (8, 8), getImg("Bomb"))
 				x, y = pygame.mouse.get_pos()
-
 
 				xChng = x - player.coords[0]
 				yChng = y - player.coords[1]
@@ -216,22 +224,13 @@ while Running:
 					newBomb.vel[0] = (xChng/hypot)*14
 					newBomb.vel[1] = (yChng/hypot)*14
 
-				xChng = player.coords[0] - x
-				yChng = player.coords[1] - y
-
-				hypot = math.hypot(xChng,yChng)
-
-				newBomb.vel[0] = xChng/hypot*14
-				newBomb.vel[1] = yChng/hypot*14
-
-
 				bombs.append(newBomb)
 				bombWaitTime = normalBombWait
 
 	#Player
 	if not player.floor:
-		if player.vel[1] < gravity: #Gravity
-			player.vel[1] += 0.5
+		if player.vel[1] < maxFallSpeed: #maxFallSpeed
+			player.vel[1] += gravity
 
 	if (not player.floor):
 		if player.vel[0] < .5 and player.motion[0] > 0:
@@ -306,8 +305,8 @@ while Running:
 	#Bombs
 	for i in bombs:
 		if not i.floor:
-			if i.vel[1] < gravity:
-				i.vel[1] += 0.5
+			if i.vel[1] < maxFallSpeed:
+				i.vel[1] += gravity
 		i.coords[0] += i.vel[0]
 		i.coords[1] += i.vel[1]
 		screen.blit(i.img, i.coords)
@@ -322,8 +321,8 @@ while Running:
 	for i in movingblocks:
 		i.floor = False
 		if not i.floor:
-			if i.vel[1] < gravity:  # Gravity
-				i.vel[1] += 0.5
+			if i.vel[1] < maxFallSpeed:  #Gravity
+				i.vel[1] += gravity
 		i.coords[0] += i.vel[0]
 		i.coords[1] += i.vel[1]
 	pygame.display.update()
