@@ -412,7 +412,7 @@ while Running:
 				player.vel[0] += 0.5
 		else:
 			if player.vel[0] > player.motion[0]:
-			a	player.vel[0] -= 0.5
+				player.vel[0] -= 0.5
 			elif player.vel[0] < player.motion[0]:
 				player.vel[0] += 0.5
 
