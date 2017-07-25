@@ -246,6 +246,8 @@ def drawBricks():
 
 def spawnChar():
 	player.coords = levelSpawnPts[currLvl]
+	player.vel[1] = 0
+	player.vel[0] = 0
 
 
 def createFloor(coordx, coordy, ry, rx, type=0):
@@ -462,8 +464,7 @@ while Running:
 
 	if not collide(player.coords, player.size, (0, 0), size):
 		player.coords = levelSpawnPts[currLvl]
-		player.vel[1] = 0
-		player.vel[0] = 0
+
 
 	player.floor = False
 	drawBricks()
