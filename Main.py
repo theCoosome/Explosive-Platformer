@@ -129,8 +129,8 @@ def createWall(coordx,coordy,rx,ry,dir):
 		if dir == "up":
 			bricks.append(Brick("type", [coordx, coordy], (ry*16,rx*16), brickImg))
 
-
 createFloor(0, 300, 1, 17)
+
 def createMovingBlock(coordx,coordy,rx,ry):
 	for i in range(rx,ry):
 		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
