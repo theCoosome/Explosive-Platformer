@@ -145,22 +145,31 @@ def createWall(coordx,coordy,rx,ry,dir):
 		if dir == "up":
 			bricks.append(Brick("type", [coordx, coordy], (ry*16,rx*16), brickImg))
 
-
 createFloor(0, 300, 1, 17)
-def createMovingBlock(coordx,coordy,rx,ry):
-	for i in range(rx,ry):
-		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
 
 def createMovingBlock(coordx,coordy,rx,ry):
 	for i in range(rx,ry):
 		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
 
+def createMovingBlock(coordx,coordy,rx,ry):
+	for i in range(rx,ry):
+		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
+
+#creates floors and walls based on coor and size
 createFloor(0, 300, 0, 17)
 createWall(0,300,0,4,"down")
 
 createFloor(200, 200, 1, 8)
 createWall(264,216,0,2,"up")
 createMovingBlock(32,200,0,1)
+createFloor(200,400,3,10)
+createFloor(0,704,0,34)
+createFloor(600,500,0,14)
+createFloor(500,300,0,1)
+createFloor(300,170,0,15)
+createFloor(378,245,0,3)
+createFloor(220,190,0,1)
+createWall(300,256,0,10,"down")
 #createFloor(300,332,0,20,)
 #createWall(264,332,0,20,"up")
 
@@ -170,13 +179,14 @@ bombWaitTime = 0
 normalBombWait = 60
 detRange = 48
 standardPower = 16
+#maxFallSpeed != gravity!!
 maxFallSpeed = 16
 gravity = 0.5
 
 affectedByBombs = [player]
 
 while Running:
-	if bombWaitTime > 0:
+	if bombWaitTime > 0: #sets off bomb
 		bombWaitTime -= 1
 	bombsExplode = False
 	bombType = 1
@@ -186,32 +196,29 @@ while Running:
 	for event in pygame.event.get():
 		if event.type == pygame.KEYDOWN:
 			#movement
-			if event.key in [K_LEFT, K_a]:
+			if event.key in [K_LEFT, K_a]: #move <-
 				player.motion[0] -= 2.0
-			if event.key in [K_RIGHT, K_d]:
+			if event.key in [K_RIGHT, K_d]: #move ->
 				player.motion[0] += 2.0
-			if event.key in [K_DOWN, K_s]:
+			if event.key in [K_DOWN, K_s]: #v
 				player.motion[1] += 0.5
 				player.Crouch()
-			if event.key == K_r:
-				fps = 10
-			if event.key == K_f:
-				fps = 60
-
-			if event.key in [K_UP, K_w] and player.floor:
+			if event.key in [K_UP, K_w] and player.floor: #^
 				player.vel[1] = -10
 				player.floor = False
-			if event.key == K_g:
+			if event.key == K_r: #slow down
+				fps = 10
+			if event.key == K_f: #speed up
+				fps = 60
+			if event.key == K_g:  #defunct?gravty on and off
 				for i in bombs:
 					i.floor = toggle(player.floor)
 					i.vel[1] = 0
 				player.floor = toggle(player.floor)
 				player.vel[1] = 0
-
-			if event.key == pygame.K_q:
-
+			if event.key == pygame.K_q: #quiting
 				Running = False
-			if event.key == pygame.K_SPACE:
+			if event.key == pygame.K_SPACE: #exploding
 				bombsExplode = True
 
 		if event.type == pygame.KEYUP:
