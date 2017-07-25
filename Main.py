@@ -54,6 +54,11 @@ def collide(p1, p2, p3, p4):
 		#if bottom is below top and top is above bottom
 		if p1[0] + p2[0] > p3[0] and p1[0] < p3[0] + p4[0]:
 			return True
+			
+#if point p3 is in p1 with size p2
+def pointCollide(p1, p2, p3):
+	if p1[0] + p2[0] > p3[0] and p1[0] < p3[0] and p1[1] + p2[1] > p3[1] and p1[1] < p3[1]:
+		return True
 
 class Person(object):
 	def __init__(self, coords, size):
@@ -71,6 +76,28 @@ class Person(object):
 	def unCrouch(self):
 		self.crouch = False
 		self.img = 0
+	def Collide(self, i):
+		if collide(i.coords, i.size, self.coords, self.size): #DOWN
+			#if self.vel[1] > 0: #Falling
+			if center(self)[1] < center(i):
+				self.coords[1] = i.coords[1]-self.size[1]
+				self.vel[1] = 0
+				self.floor = True
+		if collide(self.coords, self.size, (i.coords[0], i.coords[1]+3), (i.size[0], i.size[1]-3)): #LEFT / RIGHT
+			if self.vel[0] > 0 and self.coords[0] <= i.coords[0]:
+				self.coords[0] = i.coords[0] - self.size[0]
+				self.vel[0] = 0
+			if self.vel[0] < 0 and self.coords[0]+self.size[0] >= i.coords[0]+i.size[0]:
+				self.coords[0] = i.coords[0] + i.size[0]
+				self.vel[0] = 0
+		if collide(i.coords, i.size, self.coords, self.size): #UP
+			if self.vel[1] < 0: #Up-ing
+				self.coords[1] = i.coords[1]+i.size[1]
+				self.vel[1] = 0
+
+
+		if collide(player.coords, (16, 17), i.coords, i.size):
+			player.floor = True
 		
 player = Person([50, 250], (standardSize))
 
@@ -79,7 +106,7 @@ class movingBlock(object):
 		self.type = type
 		self.coords = coords
 		self.size = size
-		self.img = img
+		self.img = pygame.transform.scale(img, size)
 		self.floor = False
 		self.vel = [0,-15]
 class Brick(object):
@@ -87,7 +114,7 @@ class Brick(object):
 		self.type = type
 		self.coords = coords
 		self.size = size
-		self.img = img
+		self.img = pygame.transform.scale(img, size)
 
 movingblocks = []
 
@@ -104,21 +131,21 @@ class bomb(object):
 
 	def detonatorStandard(self, detRange, mob, standardPower):
 
-		px, py = player.coords
+		px, py = mob.coords
 		bx, by = self.coords
 
 		xd = px - bx
 		yd = py - by
 
 		td = math.hypot(xd, yd)
-		pow = standardPower * (detRange - td)
+		pow = standardPower * ((detRange - td)/detRange)
 
 		if pow < 0:
 			pow = 0
 
 		if (td != 0):
-			player.vel[0] = (xd / td) * pow
-			player.vel[1] = (yd / td) * pow
+			mob.vel[0] += (xd / td) * pow
+			mob.vel[1] += (yd / td) * pow
 
 testBomb = bomb(1, [300, 250], (bombSize), getImg("Bomb"))
 
@@ -130,13 +157,22 @@ bricks = []
 
 
 
+<<<<<<< HEAD
+<<<<<<< HEAD
 def createFloor(coordx,coordy,rx,ry):
 
-	bricks.append(Brick("type",[coordx,coordy],(ry*16,rx*16),brickImg))
+	bricks.append(Brick("type",[coordx,coordy],(ry*16,rx*16),brickImg)) #,brickImg.resize((brickImg.height, brickImg.width * 16)) does not work
 
 	for i in range(rx,ry):
 		bricks.append(Brick("type",[coordx + (16 * i),coordy],(16 * rx,16),brickImg))
+=======
+def createFloor(coordx,coordy,ry,rx, type = 0):
+>>>>>>> 388977992d54495c747432d1a01e0f05707481ee
+=======
+def createFloor(coordx,coordy,ry,rx, type = 0):
+>>>>>>> 388977992d54495c747432d1a01e0f05707481ee
 
+	bricks.append(Brick(type,[coordx,coordy],(rx*16,ry*16),brickImg))
 
 def createWall(coordx,coordy,rx,ry,dir):
 
@@ -156,29 +192,33 @@ def createMovingBlock(coordx,coordy,rx,ry):
 		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
 
 #creates floors and walls based on coor and size
-createFloor(0, 300, 0, 17)
-createWall(0,300,0,4,"down")
+createFloor(0, 300, 1, 17)
+createFloor(0,300,1,4)
 
 createFloor(200, 200, 1, 8)
-createWall(264,216,0,2,"up")
-createMovingBlock(32,200,0,1)
+createFloor(264,216,1,2)
+createMovingBlock(32,200,1,1)
 createFloor(200,400,3,10)
-createFloor(0,704,0,34)
-createFloor(600,500,0,14)
-createFloor(500,300,0,1)
-createFloor(300,170,0,15)
-createFloor(378,245,0,3)
-createFloor(220,190,0,1)
-createWall(300,256,0,10,"down")
+createFloor(0,704,1,34)
+createFloor(600,500,1,14)
+createFloor(500,300,1,1)
+createFloor(300,170,1,15)
+createFloor(378,245,1,3)
+createFloor(220,190,1,1)
+createFloor(300,256,1,10)
 #createFloor(300,332,0,20,)
 #createWall(264,332,0,20,"up")
 
 #Current main screen, basic level.
 Running = True
+
 bombWaitTime = 0
 normalBombWait = 60
-detRange = 48
+detRange = 72
 standardPower = 16
+
+throwPower = 10
+
 #maxFallSpeed != gravity!!
 maxFallSpeed = 16
 gravity = 0.5
@@ -216,7 +256,7 @@ while Running:
 					i.vel[1] = 0
 				player.floor = toggle(player.floor)
 				player.vel[1] = 0
-			if event.key == pygame.K_q: #quiting
+			if event.key == pygame.K_q: #quiting  or raw_input()=="exit" doesnt work
 				Running = False
 			if event.key == pygame.K_SPACE: #exploding
 				bombsExplode = True
@@ -241,16 +281,16 @@ while Running:
 				hy = math.hypot(xChng,yChng)
 
 				if(hy != 0):
-					newBomb.vel[0] = (xChng/hy)*14
-					newBomb.vel[1] = (yChng/hy)*14
+					newBomb.vel[0] = (xChng/hy)*throwPower
+					newBomb.vel[1] = (yChng/hy)*throwPower
 
 				bombs.append(newBomb)
 				bombWaitTime = normalBombWait
 
 	#Player
-	if not player.floor:
-		if player.vel[1] < maxFallSpeed: #maxFallSpeed
-			player.vel[1] += gravity
+	#if not player.floor:
+	if player.vel[1] < maxFallSpeed: #maxFallSpeed
+		player.vel[1] += gravity
 
 	if (not player.floor):
 		if player.vel[0] < .5 and player.motion[0] > 0:
@@ -269,58 +309,18 @@ while Running:
 				player.vel[0] -= 0.5
 			elif player.vel[0] < player.motion[0]:
 				player.vel[0] += 0.5
-
+	#updating dereks location
 	player.coords[0] += player.vel[0]
 	player.coords[1] += player.vel[1]
 	if not collide(player.coords, player.size, (0, 0), size):
 		player.coords = [50, 250]
 
 	player.floor = False
+	plamid = center(player)
 	for i in bricks:
-		'''for f in movingblocks:
-			f.floor =False
-			if collide(i.coords, i.size, f.coords, f.size):
-				if f.vel[1] > 0:
-					f.floor = True
-					f.coords[1] = i.coords[1] - f.size[1]
-				if f.vel[1] < 0:
-					f.coords[1] = i.coords[1] + i.size[1]
-				f.vel[1] = 0
-			screen.blit(f.img, f.coords)
-
-			if collide(i.coords,i.size,player.coords,player.size):
-
-				if player.vel[1] > 0:
-					player.floor = True
-					player.coords[1] = i.coords[1]-player.size[1]
-				if player.vel[1] < 0:
-					player.coords[1] = i.coords[1]+i.size[1]
-
-				player.vel[1] = 0'''
-
-		if collide(i.coords, i.size, player.coords, player.size): #COLLISIONS
-			mid = center(i)
-			if player.vel[1] < 0: #Up-ing
-				player.coords[1] = i.coords[1]+i.size[1]
-				player.vel[1] = 0
-			if player.vel[1] > 0: #Falling
-				player.coords[1] = i.coords[1]-player.size[1]
-				player.vel[1] = 0
-				player.floor = True
-			if collide(player.coords, player.size, (i.coords[0], i.coords[1]+3), (i.size[0], i.size[1]-3)):
-				if player.vel[0] > 0 and player.coords[0] < mid[0]:
-					player.coords[0] = i.coords[0] - player.size[0]
-					player.vel[0] = 0
-				if player.vel[0] < 0 and player.coords[0] > mid[0]:
-					player.coords[0] = i.coords[0] + i.size[0]
-					player.vel[0] = 0
-
-
-		if collide(player.coords, (16, 17), i.coords, i.size):
-			player.floor = True
-
+		player.Collide(i)
 		screen.blit(i.img,i.coords)
-
+		
 	screen.blit(player.images[player.img], player.coords)
 	#Bombs
 	for i in bombs:
@@ -343,7 +343,8 @@ while Running:
 	for i in bombs:
 		if i.isExploding:
 			i.explodeTime -= 1;
-		#if i.explodeTime <= 0:
+		if i.explodeTime <= 0:
+			bombs.remove(i);
 
 
 	#Moving Blocks
