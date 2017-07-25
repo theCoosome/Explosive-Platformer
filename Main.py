@@ -13,19 +13,23 @@ fontComp = pygame.font.SysFont('couriernew', 16, True)
 smallfont = pygame.font.SysFont('couriernew', 12)
 massive = pygame.font.SysFont('couriernew', 200, True)
 
+#sizes so nothinf is hardcoded
 size = (1024, 720)
+standardSize = (16, 16)
+bombSize = ((standardSize[0]/2),(standardSize[1]/2))
+
 screen = pygame.display.set_mode(size)
 
 clock = pygame.time.Clock()
 pygame.display.set_caption("Explosive Platformer")
 #pygame.mouse.set_visible(False)
 
-def getImg(name):
+def getImg(name): #gets images and prints their retrieval
 	full = "assets/"+name+".png"
 	print "Loading: "+full
 	try:
 		return pygame.image.load(full)
-	except pygame.error:
+	except pygame.error: #if image isnt found, substitutes with writing in progress icon
 		print "--File not found. Substituting"
 		return pygame.image.load("assets/wip.png")
 
@@ -34,13 +38,13 @@ brickImg = getImg("Brick")
 personimg = getImg("Human")
 movingImg = getImg("BrickMoving")
 
-def toggle(bool):
+def toggle(bool): #is used to make bomb and players stop when in contact with floor
 	if bool:
 		return False
 	else:
 		return True
 		
-def center(obj):
+def center(obj): #finds center of object sent to function
 	return (obj.coords[0]+(obj.size[0]/2), obj.coords[1]+(obj.size[1]/2))
 
 #object one coord pair, size, object two coord pair and size
@@ -55,7 +59,7 @@ class Person(object):
 	def __init__(self, coords, size):
 		self.coords = coords
 		self.size = size
-		self.vel = [0, -15]
+		self.vel = [0, -15] # starts going up
 		self.motion = [0.0, 0.0] #attempted motion, xy direction
 		self.floor = False #is on ground
 		self.crouch = False
@@ -63,12 +67,12 @@ class Person(object):
 		self.img = 0
 	def Crouch(self):
 		self.crouch = True
-		self.img += 1
+		self.img = 1
 	def unCrouch(self):
 		self.crouch = False
-		self.img -= 1
+		self.img = 0
 		
-player = Person([50, 250], (16, 16))
+player = Person([50, 250], (standardSize))
 
 class movingBlock(object):
 	def __init__(self, type, coords, size, img):
@@ -95,7 +99,7 @@ class bomb(object):
 		self.size = size
 		self.img = img
 		self.vel = [0, -15]
-testBomb = bomb(1, [300, 250], (8, 8), getImg("Bomb"))
+testBomb = bomb(1, [300, 250], (bombSize), getImg("Bomb"))
 
 bombs = [testBomb]
 
