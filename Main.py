@@ -8,6 +8,7 @@ fps = 60
 
 WHITE = pygame.Color(255, 255, 255)
 
+pygame.mouse.set_visible(False)
 font = pygame.font.SysFont('couriernew', 13)
 fontComp = pygame.font.SysFont('couriernew', 16, True)
 smallfont = pygame.font.SysFont('couriernew', 12)
@@ -43,6 +44,10 @@ personimg = getImg("Derek")
 movingImg = getImg("BrickMoving")
 destructableImg = getImg("BrickDestructable")
 bombImg = getImg("Bomb")
+
+#Mice
+AimImg = getImg("Mouse/Aim")
+mouseImg = AimImg
 
 
 def toggle(bool):  # is used to make bomb and players stop when in contact with floor
@@ -321,6 +326,7 @@ totalLvls = 2
 createLevel(currLvl)
 
 while Running:
+	mousepos = pygame.mouse.get_pos()
 	if bombWaitTime > 0:  # sets off bomb
 		bombWaitTime -= 1
 	bombsExplode = False
@@ -501,5 +507,6 @@ while Running:
 				i.vel[0] = Zero(i.vel[0], friction)
 		screen.blit(i.img,i.coords)
 			
+	screen.blit(mouseImg, (mousepos[0]-3, mousepos[1]-3))
 	pygame.display.update()
 	clock.tick(fps)
