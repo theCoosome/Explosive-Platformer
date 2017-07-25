@@ -35,7 +35,7 @@ def getImg(name): #gets images and prints their retrieval
 
 #SET GET IMAGES HERE
 brickImg = getImg("Brick")
-personimg = getImg("Human")
+personimg = getImg("Derek")
 movingImg = getImg("BrickMoving")
 
 def toggle(bool): #is used to make bomb and players stop when in contact with floor
@@ -68,7 +68,7 @@ class Person(object):
 		self.motion = [0.0, 0.0] #attempted motion, xy direction
 		self.floor = False #is on ground
 		self.crouch = False
-		self.images = [getImg("Human"), getImg("HumanCrouch")]
+		self.images = [getImg("Derek"), getImg("DerekCrouch")]
 		self.img = 0
 	def Crouch(self):
 		self.crouch = True
@@ -119,24 +119,41 @@ movingblocks = []
 
 class bomb(object):
 	def __init__(self, type, coords, size, img):
+		self.explodeTime = 10
+		self.isExploding = False
 		self.floor = False
 		self.type = type
 		self.coords = coords
 		self.size = size
 		self.img = img
 		self.vel = [0, -15]
+
+	def detonatorStandard(self, detRange, mob, standardPower):
+
+		px, py = player.coords
+		bx, by = self.coords
+
+		xd = px - bx
+		yd = py - by
+
+		td = math.hypot(xd, yd)
+		pow = standardPower * (detRange/(detRange - td))
+
+		if pow < 0:
+			pow = 0
+
+		if (td != 0):
+			mob.vel[0] = (xd / td) * pow
+			mob.vel[1] = (yd / td) * pow
+
 testBomb = bomb(1, [300, 250], (bombSize), getImg("Bomb"))
 
 bombs = [testBomb]
 
 bricks = []
 
-def detonatorStandard(bomb, detRange, player):
-	px, py = player.coords
-	bx, by = bomb.coords
-	xd = px - bx
-	yd = py - by
-	td = hypot(xd, yd)
+
+
 
 
 def createFloor(coordx,coordy,rx,ry):
@@ -154,22 +171,31 @@ def createWall(coordx,coordy,rx,ry,dir):
 		if dir == "up":
 			bricks.append(Brick("type", [coordx, coordy], (ry*16,rx*16), brickImg))
 
-
 createFloor(0, 300, 1, 17)
-def createMovingBlock(coordx,coordy,rx,ry):
-	for i in range(rx,ry):
-		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
 
 def createMovingBlock(coordx,coordy,rx,ry):
 	for i in range(rx,ry):
 		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
 
+def createMovingBlock(coordx,coordy,rx,ry):
+	for i in range(rx,ry):
+		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
+
+#creates floors and walls based on coor and size
 createFloor(0, 300, 0, 17)
 createWall(0,300,0,4,"down")
 
 createFloor(200, 200, 1, 8)
 createWall(264,216,0,2,"up")
 createMovingBlock(32,200,0,1)
+createFloor(200,400,3,10)
+createFloor(0,704,0,34)
+createFloor(600,500,0,14)
+createFloor(500,300,0,1)
+createFloor(300,170,0,15)
+createFloor(378,245,0,3)
+createFloor(220,190,0,1)
+createWall(300,256,0,10,"down")
 #createFloor(300,332,0,20,)
 #createWall(264,332,0,20,"up")
 
@@ -178,12 +204,15 @@ Running = True
 bombWaitTime = 0
 normalBombWait = 60
 detRange = 48
-standardPower = 16
+standardPower = 4
+#maxFallSpeed != gravity!!
 maxFallSpeed = 16
 gravity = 0.5
 
+affectedByBombs = [player]
+
 while Running:
-	if bombWaitTime > 0:
+	if bombWaitTime > 0: #sets off bomb
 		bombWaitTime -= 1
 	bombsExplode = False
 	bombType = 1
@@ -193,32 +222,29 @@ while Running:
 	for event in pygame.event.get():
 		if event.type == pygame.KEYDOWN:
 			#movement
-			if event.key in [K_LEFT, K_a]:
+			if event.key in [K_LEFT, K_a]: #move <-
 				player.motion[0] -= 2.0
-			if event.key in [K_RIGHT, K_d]:
+			if event.key in [K_RIGHT, K_d]: #move ->
 				player.motion[0] += 2.0
-			if event.key in [K_DOWN, K_s]:
+			if event.key in [K_DOWN, K_s]: #v
 				player.motion[1] += 0.5
 				player.Crouch()
-			if event.key == K_r:
-				fps = 10
-			if event.key == K_f:
-				fps = 60
-
-			if event.key in [K_UP, K_w] and player.floor:
+			if event.key in [K_UP, K_w] and player.floor: #^
 				player.vel[1] = -10
 				player.floor = False
-			if event.key == K_g:
+			if event.key == K_r: #slow down
+				fps = 10
+			if event.key == K_f: #speed up
+				fps = 60
+			if event.key == K_g:  #defunct?gravty on and off
 				for i in bombs:
 					i.floor = toggle(player.floor)
 					i.vel[1] = 0
 				player.floor = toggle(player.floor)
 				player.vel[1] = 0
-
-			if event.key == pygame.K_q:
-
+			if event.key == pygame.K_q: #quiting
 				Running = False
-			if event.key == pygame.K_SPACE:
+			if event.key == pygame.K_SPACE: #exploding
 				bombsExplode = True
 
 		if event.type == pygame.KEYUP:
@@ -238,11 +264,11 @@ while Running:
 				xChng = x - player.coords[0]
 				yChng = y - player.coords[1]
 
-				hypot = math.hypot(xChng,yChng)
+				hy = math.hypot(xChng,yChng)
 
-				if(hypot != 0):
-					newBomb.vel[0] = (xChng/hypot)*14
-					newBomb.vel[1] = (yChng/hypot)*14
+				if(hy != 0):
+					newBomb.vel[0] = (xChng/hy)*14
+					newBomb.vel[1] = (yChng/hy)*14
 
 				bombs.append(newBomb)
 				bombWaitTime = normalBombWait
@@ -255,19 +281,19 @@ while Running:
 	if (not player.floor):
 		if player.vel[0] < .5 and player.motion[0] > 0:
 			player.vel[0] += player.motion[0]/4
-		if player.vel[0] > -.5 and player.motion[0] < 0:
+		elif player.vel[0] > -.5 and player.motion[0] < 0:
 			player.vel[0] += player.motion[0]/4
 
 	else:
 		if player.crouch:
 			if player.vel[0] > player.motion[0]/4:
 				player.vel[0] -= 0.5
-			if player.vel[0] < player.motion[0]/4:
+			elif player.vel[0] < player.motion[0]/4:
 				player.vel[0] += 0.5
 		else:
 			if player.vel[0] > player.motion[0]:
 				player.vel[0] -= 0.5
-			if player.vel[0] < player.motion[0]:
+			elif player.vel[0] < player.motion[0]:
 				player.vel[0] += 0.5
 
 	player.coords[0] += player.vel[0]
@@ -293,8 +319,17 @@ while Running:
 
 	if bombsExplode:
 		for i in bombs:
-
+			i.isExploding = True
 			i.img = personimg
+			for p in affectedByBombs:
+				if i.type == 1:
+					i.detonatorStandard(detRange, p, standardPower)
+
+
+	for i in bombs:
+		if i.isExploding:
+			i.explodeTime -= 1;
+		#if i.explodeTime <= 0:
 
 
 	#Moving Blocks
