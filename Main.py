@@ -159,7 +159,8 @@ bombWaitTime = 0
 normalBombWait = 60
 detRange = 48
 standardPower = 16
-gravity = 11
+maxFallSpeed = 16
+gravity = 0.5
 
 while Running:
 	if bombWaitTime > 0:
@@ -194,8 +195,6 @@ while Running:
 				player.floor = toggle(player.floor)
 				player.vel[1] = 0
 
-
-
 			if event.key == pygame.K_q:
 
 				Running = False
@@ -213,9 +212,8 @@ while Running:
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			if bombWaitTime == 0:
-				newBomb = bomb(bombType, [player.coords[0] - 5, player.coords[1]], (8, 8), getImg("Bomb"))
+				newBomb = bomb(bombType, [player.coords[0], player.coords[1]], (8, 8), getImg("Bomb"))
 				x, y = pygame.mouse.get_pos()
-
 
 				xChng = x - player.coords[0]
 				yChng = y - player.coords[1]
@@ -226,22 +224,13 @@ while Running:
 					newBomb.vel[0] = (xChng/hypot)*14
 					newBomb.vel[1] = (yChng/hypot)*14
 
-				xChng = player.coords[0] - x
-				yChng = player.coords[1] - y
-
-				hypot = math.hypot(xChng,yChng)
-
-				newBomb.vel[0] = xChng/hypot*14
-				newBomb.vel[1] = yChng/hypot*14
-
-
 				bombs.append(newBomb)
 				bombWaitTime = normalBombWait
 
 	#Player
 	if not player.floor:
-		if player.vel[1] < gravity: #Gravity
-			player.vel[1] += 0.5
+		if player.vel[1] < maxFallSpeed: #maxFallSpeed
+			player.vel[1] += gravity
 
 	if (not player.floor):
 		if player.vel[0] < .5 and player.motion[0] > 0:
@@ -352,8 +341,8 @@ while Running:
 	#Bombs
 	for i in bombs:
 		if not i.floor:
-			if i.vel[1] < gravity:
-				i.vel[1] += 0.5
+			if i.vel[1] < maxFallSpeed:
+				i.vel[1] += gravity
 		i.coords[0] += i.vel[0]
 		i.coords[1] += i.vel[1]
 		screen.blit(i.img, i.coords)
@@ -368,8 +357,8 @@ while Running:
 	for i in movingblocks:
 		i.floor = False
 		if not i.floor:
-			if i.vel[1] < gravity:  # Gravity
-				i.vel[1] += 0.5
+			if i.vel[1] < maxFallSpeed:  #Gravity
+				i.vel[1] += gravity
 		i.coords[0] += i.vel[0]
 		i.coords[1] += i.vel[1]
 	pygame.display.update()
