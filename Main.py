@@ -113,13 +113,23 @@ player = Person([50, 250], (standardSize))
 
 
 class movingBlock(object):
-	def __init__(self, type, coords, size, img):
+	def __init__(self, type, coords, size):
+		self.hp = 1
 		self.type = type
 		self.coords = coords
 		self.size = size
-		self.img = pygame.transform.scale(img, size)
 		self.floor = False
 		self.vel = [0, 0]
+		
+		if type == 0: #Movable
+			self.img = pygame.transform.scale(movingImg, size)
+		
+		if type == 1: #Destructable
+			self.img = pygame.transform.scale(destructableImg, size)
+			
+		if type == 2: #Movable and Destructable
+			self.img = pygame.transform.scale(destructableImg, size)
+			
 		
 	def Collide(self, i):
 		if collide(self.coords, self.size, i.coords, i.size): #LEFT / RIGHT
@@ -238,7 +248,10 @@ createFloor(0, 300, 1, 4)
 createFloor(200, 200, 1, 8)
 createFloor(264, 216, 1, 2)
 #createMovingBlock(32, 200, 1, 1)
-movingblocks.append(movingBlock(0, [350, 20], (48, 32), movingImg))
+movingblocks.append(movingBlock(0, [350, 20], (48, 32)))
+temp = movingBlock(1, [208, 224], (64, 80))
+temp.hp = 50
+movingblocks.append(temp)
 createFloor(200, 400, 3, 10)
 createFloor(0, 704, 1, 34)
 createFloor(600, 500, 1, 14)
@@ -297,7 +310,7 @@ while Running:
 				player.motion[1] += 0.5
 				player.Crouch()
 			if event.key in [K_UP, K_w] and player.floor:  # ^
-				player.vel[1] = -10
+				player.vel[1] = -8
 				player.floor = False
 			if event.key == K_r:  # slow down
 				fps = 10
@@ -316,7 +329,7 @@ while Running:
 			if event.key == pygame.K_t: #print cursor location, useful for putting stuff in the right spot
 				x, y = pygame.mouse.get_pos()
 				print "Absolute: ", x, y
-				print "16 base:", x/16, y/16
+				print "16 base:", x/16, y/16, "("+str((x/16)*16), str((y/16)*16)+")"
 
 		if event.type == pygame.KEYUP:
 			if event.key in [K_LEFT, K_a]:
@@ -363,21 +376,21 @@ while Running:
 				player.vel[0] += 0.5
 		else:
 			if player.vel[0] > player.motion[0]:
-				player.vel[0] -= 0.5
+			a	player.vel[0] -= 0.5
 			elif player.vel[0] < player.motion[0]:
 				player.vel[0] += 0.5
 
-	if player.vel[0]  <=-31:
-		player.vel[0] = -31
+	if player.vel[0]  <=-30:
+		player.vel[0] = -30
 
-	if player.vel[1] <=-31:
-		player.vel[1] = -31
+	if player.vel[1] <=-30:
+		player.vel[1] = -30
 
-	if player.vel[0] >= 31:
-		player.vel[0] = 31
+	if player.vel[0] >= 30:
+		player.vel[0] = 30
 
-	if player.vel[1] >= 31:
-		player.vel[1] = 31
+	if player.vel[1] >= 30:
+		player.vel[1] = 30
 
 	player.coords[0] += player.vel[0]
 	player.coords[1] += player.vel[1]
@@ -396,6 +409,11 @@ while Running:
 	screen.blit(player.images[player.img], player.coords)
 	# Bombs
 	for i in bombs:
+		if i.isExploding:
+			i.explodeTime -= 1
+		if i.explodeTime <= 0:
+			bombs.remove(i)
+			
 		if not i.stuck:
 			if i.vel[1] < maxFallSpeed:
 				i.vel[1] += gravity
@@ -423,24 +441,19 @@ while Running:
 					i.detonatorStandard(detRange, p, standardPower)
 				
 
-	for i in bombs:
-		if i.isExploding:
-			i.explodeTime -= 1
-		if i.explodeTime <= 0:
-			bombs.remove(i)
-
 	# Moving Blocks
 	for i in movingblocks:
 		player.Collide(i)
-		i.floor = False
-		if i.vel[1] < maxFallSpeed:  # Gravity
-			i.vel[1] += gravity
-		i.coords[0] += i.vel[0]
-		i.coords[1] += i.vel[1]
-		for p in bricks:
-			i.Collide(p)
-		if i.floor:
-			i.vel[0] = Zero(i.vel[0], friction)
+		if i.type in [0, 2]:
+			i.floor = False
+			if i.vel[1] < maxFallSpeed:  # Gravity
+				i.vel[1] += gravity
+			i.coords[0] += i.vel[0]
+			i.coords[1] += i.vel[1]
+			for p in bricks:
+				i.Collide(p)
+			if i.floor:
+				i.vel[0] = Zero(i.vel[0], friction)
 		screen.blit(i.img,i.coords)
 			
 	pygame.display.update()
