@@ -128,23 +128,42 @@ class bomb(object):
 		self.img = img
 		self.vel = [0, -15]
 
+	def Collide(self, i):
+		if collide(i.coords, i.size, self.coords, self.size): #DOWN
+			#if self.vel[1] > 0: #Falling
+			if center(self)[1] < center(i):
+				self.coords[1] = i.coords[1]-self.size[1]
+				self.vel[1] = 0
+				self.floor = True
+		if collide(self.coords, self.size, (i.coords[0], i.coords[1]+3), (i.size[0], i.size[1]-3)): #LEFT / RIGHT
+			if self.vel[0] > 0 and self.coords[0] <= i.coords[0]:
+				self.coords[0] = i.coords[0] - self.size[0]
+				self.vel[0] = 0
+			if self.vel[0] < 0 and self.coords[0]+self.size[0] >= i.coords[0]+i.size[0]:
+				self.coords[0] = i.coords[0] + i.size[0]
+				self.vel[0] = 0
+		if collide(i.coords, i.size, self.coords, self.size): #UP
+			if self.vel[1] < 0: #Up-ing
+				self.coords[1] = i.coords[1]+i.size[1]
+				self.vel[1] = 0
+
 	def detonatorStandard(self, detRange, mob, standardPower):
 
-		px, py = player.coords
+		px, py = mob.coords
 		bx, by = self.coords
 
 		xd = px - bx
 		yd = py - by
 
 		td = math.hypot(xd, yd)
-		pow = standardPower * (detRange/(detRange - td))
+		pow = standardPower * ((detRange - td)/detRange)
 
 		if pow < 0:
 			pow = 0
 
 		if (td != 0):
-			mob.vel[0] = (xd / td) * pow
-			mob.vel[1] = (yd / td) * pow
+			mob.vel[0] += (xd / td) * pow
+			mob.vel[1] += (yd / td) * pow
 
 #testBomb = bomb(1, [300, 250], (bombSize), getImg("Bomb"))
 
@@ -199,10 +218,14 @@ createFloor(300,256,1,10)
 
 #Current main screen, basic level.
 Running = True
+
 bombWaitTime = 0
 normalBombWait = 60
-detRange = 48
-standardPower = 4
+detRange = 72
+standardPower = 16
+
+throwPower = 10
+
 #maxFallSpeed != gravity!!
 maxFallSpeed = 16
 gravity = 0.5
@@ -265,8 +288,8 @@ while Running:
 				hy = math.hypot(xChng,yChng)
 
 				if(hy != 0):
-					newBomb.vel[0] = (xChng/hy)*14
-					newBomb.vel[1] = (yChng/hy)*14
+					newBomb.vel[0] = (xChng/hy)*throwPower
+					newBomb.vel[1] = (yChng/hy)*throwPower
 
 				bombs.append(newBomb)
 				bombWaitTime = normalBombWait
@@ -303,6 +326,8 @@ while Running:
 	plamid = center(player)
 	for i in bricks:
 		player.Collide(i)
+		for p in bombs:
+			p.Collide(i)
 		screen.blit(i.img,i.coords)
 		
 	screen.blit(player.images[player.img], player.coords)
@@ -327,7 +352,8 @@ while Running:
 	for i in bombs:
 		if i.isExploding:
 			i.explodeTime -= 1;
-		#if i.explodeTime <= 0:
+		if i.explodeTime <= 0:
+			bombs.remove(i);
 
 
 	#Moving Blocks
