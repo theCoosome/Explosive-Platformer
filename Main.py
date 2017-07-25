@@ -7,6 +7,7 @@ pygame.init()
 fps = 60
 
 WHITE = pygame.Color(255, 255, 255)
+BLACK = pygame.Color(0, 0, 0)
 
 pygame.mouse.set_visible(False)
 font = pygame.font.SysFont('couriernew', 13)
@@ -513,6 +514,12 @@ while Running:
 	for i in bombs:
 		if i.isExploding:
 			i.explodeTime -= 1
+			if i.explodeTime > 10:
+				pygame.draw.circle(screen, 
+				BLACK, 
+				(int(center(i)[0]), int(center(i)[1])), 
+				detRange-player.size[0], 1)
+		
 		if i.explodeTime <= 0:
 			bombs.remove(i)
 			
