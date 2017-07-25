@@ -93,28 +93,42 @@ movingblocks = []
 
 class bomb(object):
 	def __init__(self, type, coords, size, img):
+		self.explodeTime = 10
+		self.isExploding = False
 		self.floor = False
 		self.type = type
 		self.coords = coords
 		self.size = size
 		self.img = img
 		self.vel = [0, -15]
+
+	def detonatorStandard(self, detRange, mob, standardPower):
+
+		px, py = player.coords
+		bx, by = self.coords
+
+		xd = px - bx
+		yd = py - by
+
+		td = math.hypot(xd, yd)
+		pow = standardPower * (detRange - td)
+
+		if pow < 0:
+			pow = 0
+
+		if (td != 0):
+			player.vel[0] = (xd / td) * pow
+			player.vel[1] = (yd / td) * pow
+
 testBomb = bomb(1, [300, 250], (bombSize), getImg("Bomb"))
 
 bombs = [testBomb]
 
 bricks = []
 
-def detonatorStandard(bomb, detRange, player, standardPower):
-	px, py = player.coords
-	bx, by = bomb.coords
-	xd = px - bx
-	yd = py - by
-	td = hypot(xd, yd)
-	pow = standardPower * (detRange-td)
-	if pow < 0:
-		pow = 0
-	
+
+
+
 
 def createFloor(coordx,coordy,rx,ry):
 
@@ -158,6 +172,8 @@ detRange = 48
 standardPower = 16
 maxFallSpeed = 16
 gravity = 0.5
+
+affectedByBombs = [player]
 
 while Running:
 	if bombWaitTime > 0:
@@ -215,11 +231,11 @@ while Running:
 				xChng = x - player.coords[0]
 				yChng = y - player.coords[1]
 
-				hypot = math.hypot(xChng,yChng)
+				hy = math.hypot(xChng,yChng)
 
-				if(hypot != 0):
-					newBomb.vel[0] = (xChng/hypot)*14
-					newBomb.vel[1] = (yChng/hypot)*14
+				if(hy != 0):
+					newBomb.vel[0] = (xChng/hy)*14
+					newBomb.vel[1] = (yChng/hy)*14
 
 				bombs.append(newBomb)
 				bombWaitTime = normalBombWait
@@ -310,8 +326,17 @@ while Running:
 
 	if bombsExplode:
 		for i in bombs:
-
+			i.isExploding = True
 			i.img = personimg
+			for p in affectedByBombs:
+				if i.type == 1:
+					i.detonatorStandard(detRange, p, standardPower)
+
+
+	for i in bombs:
+		if i.isExploding:
+			i.explodeTime -= 1;
+		#if i.explodeTime <= 0:
 
 
 	#Moving Blocks
