@@ -77,21 +77,20 @@ class Person(object):
 		self.crouch = False
 		self.img = 0
 	def Collide(self, i):
-		if collide(i.coords, i.size, self.coords, self.size): #DOWN
-			#if self.vel[1] > 0: #Falling
-			if center(self)[1] < center(i):
-				self.coords[1] = i.coords[1]-self.size[1]
-				self.vel[1] = 0
-				self.floor = True
-		if collide(self.coords, self.size, (i.coords[0], i.coords[1]+3), (i.size[0], i.size[1]-3)): #LEFT / RIGHT
+		if collide(self.coords, self.size, (i.coords[0], i.coords[1]+5), (i.size[0], i.size[1]-5)): #LEFT / RIGHT
 			if self.vel[0] > 0 and self.coords[0] <= i.coords[0]:
 				self.coords[0] = i.coords[0] - self.size[0]
 				self.vel[0] = 0
 			if self.vel[0] < 0 and self.coords[0]+self.size[0] >= i.coords[0]+i.size[0]:
 				self.coords[0] = i.coords[0] + i.size[0]
 				self.vel[0] = 0
+		if collide(i.coords, i.size, self.coords, self.size): #DOWN
+			if center(self)[1] < center(i)[1]:
+				self.coords[1] = i.coords[1]-self.size[1]
+				self.vel[1] = 0
+				self.floor = True
 		if collide(i.coords, i.size, self.coords, self.size): #UP
-			if self.vel[1] < 0: #Up-ing
+			if center(self)[1] > center(i)[1]: #Up-ing
 				self.coords[1] = i.coords[1]+i.size[1]
 				self.vel[1] = 0
 
@@ -147,9 +146,9 @@ class bomb(object):
 			mob.vel[0] = (xd / td) * pow
 			mob.vel[1] = (yd / td) * pow
 
-testBomb = bomb(1, [300, 250], (bombSize), getImg("Bomb"))
+#testBomb = bomb(1, [300, 250], (bombSize), getImg("Bomb"))
 
-bombs = [testBomb]
+bombs = []
 
 bricks = []
 
@@ -179,6 +178,8 @@ def createMovingBlock(coordx,coordy,rx,ry):
 		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
 
 #creates floors and walls based on coor and size
+createFloor(0, 0, 1, 64)
+
 createFloor(0, 300, 1, 17)
 createFloor(0,300,1,4)
 
