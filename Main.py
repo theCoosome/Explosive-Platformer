@@ -312,21 +312,20 @@ def Zero(num, rate, goal = 0):
 	return num
 
 affectedByBombs = [player]
-<<<<<<< HEAD
+
 movingLeft = False
 movingRight = False
 gR = 0
 gL = 0
 isCrouching = False
 counter = 0
-=======
 
 currLvl = 0
 totalLvls = 2
 
 createLevel(currLvl)
 
->>>>>>> 9b764ccb80ef355ec4a31d74a5e8745f2c188bfb
+
 while Running:
 	if bombWaitTime > 0:  # sets off bomb
 		bombWaitTime -= 1
