@@ -13,7 +13,7 @@ fontComp = pygame.font.SysFont('couriernew', 16, True)
 smallfont = pygame.font.SysFont('couriernew', 12)
 massive = pygame.font.SysFont('couriernew', 200, True)
 
-#sizes so nothinf is hardcoded
+#sizes so nothing is hardcoded
 size = (1024, 720)
 standardSize = (16, 16)
 bombSize = ((standardSize[0]/2),(standardSize[1]/2))
@@ -70,6 +70,7 @@ class Person(object):
 		self.img = 1
 	def unCrouch(self):
 		self.crouch = False
+<<<<<<< HEAD
 		self.img = 0
 		
 player = Person([50, 250], (standardSize))
@@ -251,7 +252,7 @@ while Running:
 
 	player.floor = False
 	for i in bricks:
-		for f in movingblocks:
+		'''for f in movingblocks:
 			f.floor =False
 			if collide(i.coords, i.size, f.coords, f.size):
 				if f.vel[1] > 0:
@@ -270,10 +271,17 @@ while Running:
 				if player.vel[1] < 0:
 					player.coords[1] = i.coords[1]+i.size[1]
 
-				player.vel[1] = 0
+				player.vel[1] = 0'''
 
 		if collide(i.coords, i.size, player.coords, player.size): #COLLISIONS
 			mid = center(i)
+			if player.vel[1] < 0: #Up-ing
+				player.coords[1] = i.coords[1]+i.size[1]
+				player.vel[1] = 0
+			if player.vel[1] > 0: #Falling
+				player.coords[1] = i.coords[1]-player.size[1]
+				player.vel[1] = 0
+				player.floor = True
 			if collide(player.coords, player.size, (i.coords[0], i.coords[1]+3), (i.size[0], i.size[1]-3)):
 				if player.vel[0] > 0 and player.coords[0] < mid[0]:
 					player.coords[0] = i.coords[0] - player.size[0]
@@ -283,54 +291,11 @@ while Running:
 					player.vel[0] = 0
 
 
-		if collide(i.coords, i.size, player.coords, player.size): #COLLISIONS
-			if player.vel[1] < 0: #Up-ing
-				player.coords[1] = i.coords[1]+i.size[1]
-
-				player.vel[1] = 0
-	if collide(i.coords, i.size, player.coords, player.size): #COLLISIONS
-		mid = center(i)
-		if collide(player.coords, player.size, (i.coords[0], i.coords[1]+3), (i.size[0], i.size[1]-3)):
-			if player.vel[0] > 0 and player.coords[0] < mid[0]:
-				player.coords[0] = i.coords[0] - player.size[0]
-				player.vel[0] = 0
-			if player.vel[0] < 0 and player.coords[0] > mid[0]:
-				player.coords[0] = i.coords[0] + i.size[0]
-				player.vel[0] = 0
-
-		if player.vel[1] < 0: #Up-ing
-			player.coords[1] = i.coords[1]+i.size[1]
-			player.vel[1] = 0
-		if player.vel[1] > 0: #Falling
-			player.coords[1] = i.coords[1]-player.size[1]
-			player.vel[1] = 0
-			player.floor = True
-
 		if collide(player.coords, (16, 17), i.coords, i.size):
 			player.floor = True
 
 		screen.blit(i.img,i.coords)
 
-
-	'''for f in movingblocks:
-		f.floor = False
-		if collide(i.coords, i.size, f.coords, f.size):
-			if f.vel[1] > 0:
-				f.floor = True
-				f.coords[1] = i.coords[1] - f.size[1]
-			if f.vel[1] < 0:
-				f.coords[1] = i.coords[1] + i.size[1]
-			f.vel[1] = 0
-		screen.blit(f.img, f.coords)
-
-		if collide(i.coords,i.size,player.coords,player.size):
-
-			if player.vel[1] > 0:
-				player.floor = True
-				player.coords[1] = i.coords[1]-player.size[1]
-			if player.vel[1] < 0:
-				player.coords[1] = i.coords[1]+i.size[1]
-			player.vel[1] = 0'''
 	screen.blit(player.images[player.img], player.coords)
 	#Bombs
 	for i in bombs:
