@@ -111,8 +111,10 @@ def detonatorStandard(bomb, detRange, player, standardPower):
 	xd = px - bx
 	yd = py - by
 	td = hypot(xd, yd)
-	pow = standardPower
-
+	pow = standardPower * (detRange-td)
+	if pow < 0:
+		pow = 0
+	
 
 def createFloor(coordx,coordy,rx,ry):
 
