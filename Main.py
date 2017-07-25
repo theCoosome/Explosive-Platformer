@@ -276,6 +276,8 @@ def createFloor(coordx, coordy, ry, rx, type=0):
 
 def wipeFloor():
 	del bricks[:]
+	del bombs[:]
+	del movingblocks[:]
 
 
 def createWall(coordx, coordy, rx, ry, dir):
@@ -296,6 +298,7 @@ totalLvls = 2	#CHANGE THIS WHEN ADDING LVLS
 def createLevel(lvl):	#Almost all refrences of this should be written createLevel(currLvl). Only use an int for bugtesting.
 	wipeFloor()
 	spawnChar()
+
 	if (lvl == 0):
 		createFloor(0, 0, 1, 64)
 		createFloor(0, 300, 1, 17)
@@ -393,6 +396,8 @@ while Running:
 				fps = 10
 			if event.key == K_f:  # speed up
 				fps = 60
+			if event.key == K_x:
+				createLevel(currLvl)
 			if event.key == K_g:  # defunct?gravty on and off
 				for i in bombs:
 					i.floor = toggle(player.floor)
