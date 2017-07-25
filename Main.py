@@ -44,6 +44,8 @@ destructableImg = getImg("BrickDestructable")
 derek = getImg("Derek")
 left = [getImg("anim1l"),getImg("anim2l"),getImg("anim3l")]
 right = [getImg("anim1r"),getImg("Derek"),getImg("anim2r")]
+crouchImg = getImg("DerekCrouch")
+
 def toggle(bool):  # is used to make bomb and players stop when in contact with floor
 	if bool:
 		return False
@@ -356,6 +358,7 @@ while Running:
 				movingLeft = False
 			if event.key in [K_DOWN, K_s]:  # v
 				player.motion[1] += 0.5
+				isCrouching = True
 				player.Crouch()
 			if event.key in [K_UP, K_w] and player.floor:  # ^
 				player.vel[1] = -8
@@ -473,6 +476,8 @@ while Running:
 	if player.vel[0] == 0 and player.vel[1] == 0:
 		movingLeft = False
 		movingRight = False
+	if isCrouching:
+		personimg = crouchImg;
 	if player.motion > 0:
 		if movingRight:
 			counter += 1
