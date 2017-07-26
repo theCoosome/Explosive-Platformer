@@ -34,11 +34,13 @@ def getImg(name):  # gets images and prints their retrieval
 		print "--File not found. Substituting"
 		return pygame.image.load("assets/wip.png")
 
-brickImg = getImg("Brick")
-personimg = getImg("Derek")
+brickImg = getImg("Bricks/Brick")
+personimg = getImg("Dereks/Derek")
 movingImg = getImg("BrickMoving")
 destructableImg = getImg("BrickDestructable")
 bombImg = getImg("Bomb")
+
+bricks = []
 
 #Mouse Images
 AimImg = getImg("Mouse/Aim")
@@ -53,6 +55,17 @@ mouseImg = mouseImgs[0]
 
 def center(obj):  # finds center of object sent to function
 	return (obj.coords[0] + (obj.size[0] / 2), obj.coords[1] + (obj.size[1] / 2))
+
+def pointCollide(p1, p2, p3):
+	if p1[0] + p2[0] > p3[0] and p1[0] < p3[0] and p1[1] + p2[1] > p3[1] and p1[1] < p3[1]:
+		return True
+
+def collide(p1, p2, p3, p4):
+	# if right side is right of left side, and left side left of right side
+	if p1[1] + p2[1] > p3[1] and p1[1] < p3[1] + p4[1]:
+		# if bottom is below top and top is above bottom
+		if p1[0] + p2[0] > p3[0] and p1[0] < p3[0] + p4[0]:
+			return True
 
 class Person(object):
 	def __init__(self, coords, size):
@@ -148,6 +161,17 @@ class Brick(object):
 		self.img = pygame.transform.scale(img, size)
 
 
+def drawBricks():
+	for i in bricks:
+		screen.blit(i.img, i.coords)
+
+def createFloor(coordx, coordy, ry, rx, type):
+	if type == 0:
+		bricks.append(Brick(type, [coordx, coordy], (rx * 16, ry * 16), brickImg))
+	else:
+		
+
+
 placeMode = "brick"
 
 movingblocks = []
@@ -232,9 +256,14 @@ gL = 0
 Running = True
 pressedLMB = False
 
+all = []
+
 while Running:
 	mousepos = pygame.mouse.get_pos()
 	screen.fill(WHITE)
+	currImgNum = mouseImgs.index(mouseImg)
+
+	placeRect = Rect(0,0,0,0)
 
 	w, h = size
 
@@ -282,7 +311,24 @@ while Running:
 		if event.type == pygame.MOUSEBUTTONUP:
 			if event.button == 1:
 				pressedLMB = False
+				rectX, rectY = placeRect.topleft
+				brx, bry = placeRect.bottomright
+				if(currImgNum == 1):
+					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry-rectY)/16)), int(math.fabs((brx-rectX)/16)), 0)
+				elif(currImgNum == 2):
+					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry - rectY) / 16)),
+								int(math.fabs((brx - rectX) / 16)), 2)
+				elif(currImgNum == 6):
+					for i in bricks:
+						coords = (min(rectX, brx), min(rectY, bry))
+						pSize = (int(math.fabs(bry-rectY)),int(math.fabs(brx-rectX)))
+						if collide(coords, pSize, i.coords, i.size):
+							print "Touching"
+							del bricks[bricks.index(i)]
 
+
+
+	drawBricks()
 	screen.blit(mouseImg, (mousepos[0] - 3, mousepos[1] - 3))
 	pygame.display.update()
 	clock.tick(60)
