@@ -780,6 +780,8 @@ while Running:
 				mb.Collide(p)
 			screen.blit(p.img,p.coords)
 
+	#UI display
+	screen.blit(DetCurrent.img, (4, 4))
 
 	screen.blit(mouseImg, (mousepos[0]-3, mousepos[1]-3))
 	pygame.display.update()
