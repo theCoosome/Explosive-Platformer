@@ -119,23 +119,26 @@ class Person(object):
 
 	def Collide(self, i):
 		if collide(self.coords, self.size, (i.coords[0], i.coords[1] + 3), (i.size[0], i.size[1] - 3)):  # LEFT / RIGHT
-			p1 = self.coords
+			p1 = center(self)
 			if self.vel[0] > 0 and self.coords[0] <= i.coords[0]:
 				self.coords[0] = i.coords[0] - self.size[0]
 				self.vel[0] = 0
-				pygame.draw.line(screen, RED, p1, self.coords)
+				pygame.draw.line(screen, RED, p1, center(self))
 			if self.vel[0] < 0 and self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
 				self.coords[0] = i.coords[0] + i.size[0]
 				self.vel[0] = 0
-				pygame.draw.line(screen, RED, p1, self.coords)
+				pygame.draw.line(screen, RED, p1, center(self))
 		if collide(i.coords, i.size, self.coords, self.size):  # UP
+			p1 = center(self)
 			if center(self)[1] > center(i)[1]:
 				self.coords[1] = i.coords[1] + i.size[1]
 				self.vel[1] = 0
+				pygame.draw.line(screen, GREEN, p1, center(self))
 			if center(self)[1] < center(i)[1]: #DOWN
 				self.coords[1] = i.coords[1] - self.size[1]
 				self.vel[1] = 0
 				self.floor = True
+				pygame.draw.line(screen, BLUE, p1, center(self))
 		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
 			self.floor = True
 
@@ -409,7 +412,7 @@ while Running:
 				effect.play()
 				player.floor = False
 			if event.key == K_r:  # slow down
-				fps = 10
+				fps /= 2
 			if event.key == K_f:  # speed up
 				fps = 60
 			if event.key == K_x:
