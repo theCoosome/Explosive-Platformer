@@ -3,11 +3,26 @@ from pygame.locals import *
 import math
 from decimal import *
 
+pygame.mixer.pre_init(44100, -16, 2, 2048)
 pygame.init()
 
 size = (1024, 720)
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Explosive Platformer Level Editor")
+
+WHITE = pygame.Color(255, 255, 255)
+BLACK = pygame.Color(0, 0, 0)
+RED = pygame.Color(255, 0, 0)
+GREEN = pygame.Color(0, 255, 0)
+BLUE = pygame.Color(0, 0, 255)
+
+clock = pygame.time.Clock()
+
+pygame.mouse.set_visible(False)
+font = pygame.font.SysFont('couriernew', 13)
+fontComp = pygame.font.SysFont('couriernew', 16, True)
+smallfont = pygame.font.SysFont('couriernew', 12)
+massive = pygame.font.SysFont('couriernew', 200, True)
 
 def getImg(name):  # gets images and prints their retrieval
 	full = "assets/" + name + ".png"
@@ -23,6 +38,17 @@ personimg = getImg("Derek")
 movingImg = getImg("BrickMoving")
 destructableImg = getImg("BrickDestructable")
 bombImg = getImg("Bomb")
+
+#Mouse Images
+AimImg = getImg("Mouse/Aim")
+BrickPlaceImg = getImg("Mouse/Brick")
+DPlaceImg = getImg("Mouse/Destructable")
+MovablePlaceImg = getImg("Mouse/Movable")
+MultiPlaceImg = getImg("Mouse/Multi")
+ExitPlaceImg = getImg("Mouse/Exit")
+RemoveImg = getImg("Mouse/Remove")
+mouseImgs = [AimImg, BrickPlaceImg, DPlaceImg, MovablePlaceImg, MultiPlaceImg, ExitPlaceImg, RemoveImg]
+mouseImg = mouseImgs[0]
 
 def center(obj):  # finds center of object sent to function
 	return (obj.coords[0] + (obj.size[0] / 2), obj.coords[1] + (obj.size[1] / 2))
@@ -121,6 +147,11 @@ class Brick(object):
 		self.img = pygame.transform.scale(img, size)
 
 
+
+
+
+placeMode = "brick"
+
 movingblocks = []
 
 
@@ -184,4 +215,46 @@ class bomb(object):
 			mob.vel[0] += (xd / td) * pow
 			mob.vel[1] += (yd / td) * pow
 
+def Zero(num, rate, goal=0):
+	if num > goal:
+		num -= rate
+		if num < goal:
+			num = goal
+	if num < goal:
+		num += rate
+		if num > goal:
+			num = goal
+	return num
 
+gR = 0
+gL = 0
+
+Running = True
+
+while Running:
+	mousepos = pygame.mouse.get_pos()
+	screen.fill(WHITE)
+
+	for event in pygame.event.get():
+		if event.type == pygame.KEYDOWN:
+			if event.key == pygame.K_q:  # quiting
+				Running = False
+
+		if event.type == pygame.MOUSEBUTTONDOWN:
+			print event.button
+			if event.button == 1:
+				startPlace()
+			if event.button == 4:
+				newImgNum = mouseImgs.index(mouseImg) + 1
+				if newImgNum >= len(mouseImgs):
+					newImgNum = 0
+				mouseImg = mouseImgs[newImgNum]
+			if event.button == 5:
+				newImgNum = mouseImgs.index(mouseImg) - 1
+				if newImgNum < 0:
+					newImgNum = len(mouseImgs)-1
+				mouseImg = mouseImgs[newImgNum]
+
+	screen.blit(mouseImg, (mousepos[0] - 3, mousepos[1] - 3))
+	pygame.display.update()
+	clock.tick(60)
