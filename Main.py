@@ -566,7 +566,7 @@ while Running:
 		if player.motion[0] < 0:
 			personimg = crouchImg[1]
 		else:
-			personimg = crouchImg[0];
+			personimg = crouchImg[0]
 	else:
 		if player.motion[0] > 0:
 			if movingRight:
@@ -636,14 +636,16 @@ while Running:
 	if bombsExplode:
 		for i in bombs:
 			if i.armed:
-				i.isExploding = True
-				i.img = normalBombImgs[0]
-				i.Detonate(player)
-				for p in movingblocks:
-					if i.type == 1:
-						i.Detonate(p)
-				i.stuck = True
-				i.vel = [0, 0]
+				if (i.type != 3) or ():
+					i.isExploding = True
+					i.img = normalBombImgs[0]
+					i.Detonate(player)
+					for p in movingblocks:
+						if i.type == 1:
+							i.Detonate(p)
+					i.stuck = True
+					i.vel = [0, 0]
+			
 				
 				
 	# Moving Blocks
