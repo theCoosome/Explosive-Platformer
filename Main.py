@@ -493,17 +493,17 @@ while Running:
 			elif player.vel[0] < player.motion[0]:
 				player.vel[0] += 0.5
 
-	if player.motion[0]  <=-30:
-		player.motion[0] = -30
+	if player.vel[0]  <=-25:
+		player.vel[0] = -25
 
-	if player.motion[1] <=-30:
-		player.motion[1] = -30
+	if player.vel[1] <=-25:
+		player.vel[1] = -25
 
-	if player.motion[0] >= 30:
-		player.motion[0] = 30
+	if player.vel[0] >= 25:
+		player.vel[0] = 25
 
-	if player.motion[1] >= 30:
-		player.motion[1] = 30
+	if player.vel[1] >= 25:
+		player.vel[1] = 25
 
 	player.coords[0] += player.vel[0]
 	player.coords[1] += player.vel[1]
