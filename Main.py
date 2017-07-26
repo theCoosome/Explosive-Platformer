@@ -240,7 +240,7 @@ class bomb(object):
 
 		td = math.hypot(xd, yd)
 		pow = standardPower * ((detRange - td) / detRange)
-
+		
 		if pow < 0:
 			pow = 0
 
@@ -271,7 +271,6 @@ def spawnChar():
 	player.vel[1] = 0
 	player.vel[0] = 0
 
-
 def createFloor(coordx, coordy, ry, rx, type=0):
 	bricks.append(Brick(type, [coordx, coordy], (rx * 16, ry * 16), brickImg))
 
@@ -279,7 +278,6 @@ def wipeFloor():
 	del bricks[:]
 	del bombs[:]
 	del movingblocks[:]
-
 
 def createWall(coordx, coordy, rx, ry, dir):
 	if dir == "down":
@@ -584,7 +582,7 @@ while Running:
 	if bombsExplode:
 		for i in bombs:
 			i.isExploding = True
-			i.img = getImg("Explosion_Normal/sprite_00")
+			i.img = normalBombImgs[0]
 			for p in affectedByBombs:
 				if i.type == 1:
 					i.detonatorStandard(detRange, p, standardPower)
