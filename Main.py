@@ -131,15 +131,16 @@ class Person(object):
 				pygame.draw.line(screen, RED, p1, center(self))
 		if collide(i.coords, i.size, self.coords, self.size):  # UP
 			p1 = center(self)
-			if center(self)[1] > center(i)[1]:
-				self.coords[1] = i.coords[1] + i.size[1]
-				self.vel[1] = 0
-				pygame.draw.line(screen, GREEN, p1, center(self))
-			if center(self)[1] < center(i)[1]: #DOWN
+			if center(self)[1] < center(i)[1]: #FLOOR
 				self.coords[1] = i.coords[1] - self.size[1]
 				self.vel[1] = 0
 				self.floor = True
 				pygame.draw.line(screen, BLUE, p1, center(self))
+			p1 = center(self)
+			if center(self)[1] > center(i)[1]:
+				self.coords[1] = i.coords[1] + i.size[1]
+				self.vel[1] = 0
+				pygame.draw.line(screen, GREEN, p1, center(self))
 		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
 			self.floor = True
 
