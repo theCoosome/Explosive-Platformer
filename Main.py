@@ -484,8 +484,7 @@ while Running:
 
 				if (hy != 0):
 					bombs.append(DetCurrent.newBomb([player.coords[0], player.coords[1]], [((xChng / hy) * throwPower), ((yChng / hy) * throwPower)]))
-				effect = pygame.mixer.Sound("assets/throw.wav")
-				effect.play()
+				
 				bombWaitTime = normalBombWait
 
 	# Player
@@ -597,7 +596,8 @@ while Running:
 			i.time += 1
 			if i.time >= i.arm:
 				i.armed = True
-				print "ARMED"
+				effect = pygame.mixer.Sound("assets/throw.wav")
+				effect.play()
 
 		screen.blit(i.img, i.coords)
 
