@@ -109,10 +109,14 @@ def pointCollide(p1, p2, p3):
 		return True
 
 
-def isNear(p1, p2):
-	distance = abs(p1.coords[0] - p2.coords [0])
-	print distance
-	if distance <= 32:
+def isNear(p1, p2, dist = 32):
+	
+	xChng = p1[0] - p2[0]
+	yChng = p1[1] - p2[1]
+
+	hy = math.hypot(xChng, yChng)
+	#print distance
+	if hy <= dist:
 		return True
 	else:
 		return False
@@ -481,7 +485,7 @@ while Running:
 		if event.type == pygame.KEYDOWN:
 
 			#Switches and Interactable Objects
-			if (isNear(switchs[0], player)):
+			if (isNear(center(switchs[0]), center(player))):
 				if event.key in [K_e]:
 					movingblocks.append(movingBlock(0, [64, 64], (16, 16)))
 
@@ -718,13 +722,12 @@ while Running:
 	if bombsExplode:
 		for i in bombs:
 			if i.armed:
-
-				if (i.type != 3) or ():
+				if (i.type != 3) or (isNear(center(i), mousepos, 32)) or (isNear(center(i), center(player), 20)):
 					i.isExploding = True
 					i.img = normalBombImgs[0]
 					i.Detonate(player)
 					for p in movingblocks:
-						if i.type == 1:
+						if p.type == 1:
 							i.Detonate(p)
 					i.stuck = True
 					i.vel = [0, 0]
@@ -775,13 +778,15 @@ while Running:
 		for p in platforms:
 			player.Collide(p)
 			for mb in movingblocks:
-				if isOnTop(p,mb) and isNear(p,mb):
+				if isOnTop(p,mb) and isNear(center(p),center(mb)):
 					print "you won!"
 				mb.Collide(p)
 			screen.blit(p.img,p.coords)
 
 	#UI display
 	screen.blit(DetCurrent.img, (4, 4))
+	if DetCurrent.type == 3:
+		pygame.draw.circle(screen, RED, mousepos, 32, 1)
 
 	screen.blit(mouseImg, (mousepos[0]-3, mousepos[1]-3))
 	pygame.display.update()
