@@ -46,7 +46,7 @@ def getImg(name):  # gets images and prints their retrieval
 # SET GET IMAGES HERE
 brickImg = getImg("Bricks/Brick")
 personimg = getImg("Dereks/Derek")
-movingImg = getImg("BrickMoving")
+movingImg = getImg("Bricks/BrickMoving")
 
 switches= [getImg("Switch"),getImg("Switch2")]
 switchImg = switches[0]
@@ -338,7 +338,7 @@ class detonator(object):
 		self.bomb = img2 #Bomb image
 	def newBomb(self, coords, vel):
 		return bomb(self.type, coords, vel, (8, 8), self.kbP, self.arm, self.bomb)
-		
+
 DetGod = detonator(0, 16, 16, 5, 0, 99999, getImg("UI/DetDefault"), bombImg)
 DetNorm = detonator(1, 2, 8, 5, 30, 4, getImg("UI/DetDefault"), bombImg)
 DetKB = detonator(2, 16, 16, 1, 20, 2, getImg("UI/DetJumper"), getImg("tosser"))
@@ -547,7 +547,7 @@ while Running:
 				x, y = pygame.mouse.get_pos()
 				print "Absolute: ", x, y
 				print "16 base:", x/16, y/16, "("+str((x/16)*16), str((y/16)*16)+")"
-				
+
 			if event.key == K_1:
 				bombs = []
 				DetCurrent = DetGod
@@ -585,7 +585,7 @@ while Running:
 
 				if (hy != 0):
 					bombs.append(DetCurrent.newBomb([player.coords[0], player.coords[1]], [((xChng / hy) * throwPower), ((yChng / hy) * throwPower)]))
-				
+
 				bombWaitTime = normalBombWait
 
 	# Player
@@ -625,6 +625,8 @@ while Running:
 	if player.vel[1] >= 16:
 		player.vel[1] = 16
 
+
+
 	player.coords[0] += player.vel[0]
 	player.coords[1] += player.vel[1]
 
@@ -637,7 +639,10 @@ while Running:
 	for i in bricks:
 		screen.blit(i.img, i.coords)
 		player.Collide(i)
-
+	for i in movingblocks:
+		player.Collide(i)
+	for i in platforms:
+		player.Collide(i)
 	if player.floor:
 		player.vel[0] = Zero(player.vel[0], friction)
 	if player.vel[0] == 0 and player.vel[1] == 0:
@@ -685,7 +690,7 @@ while Running:
 			if i.explodeTime > 10:
 
 				pygame.draw.circle(screen, BLACK, (int(center(i)[0]), int(center(i)[1])), detRange-player.size[0], 1)
-		
+
 
 		if i.explodeTime <= 0:
 			bombs.remove(i)
@@ -728,12 +733,13 @@ while Running:
 							i.Detonate(p)
 					i.stuck = True
 					i.vel = [0, 0]
-			
 
-				
-				
+
+
+
 	# Moving Blocks
 	for i in movingblocks:
+
 		player.Collide(i)
 
 		i.floor = False
@@ -747,15 +753,26 @@ while Running:
 			i.vel[0] = Zero(i.vel[0], friction)
 		screen.blit(i.img, i.coords)
 	# Moving Blocks
-	for i in movingblocks:
-		player.Collide(i)
-
-
 
 		if i.type in [0, 2]:
 			i.floor = False
 			if i.vel[1] < maxFallSpeed:  # Gravity
 				i.vel[1] += gravity
+
+			if i.vel[0] <= -16:
+				i.vel[0] = -16
+
+			if i.vel[1] <= -16:
+				i.vel[1] = -16
+
+			if i.vel[0] >= 16:
+				i.vel[0] = 16
+
+			if i.vel[1] >= 16:
+				i.vel[1] = 16
+
+
+
 			i.coords[0] += i.vel[0]
 			i.coords[1] += i.vel[1]
 			for p in bricks:
@@ -788,9 +805,8 @@ while Running:
 	screen.blit(mouseImg, (mousepos[0]-3, mousepos[1]-3))
 	pygame.display.update()
 	clock.tick(fps)
-	
-	
-	
-	
-	
-	
+
+
+
+
+
