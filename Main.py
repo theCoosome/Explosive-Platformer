@@ -48,9 +48,17 @@ brickImg = getImg("Brick")
 personimg = getImg("Derek")
 movingImg = getImg("BrickMoving")
 destructableImg = getImg("BrickDestructable")
-
+switches= [getImg("Switch"),getImg("Switch2")]
+switchImg = switches[0]
+lockImg = getImg("bars")
+keyImg = getImg("key")
+crateImg = getImg("crate")
 #Bombs
 bombImg = getImg("Bomb")
+platformImg = getImg("platform")
+
+
+
 normalBombImgs = []
 i = 0
 while i < 10:
@@ -97,8 +105,29 @@ def pointCollide(p1, p2, p3):
 		return True
 
 
+def isNear(p1, p2):
+	distance = abs(p1.coords[0] - p2.coords [0])
+	print distance
+	if distance <= 32:
+		return True
+	else:
+		return False
+def isOnTop(p1,p2):
+	distance = abs(p1.coords[1] - p2.coords[1])
+	if distance <= 32:
+		return True
+	else:
+		return False
+
+class Platform(object):
+	def __init__(self,coords,size,img):
+		self.coords = coords
+		self.size = size
+		self.img = pygame.transform.scale(img, size)
+		self.stuck = False
+
 class Person(object):
-	def __init__(self, coords, size):
+	def __init__(self, coords, size,hasKey):
 		self.coords = coords
 		self.size = size
 		self.vel = [0, -15]  # starts going up
@@ -107,6 +136,7 @@ class Person(object):
 		self.crouch = False
 		self.index = 0
 		self.img = 0
+		self.hasKey = hasKey
 
 
 	def Crouch(self):
@@ -144,7 +174,7 @@ class Person(object):
 			self.floor = True
 
 
-player = Person([50, 250], (standardSize))
+player = Person([50, 250], (standardSize),False)
 
 
 class movingBlock(object):
@@ -160,7 +190,7 @@ class movingBlock(object):
 
 		if type == 1: #Destructable
 			self.img = pygame.transform.scale(destructableImg, size)
-			
+
 		if type == 2: #Movable and Destructable
 			self.img = pygame.transform.scale(destructableImg, size)
 
@@ -193,10 +223,31 @@ class Brick(object):
 		self.size = size
 		self.img = pygame.transform.scale(img, size)
 
-
+class Switch(object):
+	def __init__(self,type,coords,size,img,toggle):
+		self.type = type
+		self.coords = coords
+		self.size = size
+		self.img = img
+		self.toggle = toggle
 movingblocks = []
 
-
+class Key(object):
+	def __init__(self,coords,size,img):
+		self.coords = coords
+		self.size = size
+		self.img = pygame.transform.scale(img, size)
+class Gate(object):
+	def __init__(self,coords,size,img,open):
+		self.coords = coords
+		self.size = size
+		self.img = pygame.transform.scale(img, size)
+		self.open = open
+class Crate(object):
+	def __init__(self,coords,size,img):
+		self.coords = coords
+		self.size = size
+		self.img = img
 class bomb(object):
 	def __init__(self, type, coords, size, img):
 		self.explodeTime = 16
@@ -249,7 +300,7 @@ class bomb(object):
 
 		td = math.hypot(xd, yd)
 		pow = standardPower * ((detRange - td) / detRange)
-		
+
 		if pow < 0:
 			pow = 0
 
@@ -298,11 +349,9 @@ def createWall(coordx, coordy, rx, ry, dir):
 
 def createMovingBlock(coordx, coordy, rx, ry):
 	for i in range(rx, ry):
-		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
+		movingblocks.append(movingBlock(0,[coordx + (16 * i), coordy], (16 * rx, 16)))
 
-def createMovingBlock(coordx, coordy, rx, ry):
-	for i in range(rx, ry):
-		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
+
 
 def borderedLevel():
 	createFloor(0, 0, 2, 64)
@@ -310,7 +359,11 @@ def borderedLevel():
 	createFloor(0, 32, 64, 2)
 # creates floors and walls based on coor and size
 
-
+switchs = []
+keys = []
+gates = []
+crates = []
+platforms = []
 currLvl = 0
 totalLvls = 2	#CHANGE THIS WHEN ADDING LVLS
 def createLevel(lvl):	#Almost all refrences of this should be written createLevel(currLvl). Only use an int for bugtesting.
@@ -330,6 +383,13 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		createFloor(378, 245, 1, 3)
 		createFloor(220, 190, 1, 1)
 		createFloor(300, 256, 1, 10)
+		platforms.append(Platform((896, 626), (64, 64), platformImg))
+		switchs.append(Switch("Switch", (256, 284), (32, 32), switchImg, False))
+		crates.append(Crate((432, 160), (16, 16), crateImg))
+		keys.append(Key((432, 160), (8, 8), keyImg))
+		gates.append(Gate((896, 626), (64, 64), lockImg, False))
+		movingblocks.append(movingBlock(0,[64,64],(16,16)))
+
 	# createFloor(300,332,0,20,)
 	# createWall(264,332,0,20,"up")
 	elif (lvl == 1):
@@ -337,6 +397,7 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 
 # Current main screen, basic level.
 Running = True
+
 
 bombWaitTime = 0
 normalBombWait = 1
@@ -388,6 +449,16 @@ while Running:
 	# user input
 	for event in pygame.event.get():
 		if event.type == pygame.KEYDOWN:
+
+			#Switches and Interactable Objects
+			if (isNear(switchs[0], player)):
+				if event.key in [K_e]:
+					movingblocks.append(movingBlock(0, [64, 64], (16, 16)))
+
+					switchs[0].img = switches[1]
+
+
+
 			# movement
 
 			if event.key in [K_LEFT, K_a]:  # move <-
@@ -560,11 +631,11 @@ while Running:
 		if i.isExploding:
 			i.explodeTime -= 1
 			if i.explodeTime > 10:
-				pygame.draw.circle(screen, 
-				BLACK, 
-				(int(center(i)[0]), int(center(i)[1])), 
+				pygame.draw.circle(screen,
+				BLACK,
+				(int(center(i)[0]), int(center(i)[1])),
 				detRange-player.size[0], 1)
-		
+
 		if i.explodeTime <= 0:
 			bombs.remove(i)
 
@@ -586,8 +657,8 @@ while Running:
 		for p in movingblocks:
 			i.Collide(p)
 		screen.blit(i.img,i.coords)
-		
-		
+
+
 	if bombsExplode:
 		for i in bombs:
 			i.isExploding = True
@@ -611,23 +682,6 @@ while Running:
 		if i.explodeTime <= 0:
 			bombs.remove(i)
 
-	# Moving Blocks
-	for i in movingblocks:
-		player.Collide(i)
-
-		i.floor = False
-		if i.vel[1] < maxFallSpeed:  # Gravity
-			i.vel[1] += gravity
-		i.coords[0] += i.vel[0]
-		i.coords[1] += i.vel[1]
-		for p in bricks:
-			i.Collide(p)
-		if i.floor:
-			i.vel[0] = Zero(i.vel[0], friction)
-		screen.blit(i.img, i.coords)
-	# Moving Blocks
-	for i in movingblocks:
-		player.Collide(i)
 
 	# Moving Blocks
 	for i in movingblocks:
@@ -645,7 +699,22 @@ while Running:
 			if i.floor:
 				i.vel[0] = Zero(i.vel[0], friction)
 		screen.blit(i.img,i.coords)
-			
+
+		for s in switchs:
+			screen.blit(s.img, s.coords)
+		for k in keys:
+			screen.blit(k.img,k.coords)
+		for g in gates:
+			screen.blit(g.img,g.coords)
+		for c in crates:
+			screen.blit(c.img,c.coords)
+		for p in platforms:
+			player.Collide(p)
+			for mb in movingblocks:
+				if isOnTop(p,mb) and isNear(p,mb):
+					print "you won!"
+				mb.Collide(p)
+			screen.blit(p.img,p.coords)
 	screen.blit(mouseImg, (mousepos[0]-3, mousepos[1]-3))
 	pygame.display.update()
 	clock.tick(fps)
