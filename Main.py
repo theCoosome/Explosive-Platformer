@@ -307,7 +307,7 @@ def createMovingBlock(coordx, coordy, rx, ry):
 def borderedLevel():
 	createFloor(0, 0, 2, 64)
 	createFloor(0, 688, 2, 64)
-	createFloor(0, 32, 64, 2)
+	createFloor(0, 32, 60, 2)
 # creates floors and walls based on coor and size
 
 
@@ -319,7 +319,6 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 	if (lvl == 0):
 		borderedLevel()
 		createFloor(32, 300, 1, 15)
-		#createFloor(0, 300, 1, 4)
 		createFloor(200, 200, 1, 8)
 		createFloor(264, 216, 1, 2)
 		createMovingBlock(32, 200, 1, 1)
