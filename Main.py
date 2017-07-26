@@ -6,9 +6,13 @@ from decimal import *
 pygame.mixer.pre_init(44100, -16, 2, 2048)
 pygame.init()
 fps = 60
+debugon = True
 
 WHITE = pygame.Color(255, 255, 255)
 BLACK = pygame.Color(0, 0, 0)
+RED = pygame.Color(255, 0, 0)
+GREEN = pygame.Color(0, 255, 0)
+BLUE = pygame.Color(0, 0, 255)
 
 pygame.mouse.set_visible(False)
 font = pygame.font.SysFont('couriernew', 13)
@@ -65,7 +69,7 @@ mouseImg = AimImg
 derek = getImg("Derek")
 left = [getImg("anim1l"),getImg("anim2l"),getImg("anim3l")]
 right = [getImg("anim1r"),getImg("Derek"),getImg("anim2r")]
-crouchImg = getImg("DerekCrouch")
+crouchImg = [getImg("DerekCrouch"),getImg("derekcrouchl")]
 
 def toggle(bool):  # is used to make bomb and players stop when in contact with floor
 	if bool:
@@ -109,28 +113,30 @@ class Person(object):
 		self.crouch = True
 		self.img = 1
 
+
 	def unCrouch(self):
 		self.crouch = False
 		self.img = 0
 
 	def Collide(self, i):
-		if collide(i.coords, i.size, self.coords, self.size):  # DOWN
-			# if self.vel[1] > 0: #Falling
-			if center(self)[1] < center(i)[1]:
-				self.coords[1] = i.coords[1] - self.size[1]
-				self.vel[1] = 0
-				self.floor = True
 		if collide(self.coords, self.size, (i.coords[0], i.coords[1] + 3), (i.size[0], i.size[1] - 3)):  # LEFT / RIGHT
+			p1 = self.coords
 			if self.vel[0] > 0 and self.coords[0] <= i.coords[0]:
 				self.coords[0] = i.coords[0] - self.size[0]
 				self.vel[0] = 0
+				pygame.draw.line(screen, RED, p1, self.coords)
 			if self.vel[0] < 0 and self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
 				self.coords[0] = i.coords[0] + i.size[0]
 				self.vel[0] = 0
+				pygame.draw.line(screen, RED, p1, self.coords)
 		if collide(i.coords, i.size, self.coords, self.size):  # UP
 			if center(self)[1] > center(i)[1]:
 				self.coords[1] = i.coords[1] + i.size[1]
 				self.vel[1] = 0
+			if center(self)[1] < center(i)[1]: #DOWN
+				self.coords[1] = i.coords[1] - self.size[1]
+				self.vel[1] = 0
+				self.floor = True
 		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
 			self.floor = True
 
@@ -394,7 +400,7 @@ while Running:
 			if event.key in [K_DOWN, K_s]:  # v
 				player.motion[1] += 0.5
 
-				isCrouching = True
+
 				player.Crouch()
 			if event.key in [K_UP, K_w] and player.floor:  # ^
 				player.vel[1] = -8
@@ -429,11 +435,6 @@ while Running:
 				bombsExplode = True
 			if event.key == pygame.K_t:  # print cursor location, useful for putting stuff in the right spot
 				x, y = pygame.mouse.get_pos()
-
-
-				print "16 base:", x/16, y/16, "("+str((x/16)*16), str((y/16)*16)+")"
-
-
 				print "Absolute: ", x, y
 				print "16 base:", x/16, y/16, "("+str((x/16)*16), str((y/16)*16)+")"
 
@@ -489,17 +490,17 @@ while Running:
 			elif player.vel[0] < player.motion[0]:
 				player.vel[0] += 0.5
 
-	if player.vel[0]  <=-30:
-		player.vel[0] = -30
+	if player.motion[0]  <=-30:
+		player.motion[0] = -30
 
-	if player.vel[1] <=-30:
-		player.vel[1] = -30
+	if player.motion[1] <=-30:
+		player.motion[1] = -30
 
-	if player.vel[0] >= 30:
-		player.vel[0] = 30
+	if player.motion[0] >= 30:
+		player.motion[0] = 30
 
-	if player.vel[1] >= 30:
-		player.vel[1] = 30
+	if player.motion[1] >= 30:
+		player.motion[1] = 30
 
 	player.coords[0] += player.vel[0]
 	player.coords[1] += player.vel[1]
@@ -511,29 +512,34 @@ while Running:
 	player.floor = False
 	drawBricks()
 	for i in bricks:
-		player.Collide(i)
 		screen.blit(i.img, i.coords)
+		player.Collide(i)
 
 	if player.floor:
 		player.vel[0] = Zero(player.vel[0], friction)
 	if player.vel[0] == 0 and player.vel[1] == 0:
 		movingLeft = False
 		movingRight = False
-	if isCrouching:
-		personimg = crouchImg;
-	if player.motion > 0:
-		if movingRight:
-			counter += 1
-			if counter == 10:
-				player.index += 1
-				counter = 0
-			if player.index >= len(right):
-				player.index = 0
-
-			personimg = right[player.index]
+	if player.crouch:
+		if player.motion[0] < 0:
+			personimg = crouchImg[1]
 		else:
+			personimg = crouchImg[0];
+	else:
+		if player.motion[0] > 0:
+			if movingRight:
+				if isCrouching == False:
+					counter += 1
+					if counter == 10:
+						player.index += 1
+						counter = 0
+					if player.index >= len(right):
+						player.index = 0
+
+				personimg = right[player.index]
+		if player.motion[0] == 0:
 			personimg = right[1]
-		if movingLeft:
+		if player.motion[0] < 0:
 			counter += 1
 			if counter == 10:
 				player.index += 1
