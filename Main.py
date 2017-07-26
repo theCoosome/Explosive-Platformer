@@ -724,7 +724,7 @@ while Running:
 					i.img = normalBombImgs[0]
 					i.Detonate(player)
 					for p in movingblocks:
-						if i.type == 1:
+						if i.type in [0,1]:
 							i.Detonate(p)
 					i.stuck = True
 					i.vel = [0, 0]
