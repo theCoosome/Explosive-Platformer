@@ -44,10 +44,10 @@ def getImg(name):  # gets images and prints their retrieval
 
 
 # SET GET IMAGES HERE
-brickImg = getImg("Brick")
-personimg = getImg("Derek")
+brickImg = getImg("Bricks/Brick")
+personimg = getImg("Dereks/Derek")
 movingImg = getImg("BrickMoving")
-destructableImg = getImg("BrickDestructable")
+destructableImg = getImg("Bricks/BrickDestructable")
 
 #Bombs
 bombImg = getImg("Bomb")
@@ -66,10 +66,10 @@ AimImg = getImg("Mouse/Aim")
 mouseImg = AimImg
 
 #Anim
-derek = getImg("Derek")
-left = [getImg("anim1l"),getImg("anim2l"),getImg("anim3l")]
-right = [getImg("anim1r"),getImg("Derek"),getImg("anim2r")]
-crouchImg = [getImg("DerekCrouch"),getImg("derekcrouchl")]
+derek = getImg("Dereks/Derek")
+left = [getImg("Dereks/anim1l"),getImg("Dereks/anim2l"),getImg("Dereks/anim3l")]
+right = [getImg("Dereks/anim1r"),getImg("Dereks/Derek"),getImg("Dereks/anim2r")]
+crouchImg = [getImg("Dereks/DerekCrouch"),getImg("Dereks/derekcrouchl")]
 
 def toggle(bool):  # is used to make bomb and players stop when in contact with floor
 	if bool:
@@ -329,7 +329,8 @@ def createMovingBlock(coordx, coordy, rx, ry):
 def borderedLevel():
 	createFloor(0, 0, 2, 64)
 	createFloor(0, 688, 2, 64)
-	createFloor(0, 32, 64, 2)
+	createFloor(0, 32, 41, 2)
+	createFloor(992, 32, 41, 2)
 # creates floors and walls based on coor and size
 
 
@@ -341,7 +342,6 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 	if (lvl == 0):
 		borderedLevel()
 		createFloor(32, 300, 1, 15)
-		#createFloor(0, 300, 1, 4)
 		createFloor(200, 200, 1, 8)
 		createFloor(264, 216, 1, 2)
 		createMovingBlock(32, 200, 1, 1)
