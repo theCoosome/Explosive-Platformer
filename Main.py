@@ -6,9 +6,13 @@ from decimal import *
 pygame.mixer.pre_init(44100, -16, 2, 2048)
 pygame.init()
 fps = 60
+debugon = True
 
 WHITE = pygame.Color(255, 255, 255)
 BLACK = pygame.Color(0, 0, 0)
+RED = pygame.Color(255, 0, 0)
+GREEN = pygame.Color(0, 255, 0)
+BLUE = pygame.Color(0, 0, 255)
 
 pygame.mouse.set_visible(False)
 font = pygame.font.SysFont('couriernew', 13)
@@ -114,23 +118,24 @@ class Person(object):
 		self.img = 0
 
 	def Collide(self, i):
-		if collide(i.coords, i.size, self.coords, self.size):  # DOWN
-			# if self.vel[1] > 0: #Falling
-			if center(self)[1] < center(i)[1]:
-				self.coords[1] = i.coords[1] - self.size[1]
-				self.vel[1] = 0
-				self.floor = True
 		if collide(self.coords, self.size, (i.coords[0], i.coords[1] + 3), (i.size[0], i.size[1] - 3)):  # LEFT / RIGHT
+			p1 = self.coords
 			if self.vel[0] > 0 and self.coords[0] <= i.coords[0]:
 				self.coords[0] = i.coords[0] - self.size[0]
 				self.vel[0] = 0
+				pygame.draw.line(screen, RED, p1, self.coords)
 			if self.vel[0] < 0 and self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
 				self.coords[0] = i.coords[0] + i.size[0]
 				self.vel[0] = 0
+				pygame.draw.line(screen, RED, p1, self.coords)
 		if collide(i.coords, i.size, self.coords, self.size):  # UP
 			if center(self)[1] > center(i)[1]:
 				self.coords[1] = i.coords[1] + i.size[1]
 				self.vel[1] = 0
+			if center(self)[1] < center(i)[1]: #DOWN
+				self.coords[1] = i.coords[1] - self.size[1]
+				self.vel[1] = 0
+				self.floor = True
 		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
 			self.floor = True
 
@@ -431,11 +436,6 @@ while Running:
 				bombsExplode = True
 			if event.key == pygame.K_t:  # print cursor location, useful for putting stuff in the right spot
 				x, y = pygame.mouse.get_pos()
-
-
-				print "16 base:", x/16, y/16, "("+str((x/16)*16), str((y/16)*16)+")"
-
-
 				print "Absolute: ", x, y
 				print "16 base:", x/16, y/16, "("+str((x/16)*16), str((y/16)*16)+")"
 
@@ -513,8 +513,8 @@ while Running:
 	player.floor = False
 	drawBricks()
 	for i in bricks:
-		player.Collide(i)
 		screen.blit(i.img, i.coords)
+		player.Collide(i)
 
 	if player.floor:
 		player.vel[0] = Zero(player.vel[0], friction)
