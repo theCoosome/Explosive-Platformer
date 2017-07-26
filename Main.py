@@ -69,7 +69,7 @@ mouseImg = AimImg
 derek = getImg("Derek")
 left = [getImg("anim1l"),getImg("anim2l"),getImg("anim3l")]
 right = [getImg("anim1r"),getImg("Derek"),getImg("anim2r")]
-crouchImg = getImg("DerekCrouch")
+crouchImg = [getImg("DerekCrouch"),getImg("derekcrouchl")]
 
 def toggle(bool):  # is used to make bomb and players stop when in contact with floor
 	if bool:
@@ -112,6 +112,7 @@ class Person(object):
 	def Crouch(self):
 		self.crouch = True
 		self.img = 1
+
 
 	def unCrouch(self):
 		self.crouch = False
@@ -248,7 +249,7 @@ class bomb(object):
 
 		td = math.hypot(xd, yd)
 		pow = standardPower * ((detRange - td) / detRange)
-
+		
 		if pow < 0:
 			pow = 0
 
@@ -279,7 +280,6 @@ def spawnChar():
 	player.vel[1] = 0
 	player.vel[0] = 0
 
-
 def createFloor(coordx, coordy, ry, rx, type=0):
 	bricks.append(Brick(type, [coordx, coordy], (rx * 16, ry * 16), brickImg))
 
@@ -287,7 +287,6 @@ def wipeFloor():
 	del bricks[:]
 	del bombs[:]
 	del movingblocks[:]
-
 
 def createWall(coordx, coordy, rx, ry, dir):
 	if dir == "down":
@@ -404,7 +403,7 @@ while Running:
 			if event.key in [K_DOWN, K_s]:  # v
 				player.motion[1] += 0.5
 
-				isCrouching = True
+
 				player.Crouch()
 			if event.key in [K_UP, K_w] and player.floor:  # ^
 				player.vel[1] = -8
@@ -494,17 +493,17 @@ while Running:
 			elif player.vel[0] < player.motion[0]:
 				player.vel[0] += 0.5
 
-	if player.vel[0]  <=-30:
-		player.vel[0] = -30
+	if player.motion[0]  <=-30:
+		player.motion[0] = -30
 
-	if player.vel[1] <=-30:
-		player.vel[1] = -30
+	if player.motion[1] <=-30:
+		player.motion[1] = -30
 
-	if player.vel[0] >= 30:
-		player.vel[0] = 30
+	if player.motion[0] >= 30:
+		player.motion[0] = 30
 
-	if player.vel[1] >= 30:
-		player.vel[1] = 30
+	if player.motion[1] >= 30:
+		player.motion[1] = 30
 
 	player.coords[0] += player.vel[0]
 	player.coords[1] += player.vel[1]
@@ -524,21 +523,26 @@ while Running:
 	if player.vel[0] == 0 and player.vel[1] == 0:
 		movingLeft = False
 		movingRight = False
-	if isCrouching:
-		personimg = crouchImg;
-	if player.motion > 0:
-		if movingRight:
-			counter += 1
-			if counter == 10:
-				player.index += 1
-				counter = 0
-			if player.index >= len(right):
-				player.index = 0
-
-			personimg = right[player.index]
+	if player.crouch:
+		if player.motion[0] < 0:
+			personimg = crouchImg[1]
 		else:
+			personimg = crouchImg[0];
+	else:
+		if player.motion[0] > 0:
+			if movingRight:
+				if isCrouching == False:
+					counter += 1
+					if counter == 10:
+						player.index += 1
+						counter = 0
+					if player.index >= len(right):
+						player.index = 0
+
+				personimg = right[player.index]
+		if player.motion[0] == 0:
 			personimg = right[1]
-		if movingLeft:
+		if player.motion[0] < 0:
 			counter += 1
 			if counter == 10:
 				player.index += 1
@@ -587,7 +591,7 @@ while Running:
 	if bombsExplode:
 		for i in bombs:
 			i.isExploding = True
-			i.img = getImg("Explosion_Normal/sprite_00")
+			i.img = normalBombImgs[0]
 			for p in affectedByBombs:
 				if i.type == 1:
 					i.detonatorStandard(detRange, p, standardPower)
