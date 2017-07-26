@@ -198,18 +198,25 @@ class Brick(object):
 movingblocks = []
 
 
+
+
 class bomb(object):
-	def __init__(self, type, coords, size, img):
+	def __init__(self, type, coords, vel, size, pow, arm, img):
+		self.type = type
+		self.coords = coords
+		self.size = size
+		self.img = img
+		self.pow = pow
+		self.time = 0
+		self.arm = arm
+		self.armed = False
 		self.explodeTime = 16
 		self.isExploding = False
 		self.floor = False
 		self.stuck = False
 		self.stuckOn = None
-		self.type = type
-		self.coords = coords
-		self.size = size
-		self.img = img
-		self.vel = [0, -15]
+		self.vel = vel
+		self.detRange = 72
 
 	def incrementSprite(self, number, curr):
 		curr = 16 - curr
@@ -240,7 +247,7 @@ class bomb(object):
 		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
 			self.floor = True
 
-	def detonatorStandard(self, detRange, mob, standardPower):
+	def Detonate(self, mob):
 
 		px, py = mob.coords
 		bx, by = self.coords
@@ -249,8 +256,7 @@ class bomb(object):
 		yd = py - by
 
 		td = math.hypot(xd, yd)
-		pow = standardPower * ((detRange - td) / detRange)
-		
+		pow = self.pow * ((self.detRange - td) / self.detRange)
 		if pow < 0:
 			pow = 0
 
@@ -259,7 +265,22 @@ class bomb(object):
 			mob.vel[1] += (yd / td) * pow
 
 
-testBomb = bomb(1, [300, 250], (bombSize), getImg("Bomb"))
+class detonator(object):
+	def __init__(self, type, kbP, kbB, dmg, arm, img, img2):
+		self.type = type
+		self.kbP = kbP #player knockback
+		self.kbB = kbB #block knockback
+		self.dmg = dmg
+		self.arm = arm #arm time
+		self.img = img #Detonator image
+		self.bomb = img2 #Bomb image
+	def newBomb(self, coords, vel):
+		return bomb(self.type, coords, vel, (8, 8), self.kbP, self.arm, self.bomb)
+		
+DetGod = detonator(0, 16, 16, 5, 0, getImg(""), bombImg)
+DetNorm = detonator(1, 2, 10, 5, 30, getImg(""), getImg(""))
+DetKB = detonator(2, 16, 16, 1, 20, getImg(""), getImg(""))
+DetCurrent = DetGod
 
 bombs = []
 
@@ -450,7 +471,6 @@ while Running:
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			if bombWaitTime == 0:
-				newBomb = bomb(bombType, [player.coords[0], player.coords[1]], (8, 8), bombImg)
 				x, y = pygame.mouse.get_pos()
 
 				xChng = x - player.coords[0]
@@ -459,11 +479,9 @@ while Running:
 				hy = math.hypot(xChng, yChng)
 
 				if (hy != 0):
-					newBomb.vel[0] = (xChng / hy) * throwPower
-					newBomb.vel[1] = (yChng / hy) * throwPower
+					bombs.append(DetCurrent.newBomb([player.coords[0], player.coords[1]], [((xChng / hy) * throwPower), ((yChng / hy) * throwPower)]))
 				effect = pygame.mixer.Sound("assets/throw.wav")
 				effect.play()
-				bombs.append(newBomb)
 				bombWaitTime = normalBombWait
 
 	# Player
@@ -556,11 +574,11 @@ while Running:
 	for i in bombs:
 		if i.isExploding:
 			i.explodeTime -= 1
+			i.incrementSprite(1, i.explodeTime)
+			effect = pygame.mixer.Sound("assets/Explosion.wav")
+			effect.play()
 			if i.explodeTime > 10:
-				pygame.draw.circle(screen, 
-				BLACK, 
-				(int(center(i)[0]), int(center(i)[1])), 
-				detRange-player.size[0], 1)
+				pygame.draw.circle(screen, BLACK, (int(center(i)[0]), int(center(i)[1])), detRange-player.size[0], 1)
 		
 		if i.explodeTime <= 0:
 			bombs.remove(i)
@@ -571,6 +589,11 @@ while Running:
 			i.coords[0] += i.vel[0]
 			i.coords[1] += i.vel[1]
 
+		if not i.armed:
+			i.time += 1
+			if i.time >= i.arm:
+				i.armed = True
+				print "ARMED"
 
 		screen.blit(i.img, i.coords)
 
@@ -587,27 +610,17 @@ while Running:
 		
 	if bombsExplode:
 		for i in bombs:
-			i.isExploding = True
-			i.img = normalBombImgs[0]
-			for p in affectedByBombs:
-				if i.type == 1:
-					i.detonatorStandard(detRange, p, standardPower)
-			for p in movingblocks:
-				if i.type == 1:
-					i.detonatorStandard(detRange, p, standardPower)
-			i.stuck = True
-			i.vel = [0, 0]
-
-
-	for i in bombs:
-		if i.isExploding:
-			i.explodeTime -= 1
-			i.incrementSprite(1, i.explodeTime)
-			effect = pygame.mixer.Sound("assets/Explosion.wav")
-			effect.play()
-		if i.explodeTime <= 0:
-			bombs.remove(i)
-
+			if i.armed:
+				i.isExploding = True
+				i.img = normalBombImgs[0]
+				i.Detonate(player)
+				for p in movingblocks:
+					if i.type == 1:
+						i.Detonate(p)
+				i.stuck = True
+				i.vel = [0, 0]
+				
+				
 	# Moving Blocks
 	for i in movingblocks:
 		player.Collide(i)
