@@ -273,7 +273,10 @@ class bomb(object):
 		self.isExploding = False
 		self.floor = False
 		self.stuck = False
+		
 		self.stuckOn = None
+		self.relative = (0, 0)
+		
 		self.vel = vel
 		self.detRange = 72
 
@@ -287,22 +290,33 @@ class bomb(object):
 				self.coords[0] = i.coords[0] - self.size[0]
 				self.vel[0] = 0
 				self.stuck = True
+				if type(i) == movingBlock:
+					self.stuckOn = i
+					self.relative = (self.coords[0]-i.coords[0], self.coords[1]-i.coords[1])
 			if self.vel[0] < 0 and self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
 				self.coords[0] = i.coords[0] + i.size[0]
 				self.vel[0] = 0
 				self.stuck = True
+				if type(i) == movingBlock:
+					self.stuckOn = i
+					self.relative = (self.coords[0]-i.coords[0], self.coords[1]-i.coords[1])
 		if collide(i.coords, i.size, self.coords, self.size):  # DOWN
 			if center(self)[1] < center(i)[1]:
 				self.coords[1] = i.coords[1] - self.size[1]
 				self.vel[1] = 0
 				self.floor = True
 				self.stuck = True
-		if collide(i.coords, i.size, self.coords, self.size):  # UP
+				if type(i) == movingBlock:
+					self.stuckOn = i
+					self.relative = (self.coords[0]-i.coords[0], self.coords[1]-i.coords[1])
 			if center(self)[1] > center(i)[1]:  # Up-ing
 				self.coords[1] = i.coords[1] + i.size[1]
 				self.vel[1] = 0
 				self.stuck = True
-
+				if type(i) == movingBlock:
+					self.stuckOn = i
+					self.relative = (self.coords[0]-i.coords[0], self.coords[1]-i.coords[1])
+		
 		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
 			self.floor = True
 
@@ -706,16 +720,18 @@ while Running:
 				effect = pygame.mixer.Sound("assets/throw.wav")
 				effect.play()
 
-		screen.blit(i.img, i.coords)
-
-
-		if i.stuckOn != None: #Follow what it is stuck to
-			pass
-
-		for p in bricks:
-			i.Collide(p)
-		for p in movingblocks:
-			i.Collide(p)
+		if (i.stuckOn != None):
+			if (i.stuckOn in movingblocks): #Follow what it is stuck to
+				i.coords = [i.stuckOn.coords[0]+i.relative[0], i.stuckOn.coords[1]+i.relative[1]]
+			else:
+				i.stuck = False
+				i.stuckOn = None
+		
+		if not i.stuck:
+			for p in bricks:
+				i.Collide(p)
+			for p in movingblocks:
+				i.Collide(p)
 		screen.blit(i.img,i.coords)
 
 
@@ -727,34 +743,15 @@ while Running:
 					i.img = normalBombImgs[0]
 					i.Detonate(player)
 					for p in movingblocks:
-						if i.type in [0,1]:
+						if p.type in [0,2]:
 							i.Detonate(p)
 					i.stuck = True
 					i.vel = [0, 0]
 			
 
-				
-				
 	# Moving Blocks
 	for i in movingblocks:
 		player.Collide(i)
-
-		i.floor = False
-		if i.vel[1] < maxFallSpeed:  # Gravity
-			i.vel[1] += gravity
-		i.coords[0] += i.vel[0]
-		i.coords[1] += i.vel[1]
-		for p in bricks:
-			i.Collide(p)
-		if i.floor:
-			i.vel[0] = Zero(i.vel[0], friction)
-		screen.blit(i.img, i.coords)
-	# Moving Blocks
-	for i in movingblocks:
-		player.Collide(i)
-
-
-
 		if i.type in [0, 2]:
 			i.floor = False
 			if i.vel[1] < maxFallSpeed:  # Gravity
