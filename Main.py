@@ -322,10 +322,6 @@ def createMovingBlock(coordx, coordy, rx, ry):
 	for i in range(rx, ry):
 		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
 
-def createMovingBlock(coordx, coordy, rx, ry):
-	for i in range(rx, ry):
-		movingblocks.append(movingBlock("type", [coordx + (16 * i), coordy], (16 * rx, 16), movingImg))
-
 def borderedLevel():
 	createFloor(0, 0, 2, 64)
 	createFloor(0, 688, 2, 64)
@@ -341,10 +337,10 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 	spawnChar()
 	if (lvl == 0):
 		borderedLevel()
+		createMovingBlock(32, 200, 4, 4)
 		createFloor(32, 300, 1, 15)
 		createFloor(200, 200, 1, 8)
 		createFloor(264, 216, 1, 2)
-		createMovingBlock(32, 200, 1, 1)
 		createFloor(200, 400, 3, 10)
 		createFloor(600, 500, 1, 14)
 		createFloor(500, 300, 1, 1)
@@ -352,8 +348,8 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		createFloor(378, 245, 1, 3)
 		createFloor(220, 190, 1, 1)
 		createFloor(300, 256, 1, 10)
-	# createFloor(300,332,0,20,)
-	# createWall(264,332,0,20,"up")
+		# createFloor(300,332,0,20,)
+		# createWall(264,332,0,20,"up")
 	elif (lvl == 1):
 		createFloor(0, 688, 2, 64)
 
@@ -639,10 +635,6 @@ while Running:
 		if i.floor:
 			i.vel[0] = Zero(i.vel[0], friction)
 		screen.blit(i.img, i.coords)
-	# Moving Blocks
-	for i in movingblocks:
-		player.Collide(i)
-
 	# Moving Blocks
 	for i in movingblocks:
 		player.Collide(i)

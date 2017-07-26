@@ -15,6 +15,7 @@ BLACK = pygame.Color(0, 0, 0)
 RED = pygame.Color(255, 0, 0)
 GREEN = pygame.Color(0, 255, 0)
 BLUE = pygame.Color(0, 0, 255)
+LGRAY = pygame.Color(214, 214, 194)
 
 clock = pygame.time.Clock()
 
@@ -147,13 +148,9 @@ class Brick(object):
 		self.img = pygame.transform.scale(img, size)
 
 
-
-
-
 placeMode = "brick"
 
 movingblocks = []
-
 
 class bomb(object):
 	def __init__(self, type, coords, size, img):
@@ -215,6 +212,9 @@ class bomb(object):
 			mob.vel[0] += (xd / td) * pow
 			mob.vel[1] += (yd / td) * pow
 
+def round_int(x):
+    return 16 * ((x + 8) // 16)
+
 def Zero(num, rate, goal=0):
 	if num > goal:
 		num -= rate
@@ -230,10 +230,33 @@ gR = 0
 gL = 0
 
 Running = True
+pressedLMB = False
 
 while Running:
 	mousepos = pygame.mouse.get_pos()
 	screen.fill(WHITE)
+
+	w, h = size
+
+	for i in range(0, (w/16)):
+		startPos = (i*16, 0)
+		endPos = (i*16, h)
+		pygame.draw.line(screen, LGRAY, startPos, endPos)
+	for i in range(0, (h/16)):
+		startPos = (0, i*16)
+		endPos = (w, i*16)
+		pygame.draw.line(screen, LGRAY, startPos, endPos)
+	if pressedLMB:
+		mouseX, mouseY = mousepos
+		startX, startY = startLoc
+		mouseX = round_int(mouseX)
+		mouseY = round_int(mouseY)
+		startX = round_int(startX)
+		startY = round_int(startY)
+		placeRect = Rect(startX, startY, mouseX - startX, mouseY - startY)
+		pygame.draw.rect(screen, BLUE, placeRect, 2)
+
+
 
 	for event in pygame.event.get():
 		if event.type == pygame.KEYDOWN:
@@ -243,7 +266,9 @@ while Running:
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			print event.button
 			if event.button == 1:
-				startPlace()
+				pressedLMB = True
+				startLoc = mousepos
+
 			if event.button == 4:
 				newImgNum = mouseImgs.index(mouseImg) + 1
 				if newImgNum >= len(mouseImgs):
@@ -254,6 +279,9 @@ while Running:
 				if newImgNum < 0:
 					newImgNum = len(mouseImgs)-1
 				mouseImg = mouseImgs[newImgNum]
+		if event.type == pygame.MOUSEBUTTONUP:
+			if event.button == 1:
+				pressedLMB = False
 
 	screen.blit(mouseImg, (mousepos[0] - 3, mousepos[1] - 3))
 	pygame.display.update()
