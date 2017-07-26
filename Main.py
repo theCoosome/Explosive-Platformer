@@ -47,17 +47,16 @@ def getImg(name):  # gets images and prints their retrieval
 brickImg = getImg("Bricks/Brick")
 personimg = getImg("Dereks/Derek")
 movingImg = getImg("BrickMoving")
-<<<<<<< HEAD
-destructableImg = getImg("BrickDestructable")
+
 switches= [getImg("Switch"),getImg("Switch2")]
 switchImg = switches[0]
 lockImg = getImg("bars")
 keyImg = getImg("key")
 crateImg = getImg("crate")
-=======
+
 destructableImg = getImg("Bricks/BrickDestructable")
 
->>>>>>> master
+
 #Bombs
 bombImg = getImg("Bomb")
 platformImg = getImg("platform")
@@ -238,7 +237,7 @@ class Switch(object):
 		self.toggle = toggle
 movingblocks = []
 
-<<<<<<< HEAD
+
 class Key(object):
 	def __init__(self,coords,size,img):
 		self.coords = coords
@@ -255,11 +254,7 @@ class Crate(object):
 		self.coords = coords
 		self.size = size
 		self.img = img
-=======
 
-
-
->>>>>>> master
 class bomb(object):
 	def __init__(self, type, coords, vel, size, pow, arm, img):
 		self.type = type
@@ -316,12 +311,9 @@ class bomb(object):
 		yd = py - by
 
 		td = math.hypot(xd, yd)
-<<<<<<< HEAD
-		pow = standardPower * ((detRange - td) / detRange)
 
-=======
 		pow = self.pow * ((self.detRange - td) / self.detRange)
->>>>>>> master
+
 		if pow < 0:
 			pow = 0
 
@@ -391,10 +383,7 @@ def createMovingBlock(coordx, coordy, rx, ry):
 		movingblocks.append(movingBlock(0,[coordx + (16 * i), coordy], (16 * rx, 16)))
 
 
-<<<<<<< HEAD
 
-=======
->>>>>>> master
 def borderedLevel():
 	createFloor(0, 0, 2, 64)
 	createFloor(0, 688, 2, 64)
@@ -425,7 +414,7 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		createFloor(378, 245, 1, 3)
 		createFloor(220, 190, 1, 1)
 		createFloor(300, 256, 1, 10)
-<<<<<<< HEAD
+
 		platforms.append(Platform((896, 626), (64, 64), platformImg))
 		switchs.append(Switch("Switch", (256, 284), (32, 32), switchImg, False))
 		crates.append(Crate((432, 160), (16, 16), crateImg))
@@ -433,12 +422,6 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		gates.append(Gate((896, 626), (64, 64), lockImg, False))
 		movingblocks.append(movingBlock(0,[64,64],(16,16)))
 
-	# createFloor(300,332,0,20,)
-	# createWall(264,332,0,20,"up")
-=======
-		# createFloor(300,332,0,20,)
-		# createWall(264,332,0,20,"up")
->>>>>>> master
 	elif (lvl == 1):
 		createFloor(0, 688, 2, 64)
 
@@ -699,16 +682,10 @@ while Running:
 			effect = pygame.mixer.Sound("assets/Explosion.wav")
 			effect.play()
 			if i.explodeTime > 10:
-<<<<<<< HEAD
-				pygame.draw.circle(screen,
-				BLACK,
-				(int(center(i)[0]), int(center(i)[1])),
-				detRange-player.size[0], 1)
 
-=======
 				pygame.draw.circle(screen, BLACK, (int(center(i)[0]), int(center(i)[1])), detRange-player.size[0], 1)
 		
->>>>>>> master
+
 		if i.explodeTime <= 0:
 			bombs.remove(i)
 
@@ -740,35 +717,12 @@ while Running:
 
 	if bombsExplode:
 		for i in bombs:
-<<<<<<< HEAD
-			i.isExploding = True
-			i.img = normalBombImgs[0]
-			for p in affectedByBombs:
-				if i.type == 1:
-					i.detonatorStandard(detRange, p, standardPower)
-			for p in movingblocks:
-				if i.type == 1:
-					i.detonatorStandard(detRange, p, standardPower)
-			i.stuck = True
-			i.vel = [0, 0]
-
-
-	for i in bombs:
-		if i.isExploding:
-			i.explodeTime -= 1
-			i.incrementSprite(1, i.explodeTime)
-			effect = pygame.mixer.Sound("assets/Explosion.wav")
-			effect.play()
-		if i.explodeTime <= 0:
-			bombs.remove(i)
-
-=======
 			if i.armed:
 				i.isExploding = True
 				i.img = normalBombImgs[0]
 				i.Detonate(player)
 				for p in movingblocks:
-					if i.type == 1:
+					if i.type in [0,1]:
 						i.Detonate(p)
 				i.stuck = True
 				i.vel = [0, 0]
@@ -791,7 +745,7 @@ while Running:
 	# Moving Blocks
 	for i in movingblocks:
 		player.Collide(i)
->>>>>>> master
+
 
 
 		if i.type in [0, 2]:
@@ -805,7 +759,6 @@ while Running:
 			if i.floor:
 				i.vel[0] = Zero(i.vel[0], friction)
 		screen.blit(i.img,i.coords)
-<<<<<<< HEAD
 
 		for s in switchs:
 			screen.blit(s.img, s.coords)
@@ -822,12 +775,8 @@ while Running:
 					print "you won!"
 				mb.Collide(p)
 			screen.blit(p.img,p.coords)
-=======
-			
-	#UI display
-	screen.blit(DetCurrent.img, (4, 4))
-			
->>>>>>> master
+
+
 	screen.blit(mouseImg, (mousepos[0]-3, mousepos[1]-3))
 	pygame.display.update()
 	clock.tick(fps)
