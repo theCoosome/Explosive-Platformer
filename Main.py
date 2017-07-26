@@ -44,15 +44,20 @@ def getImg(name):  # gets images and prints their retrieval
 
 
 # SET GET IMAGES HERE
-brickImg = getImg("Brick")
-personimg = getImg("Derek")
+brickImg = getImg("Bricks/Brick")
+personimg = getImg("Dereks/Derek")
 movingImg = getImg("BrickMoving")
+<<<<<<< HEAD
 destructableImg = getImg("BrickDestructable")
 switches= [getImg("Switch"),getImg("Switch2")]
 switchImg = switches[0]
 lockImg = getImg("bars")
 keyImg = getImg("key")
 crateImg = getImg("crate")
+=======
+destructableImg = getImg("Bricks/BrickDestructable")
+
+>>>>>>> master
 #Bombs
 bombImg = getImg("Bomb")
 platformImg = getImg("platform")
@@ -74,10 +79,10 @@ AimImg = getImg("Mouse/Aim")
 mouseImg = AimImg
 
 #Anim
-derek = getImg("Derek")
-left = [getImg("anim1l"),getImg("anim2l"),getImg("anim3l")]
-right = [getImg("anim1r"),getImg("Derek"),getImg("anim2r")]
-crouchImg = [getImg("DerekCrouch"),getImg("derekcrouchl")]
+derek = getImg("Dereks/Derek")
+left = [getImg("Dereks/anim1l"),getImg("Dereks/anim2l"),getImg("Dereks/anim3l")]
+right = [getImg("Dereks/anim1r"),getImg("Dereks/Derek"),getImg("Dereks/anim2r")]
+crouchImg = [getImg("Dereks/DerekCrouch"),getImg("Dereks/derekcrouchl")]
 
 def toggle(bool):  # is used to make bomb and players stop when in contact with floor
 	if bool:
@@ -161,15 +166,16 @@ class Person(object):
 				pygame.draw.line(screen, RED, p1, center(self))
 		if collide(i.coords, i.size, self.coords, self.size):  # UP
 			p1 = center(self)
-			if center(self)[1] > center(i)[1]:
-				self.coords[1] = i.coords[1] + i.size[1]
-				self.vel[1] = 0
-				pygame.draw.line(screen, GREEN, p1, center(self))
-			if center(self)[1] < center(i)[1]: #DOWN
+			if center(self)[1] < center(i)[1]: #FLOOR
 				self.coords[1] = i.coords[1] - self.size[1]
 				self.vel[1] = 0
 				self.floor = True
 				pygame.draw.line(screen, BLUE, p1, center(self))
+			p1 = center(self)
+			if center(self)[1] > center(i)[1]:
+				self.coords[1] = i.coords[1] + i.size[1]
+				self.vel[1] = 0
+				pygame.draw.line(screen, GREEN, p1, center(self))
 		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
 			self.floor = True
 
@@ -232,6 +238,7 @@ class Switch(object):
 		self.toggle = toggle
 movingblocks = []
 
+<<<<<<< HEAD
 class Key(object):
 	def __init__(self,coords,size,img):
 		self.coords = coords
@@ -248,18 +255,28 @@ class Crate(object):
 		self.coords = coords
 		self.size = size
 		self.img = img
+=======
+
+
+
+>>>>>>> master
 class bomb(object):
-	def __init__(self, type, coords, size, img):
+	def __init__(self, type, coords, vel, size, pow, arm, img):
+		self.type = type
+		self.coords = coords
+		self.size = size
+		self.img = img
+		self.pow = pow
+		self.time = 0
+		self.arm = arm
+		self.armed = False
 		self.explodeTime = 16
 		self.isExploding = False
 		self.floor = False
 		self.stuck = False
 		self.stuckOn = None
-		self.type = type
-		self.coords = coords
-		self.size = size
-		self.img = img
-		self.vel = [0, -15]
+		self.vel = vel
+		self.detRange = 72
 
 	def incrementSprite(self, number, curr):
 		curr = 16 - curr
@@ -290,7 +307,7 @@ class bomb(object):
 		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
 			self.floor = True
 
-	def detonatorStandard(self, detRange, mob, standardPower):
+	def Detonate(self, mob):
 
 		px, py = mob.coords
 		bx, by = self.coords
@@ -299,8 +316,12 @@ class bomb(object):
 		yd = py - by
 
 		td = math.hypot(xd, yd)
+<<<<<<< HEAD
 		pow = standardPower * ((detRange - td) / detRange)
 
+=======
+		pow = self.pow * ((self.detRange - td) / self.detRange)
+>>>>>>> master
 		if pow < 0:
 			pow = 0
 
@@ -309,7 +330,25 @@ class bomb(object):
 			mob.vel[1] += (yd / td) * pow
 
 
-testBomb = bomb(1, [300, 250], (bombSize), getImg("Bomb"))
+class detonator(object):
+	def __init__(self, type, kbP, kbB, dmg, arm, max, img, img2):
+		self.type = type
+		self.kbP = kbP #player knockback
+		self.kbB = kbB #block knockback
+		self.dmg = dmg
+		self.arm = arm #arm time
+		self.max = max #Max quantity out
+		self.img = img #Detonator image
+		self.bomb = img2 #Bomb image
+	def newBomb(self, coords, vel):
+		return bomb(self.type, coords, vel, (8, 8), self.kbP, self.arm, self.bomb)
+		
+DetGod = detonator(0, 16, 16, 5, 0, 99999, getImg("UI/DetDefault"), bombImg)
+DetNorm = detonator(1, 2, 8, 5, 30, 4, getImg("UI/DetDefault"), bombImg)
+DetKB = detonator(2, 16, 16, 1, 20, 2, getImg("UI/DetJumper"), getImg("tosser"))
+DetMulti = detonator(3, 4, 6, 5, 80, 10, getImg("UI/DetMulti"), getImg("Multi"))
+DetDest = detonator(4, 1, 1, 20, 30, 4, getImg("UI/DetDestructive"), getImg("Dest"))
+DetCurrent = DetGod
 
 bombs = []
 
@@ -352,11 +391,15 @@ def createMovingBlock(coordx, coordy, rx, ry):
 		movingblocks.append(movingBlock(0,[coordx + (16 * i), coordy], (16 * rx, 16)))
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
 def borderedLevel():
 	createFloor(0, 0, 2, 64)
 	createFloor(0, 688, 2, 64)
-	createFloor(0, 32, 64, 2)
+	createFloor(0, 32, 41, 2)
+	createFloor(992, 32, 41, 2)
 # creates floors and walls based on coor and size
 
 switchs = []
@@ -371,11 +414,10 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 	spawnChar()
 	if (lvl == 0):
 		borderedLevel()
+		createMovingBlock(32, 200, 4, 4)
 		createFloor(32, 300, 1, 15)
-		#createFloor(0, 300, 1, 4)
 		createFloor(200, 200, 1, 8)
 		createFloor(264, 216, 1, 2)
-		createMovingBlock(32, 200, 1, 1)
 		createFloor(200, 400, 3, 10)
 		createFloor(600, 500, 1, 14)
 		createFloor(500, 300, 1, 1)
@@ -383,6 +425,7 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		createFloor(378, 245, 1, 3)
 		createFloor(220, 190, 1, 1)
 		createFloor(300, 256, 1, 10)
+<<<<<<< HEAD
 		platforms.append(Platform((896, 626), (64, 64), platformImg))
 		switchs.append(Switch("Switch", (256, 284), (32, 32), switchImg, False))
 		crates.append(Crate((432, 160), (16, 16), crateImg))
@@ -392,6 +435,10 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 
 	# createFloor(300,332,0,20,)
 	# createWall(264,332,0,20,"up")
+=======
+		# createFloor(300,332,0,20,)
+		# createWall(264,332,0,20,"up")
+>>>>>>> master
 	elif (lvl == 1):
 		createFloor(0, 688, 2, 64)
 
@@ -412,14 +459,14 @@ gravity = 0.5  # pixels per frame
 friction = 0.25  # pixels per frame
 
 
-def Zero(num, rate, goal=0):
+def Zero(num, rate, goal = 0.0):
 	if num > goal:
-		num -= rate
-		if num < goal:
+		num = num-rate
+		if num <= goal:
 			num = goal
 	if num < goal:
-		num += rate
-		if num > goal:
+		num = num+rate
+		if num >= goal:
 			num = goal
 	return num
 
@@ -487,6 +534,11 @@ while Running:
 				fps = 60
 			if event.key == K_x:
 				createLevel(currLvl)
+			if event.key == K_z:
+				print "Coords: ", player.coords[0], player.coords[1]
+				print "Velocity: ", player.vel[0], player.vel[1]
+				print "Motion: ", player.motion[0], player.motion[1]
+				print "Floored: ", player.floor
 			if event.key == K_g:  # defunct?gravty on and off
 				for i in bombs:
 					i.floor = toggle(player.floor)
@@ -511,6 +563,22 @@ while Running:
 				x, y = pygame.mouse.get_pos()
 				print "Absolute: ", x, y
 				print "16 base:", x/16, y/16, "("+str((x/16)*16), str((y/16)*16)+")"
+				
+			if event.key == K_1:
+				bombs = []
+				DetCurrent = DetGod
+			if event.key == K_2:
+				bombs = []
+				DetCurrent = DetNorm
+			if event.key == K_3:
+				bombs = []
+				DetCurrent = DetKB
+			if event.key == K_4:
+				bombs = []
+				DetCurrent = DetMulti
+			if event.key == K_5:
+				bombs = []
+				DetCurrent = DetDest
 
 
 		if event.type == pygame.KEYUP:
@@ -523,8 +591,7 @@ while Running:
 				player.unCrouch()
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
-			if bombWaitTime == 0:
-				newBomb = bomb(bombType, [player.coords[0], player.coords[1]], (8, 8), bombImg)
+			if bombWaitTime == 0 and len(bombs) < DetCurrent.max:
 				x, y = pygame.mouse.get_pos()
 
 				xChng = x - player.coords[0]
@@ -533,11 +600,8 @@ while Running:
 				hy = math.hypot(xChng, yChng)
 
 				if (hy != 0):
-					newBomb.vel[0] = (xChng / hy) * throwPower
-					newBomb.vel[1] = (yChng / hy) * throwPower
-				effect = pygame.mixer.Sound("assets/throw.wav")
-				effect.play()
-				bombs.append(newBomb)
+					bombs.append(DetCurrent.newBomb([player.coords[0], player.coords[1]], [((xChng / hy) * throwPower), ((yChng / hy) * throwPower)]))
+				
 				bombWaitTime = normalBombWait
 
 	# Player
@@ -553,16 +617,17 @@ while Running:
 			player.vel[0] += player.motion[0] / 4
 
 	else:
-		if player.crouch:
-			if player.vel[0] > player.motion[0] / 4:
-				player.vel[0] -= 0.5
-			elif player.vel[0] < player.motion[0] / 4:
-				player.vel[0] += 0.5
-		else:
-			if player.vel[0] > player.motion[0]:
-				player.vel[0] -= 0.5
-			elif player.vel[0] < player.motion[0]:
-				player.vel[0] += 0.5
+		if player.motion[0] != 0:
+			if player.crouch:
+				if player.vel[0] > player.motion[0] / 4:
+					player.vel[0] -= 0.5
+				elif player.vel[0] < player.motion[0] / 4:
+					player.vel[0] += 0.5
+			else:
+				if player.vel[0] > player.motion[0]:
+					player.vel[0] -= 0.5
+				elif player.vel[0] < player.motion[0]:
+					player.vel[0] += 0.5
 
 	if player.vel[0]  <=-16:
 		player.vel[0] = -16
@@ -630,12 +695,20 @@ while Running:
 	for i in bombs:
 		if i.isExploding:
 			i.explodeTime -= 1
+			i.incrementSprite(1, i.explodeTime)
+			effect = pygame.mixer.Sound("assets/Explosion.wav")
+			effect.play()
 			if i.explodeTime > 10:
+<<<<<<< HEAD
 				pygame.draw.circle(screen,
 				BLACK,
 				(int(center(i)[0]), int(center(i)[1])),
 				detRange-player.size[0], 1)
 
+=======
+				pygame.draw.circle(screen, BLACK, (int(center(i)[0]), int(center(i)[1])), detRange-player.size[0], 1)
+		
+>>>>>>> master
 		if i.explodeTime <= 0:
 			bombs.remove(i)
 
@@ -645,6 +718,12 @@ while Running:
 			i.coords[0] += i.vel[0]
 			i.coords[1] += i.vel[1]
 
+		if not i.armed:
+			i.time += 1
+			if i.time >= i.arm:
+				i.armed = True
+				effect = pygame.mixer.Sound("assets/throw.wav")
+				effect.play()
 
 		screen.blit(i.img, i.coords)
 
@@ -661,6 +740,7 @@ while Running:
 
 	if bombsExplode:
 		for i in bombs:
+<<<<<<< HEAD
 			i.isExploding = True
 			i.img = normalBombImgs[0]
 			for p in affectedByBombs:
@@ -682,10 +762,36 @@ while Running:
 		if i.explodeTime <= 0:
 			bombs.remove(i)
 
-
+=======
+			if i.armed:
+				i.isExploding = True
+				i.img = normalBombImgs[0]
+				i.Detonate(player)
+				for p in movingblocks:
+					if i.type == 1:
+						i.Detonate(p)
+				i.stuck = True
+				i.vel = [0, 0]
+				
+				
 	# Moving Blocks
 	for i in movingblocks:
 		player.Collide(i)
+
+		i.floor = False
+		if i.vel[1] < maxFallSpeed:  # Gravity
+			i.vel[1] += gravity
+		i.coords[0] += i.vel[0]
+		i.coords[1] += i.vel[1]
+		for p in bricks:
+			i.Collide(p)
+		if i.floor:
+			i.vel[0] = Zero(i.vel[0], friction)
+		screen.blit(i.img, i.coords)
+	# Moving Blocks
+	for i in movingblocks:
+		player.Collide(i)
+>>>>>>> master
 
 
 		if i.type in [0, 2]:
@@ -699,6 +805,7 @@ while Running:
 			if i.floor:
 				i.vel[0] = Zero(i.vel[0], friction)
 		screen.blit(i.img,i.coords)
+<<<<<<< HEAD
 
 		for s in switchs:
 			screen.blit(s.img, s.coords)
@@ -715,6 +822,18 @@ while Running:
 					print "you won!"
 				mb.Collide(p)
 			screen.blit(p.img,p.coords)
+=======
+			
+	#UI display
+	screen.blit(DetCurrent.img, (4, 4))
+			
+>>>>>>> master
 	screen.blit(mouseImg, (mousepos[0]-3, mousepos[1]-3))
 	pygame.display.update()
 	clock.tick(fps)
+	
+	
+	
+	
+	
+	
