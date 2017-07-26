@@ -266,20 +266,23 @@ class bomb(object):
 
 
 class detonator(object):
-	def __init__(self, type, kbP, kbB, dmg, arm, img, img2):
+	def __init__(self, type, kbP, kbB, dmg, arm, max, img, img2):
 		self.type = type
 		self.kbP = kbP #player knockback
 		self.kbB = kbB #block knockback
 		self.dmg = dmg
 		self.arm = arm #arm time
+		self.max = max #Max quantity out
 		self.img = img #Detonator image
 		self.bomb = img2 #Bomb image
 	def newBomb(self, coords, vel):
 		return bomb(self.type, coords, vel, (8, 8), self.kbP, self.arm, self.bomb)
 		
-DetGod = detonator(0, 16, 16, 5, 0, getImg(""), bombImg)
-DetNorm = detonator(1, 2, 10, 5, 30, getImg(""), getImg(""))
-DetKB = detonator(2, 16, 16, 1, 20, getImg(""), getImg(""))
+DetGod = detonator(0, 16, 16, 5, 0, 99999, getImg("UI/DetDefault"), bombImg)
+DetNorm = detonator(1, 2, 8, 5, 30, 4, getImg("UI/DetDefault"), bombImg)
+DetKB = detonator(2, 16, 16, 1, 20, 2, getImg("UI/DetJumper"), getImg("tosser"))
+DetMulti = detonator(3, 4, 6, 5, 80, 10, getImg("UI/DetMulti"), getImg("Multi"))
+DetDest = detonator(4, 1, 1, 20, 30, 4, getImg("UI/DetDestructive"), getImg("Dest"))
 DetCurrent = DetGod
 
 bombs = []
@@ -369,14 +372,14 @@ gravity = 0.5  # pixels per frame
 friction = 0.25  # pixels per frame
 
 
-def Zero(num, rate, goal=0):
+def Zero(num, rate, goal = 0.0):
 	if num > goal:
-		num -= rate
-		if num < goal:
+		num = num-rate
+		if num <= goal:
 			num = goal
 	if num < goal:
-		num += rate
-		if num > goal:
+		num = num+rate
+		if num >= goal:
 			num = goal
 	return num
 
@@ -434,6 +437,11 @@ while Running:
 				fps = 60
 			if event.key == K_x:
 				createLevel(currLvl)
+			if event.key == K_z:
+				print "Coords: ", player.coords[0], player.coords[1]
+				print "Velocity: ", player.vel[0], player.vel[1]
+				print "Motion: ", player.motion[0], player.motion[1]
+				print "Floored: ", player.floor
 			if event.key == K_g:  # defunct?gravty on and off
 				for i in bombs:
 					i.floor = toggle(player.floor)
@@ -458,6 +466,22 @@ while Running:
 				x, y = pygame.mouse.get_pos()
 				print "Absolute: ", x, y
 				print "16 base:", x/16, y/16, "("+str((x/16)*16), str((y/16)*16)+")"
+				
+			if event.key == K_1:
+				bombs = []
+				DetCurrent = DetGod
+			if event.key == K_2:
+				bombs = []
+				DetCurrent = DetNorm
+			if event.key == K_3:
+				bombs = []
+				DetCurrent = DetKB
+			if event.key == K_4:
+				bombs = []
+				DetCurrent = DetMulti
+			if event.key == K_5:
+				bombs = []
+				DetCurrent = DetDest
 
 
 		if event.type == pygame.KEYUP:
@@ -470,7 +494,7 @@ while Running:
 				player.unCrouch()
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
-			if bombWaitTime == 0:
+			if bombWaitTime == 0 and len(bombs) < DetCurrent.max:
 				x, y = pygame.mouse.get_pos()
 
 				xChng = x - player.coords[0]
@@ -496,16 +520,17 @@ while Running:
 			player.vel[0] += player.motion[0] / 4
 
 	else:
-		if player.crouch:
-			if player.vel[0] > player.motion[0] / 4:
-				player.vel[0] -= 0.5
-			elif player.vel[0] < player.motion[0] / 4:
-				player.vel[0] += 0.5
-		else:
-			if player.vel[0] > player.motion[0]:
-				player.vel[0] -= 0.5
-			elif player.vel[0] < player.motion[0]:
-				player.vel[0] += 0.5
+		if player.motion[0] != 0:
+			if player.crouch:
+				if player.vel[0] > player.motion[0] / 4:
+					player.vel[0] -= 0.5
+				elif player.vel[0] < player.motion[0] / 4:
+					player.vel[0] += 0.5
+			else:
+				if player.vel[0] > player.motion[0]:
+					player.vel[0] -= 0.5
+				elif player.vel[0] < player.motion[0]:
+					player.vel[0] += 0.5
 
 	if player.vel[0]  <=-16:
 		player.vel[0] = -16
@@ -652,6 +677,15 @@ while Running:
 				i.vel[0] = Zero(i.vel[0], friction)
 		screen.blit(i.img,i.coords)
 			
+	#UI display
+	screen.blit(DetCurrent.img, (4, 4))
+			
 	screen.blit(mouseImg, (mousepos[0]-3, mousepos[1]-3))
 	pygame.display.update()
 	clock.tick(fps)
+	
+	
+	
+	
+	
+	
