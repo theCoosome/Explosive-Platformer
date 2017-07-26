@@ -308,7 +308,8 @@ def createMovingBlock(coordx, coordy, rx, ry):
 def borderedLevel():
 	createFloor(0, 0, 2, 64)
 	createFloor(0, 688, 2, 64)
-	createFloor(0, 32, 60, 2)
+	createFloor(0, 32, 41, 2)
+	createFloor(992, 32, 41, 2)
 # creates floors and walls based on coor and size
 
 
