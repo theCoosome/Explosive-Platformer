@@ -79,8 +79,8 @@ mouseImg = AimImg
 
 #Anim
 derek = getImg("Dereks/Derek")
-left = [getImg("Dereks/anim1l"),getImg("Dereks/anim2l"),getImg("Dereks/anim3l")]
 right = [getImg("Dereks/anim1r"),getImg("Dereks/Derek"),getImg("Dereks/anim2r")]
+left = [getImg("Dereks/anim1l"),getImg("Dereks/anim2l"),getImg("Dereks/anim3l")]
 crouchImg = [getImg("Dereks/DerekCrouch"),getImg("Dereks/derekcrouchl")]
 
 def toggle(bool):  # is used to make bomb and players stop when in contact with floor
@@ -490,21 +490,18 @@ while Running:
 
 
 			# movement
-
-			if event.key in [K_LEFT, K_a]:  # move <-
-				gL =0
-				movingLeft = True
-				movingRight = False
-				player.motion[0] -= 2.0
 			if event.key in [K_RIGHT, K_d]:  # move ->
 				player.motion[0] += 2.0
 				gR = 0
 				movingRight = True
 				movingLeft = False
+			if event.key in [K_LEFT, K_a]:  # move <-
+				player.motion[0] -= 2.0
+				gL =0
+				movingLeft = True
+				movingRight = False
 			if event.key in [K_DOWN, K_s]:  # v
 				player.motion[1] += 0.5
-
-
 				player.Crouch()
 			if event.key in [K_UP, K_w] and player.floor:  # ^
 				player.vel[1] = -8
@@ -659,9 +656,9 @@ while Running:
 						player.index = 0
 
 				personimg = right[player.index]
-		if player.motion[0] == 0:
+		elif player.motion[0] == 0:
 			personimg = right[1]
-		if player.motion[0] < 0:
+		elif player.motion[0] < 0:
 			counter += 1
 			if counter == 10:
 				player.index += 1
