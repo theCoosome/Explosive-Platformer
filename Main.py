@@ -57,6 +57,13 @@ lockImg = getImg("bars")
 keyImg = getImg("key")
 crateImg = getImg("crate")
 
+#Anim
+derek = getImg("Dereks/Derek")
+left = [getImg("Dereks/anim1l"),getImg("Dereks/anim3l")]
+right = [getImg("Dereks/anim1r"),getImg("Dereks/anim2r")]
+crouchImg = [getImg("Dereks/DerekCrouch"),getImg("Dereks/derekcrouchl")]
+'''left = [getImg("Dereks/anim1l"),getImg("Dereks/anim2l"),getImg("Dereks/anim3l")]
+right = [getImg("Dereks/anim1r"),getImg("Dereks/Derek"),getImg("Dereks/anim2r")]'''
 
 
 
@@ -80,11 +87,6 @@ normalExplode = [getImg("")]
 AimImg = getImg("Mouse/Aim")
 mouseImg = AimImg
 
-#Anim
-derek = getImg("Dereks/Derek")
-left = [getImg("Dereks/anim1l"),getImg("Dereks/anim2l"),getImg("Dereks/anim3l")]
-right = [getImg("Dereks/anim1r"),getImg("Dereks/Derek"),getImg("Dereks/anim2r")]
-crouchImg = [getImg("Dereks/DerekCrouch"),getImg("Dereks/derekcrouchl")]
 
 def toggle(bool):  # is used to make bomb and players stop when in contact with floor
 	if bool:
@@ -584,18 +586,19 @@ while Running:
 			if event.key in [K_RIGHT, K_d]:  # move ->
 				player.motion[0] += 2.0
 				gR = 0
+				personimg = right[player.index]
 				movingRight = True
 				movingLeft = False
 			if event.key in [K_LEFT, K_a]:  # move <-
 				player.motion[0] -= 2.0
 				gL =0
 				time.sleep(.02)
+				personimg = left[player.index]
 				movingLeft = True
 				movingRight = False
 			if event.key in [K_RIGHT and K_a, K_LEFT and K_d]:  # move ->
 				movingRight = False
 				movingLeft = False
-				playerimg=derek
 			if event.key in [K_DOWN, K_s]:  # v
 				player.motion[1] += 0.5
 				player.Crouch()
@@ -774,7 +777,7 @@ while Running:
 			personimg = crouchImg[0]
 	else:
 		if player.motion[0] == 0:
-			personimg = right[1]
+			personimg = derek
 		elif player.motion[0] < 0:
 			if movingLeft:
 				counter += 1
@@ -911,115 +914,3 @@ while Running:
 	screen.blit(mouseImg, (mousepos[0]-3, mousepos[1]-3))
 	pygame.display.update()
 	clock.tick(fps)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
