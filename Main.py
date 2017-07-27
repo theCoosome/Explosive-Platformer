@@ -145,7 +145,8 @@ class Person(object):
 		self.index = 0
 		self.img = 0
 		self.hasKey = hasKey
-
+		
+		self.dualColliding = False
 
 	def Crouch(self):
 		self.crouch = True
@@ -156,22 +157,36 @@ class Person(object):
 		self.crouch = False
 		self.img = 0
 
+	def Kill(self):
+		print "Ded"
+		createLevel(currLvl)
+		
 	def Collide(self, i):
 		if collide(i.coords, i.size, self.coords, self.size):  # UP
+			
+			if self.dualColliding:
+				self.Kill()
+			
+			if type(i) == movingBlock:
+				if i.vel[1] > 5:
+					self.Kill()
+				self.dualColliding = True
+					
 			p1 = center(self)
 			#if center(self)[1] < center(i)[1]: #FLOOR
 			if self.vel[1] > 0 and self.coords[1] <= i.coords[1]:
 				self.coords[1] = i.coords[1] - self.size[1]
-				self.vel[1] = 0
+				if self.vel[1] > 0:
+					self.vel[1] = 0
 				self.floor = True
 				pygame.draw.line(screen, BLUE, p1, center(self))
 		if collide(self.coords, self.size, (i.coords[0], i.coords[1] + 3), (i.size[0], i.size[1] - 3)):  # LEFT / RIGHT
 			p1 = center(self)
-			if self.vel[0] > 0 and self.coords[0] <= i.coords[0]:
+			if self.coords[0] <= i.coords[0]:
 				self.coords[0] = i.coords[0] - self.size[0]
 				self.vel[0] = 0
 				pygame.draw.line(screen, RED, p1, center(self))
-			if self.vel[0] < 0 and self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
+			if self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
 				self.coords[0] = i.coords[0] + i.size[0]
 				self.vel[0] = 0
 				pygame.draw.line(screen, RED, p1, center(self))
@@ -535,6 +550,7 @@ while Running:
 	if bombWaitTime > 0:  # sets off bomb
 		bombWaitTime -= 1
 	bombsExplode = False
+	player.dualColliding = False
 	bombType = 1
 	screen.fill(WHITE)
 
@@ -652,6 +668,7 @@ while Running:
 		player.vel[1] += gravity
 
 
+	#PLAYER MOVEMENT INPUT
 	if (not player.floor):
 		if player.vel[0] < .5 and player.motion[0] > 0:
 			player.vel[0] += player.motion[0] / 4
@@ -689,11 +706,12 @@ while Running:
 	player.coords[1] += player.vel[1]
 
 	if not collide(player.coords, player.size, (0, 0), size):
-		createLevel(currLvl)
+		player.Kill()
 
 
 	player.floor = False
 	drawBricks()
+
 	for k in keys:
 		if isNear(player.coords, k.coords):
 			player.hasKey = True
@@ -720,6 +738,14 @@ while Running:
 		player.Collide(g)
 	if player.floor:
 		player.vel[0] = Zero(player.vel[0], friction)
+
+	for i in movingblocks: #Moving blocks collide with each other
+		for p in movingblocks:
+			if not (p == i):
+				p.Collide(i)
+	
+
+			p
 	if player.vel[0] == 0 and player.vel[1] == 0:
 		movingLeft = False
 		movingRight = False
@@ -729,31 +755,34 @@ while Running:
 		else:
 			personimg = crouchImg[0]
 	else:
-		if player.motion[0] > 0:
+		if player.motion[0] == 0:
+			personimg = right[1]
+		elif player.motion[0] < 0:
+			if not movingRight:
+				counter += 1
+				if counter == 10:
+					player.index += 1
+					counter = 0
+				if player.index >= len(left):
+					player.index = 0
+			personimg = left[player.index]
+		elif player.motion[0] > 0:
 			if movingRight:
-				if isCrouching == False:
+				if not isCrouching :
 					counter += 1
 					if counter == 10:
 						player.index += 1
 						counter = 0
 					if player.index >= len(right):
 						player.index = 0
-
 				personimg = right[player.index]
-		elif player.motion[0] == 0:
-			personimg = right[1]
-		elif player.motion[0] < 0:
-			counter += 1
-			if counter == 10:
-				player.index += 1
-				counter = 0
-			if player.index >= len(left):
-				player.index = 0
+
 
 			personimg = left[player.index]
 
 
 	screen.blit(personimg, player.coords)
+
 	# Bombs
 
 	for i in bombs:
@@ -814,7 +843,7 @@ while Running:
 
 
 	# Moving Blocks
-	for i in movingblocks:
+	for i in movingblocks: #Player collide with moving blocks
 		player.Collide(i)
 		if i.type in [0, 2]:
 			i.floor = False
@@ -837,6 +866,7 @@ while Running:
 
 			i.coords[0] += i.vel[0]
 			i.coords[1] += i.vel[1]
+			
 			for p in bricks:
 				i.Collide(p)
 			if i.floor:
@@ -858,6 +888,10 @@ while Running:
 					print "you won!"
 				mb.Collide(p)
 			screen.blit(p.img,p.coords)
+	
+	for i in bricks:
+		screen.blit(i.img, i.coords)
+		player.Collide(i)
 	
 	for i in bombs:
 		if i.isExploding:
@@ -919,8 +953,12 @@ while Running:
 					i.stuckOn = None
 					i.vel = [0, 0]
 
+	
+	if player.floor:
+		player.vel[0] = Zero(player.vel[0], friction)
 
 	#UI display
+	screen.blit(personimg, player.coords)
 	screen.blit(DetCurrent.img, (4, 4))
 	if DetCurrent.type == 3:
 		pygame.draw.circle(screen, RED, mousepos, 32, 1)
