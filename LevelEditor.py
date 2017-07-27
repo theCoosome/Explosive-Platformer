@@ -270,22 +270,36 @@ def saveFile():
 	file.truncate
 	writeList = []
 	for i in bricks:
+		x,y = i.coords
+		xs, ys = i.size
 		writeContents = "$"
+		writeContents += "*"
 		writeContents += str(i.type)
-		writeContents += " "
-		writeContents += str(i.coords)
-		writeContents += " "
-		writeContents += str(i.size)
+		writeContents += "*"
+		writeContents += str(x)
+		writeContents += "*"
+		writeContents += str(y)
+		writeContents += "*"
+		writeContents += str(xs)
+		writeContents += "*"
+		writeContents += str(ys)
 		writeContents += "\n"
 		writeList.append(writeContents)
 
 	for i in movingblocks:
-		writeContents = "@"
+		x, y = i.coords
+		xs, ys = i.size
+		writeContents = "$"
+		writeContents += "*"
 		writeContents += str(i.type)
-		writeContents += " "
-		writeContents += str(i.coords)
-		writeContents += " "
-		writeContents += str(i.size)
+		writeContents += "*"
+		writeContents += str(x)
+		writeContents += "*"
+		writeContents += str(y)
+		writeContents += "*"
+		writeContents += str(xs)
+		writeContents += "*"
+		writeContents += str(ys)
 		writeContents += "\n"
 		writeList.append(writeContents)
 	print writeList
