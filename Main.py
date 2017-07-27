@@ -711,58 +711,6 @@ while Running:
 
 	# Bombs
 
-	for i in bombs:
-		if i.isExploding:
-			i.explodeTime -= 1
-			i.incrementSprite(1, i.explodeTime)
-			effect = pygame.mixer.Sound("assets/Sounds/Explosion.wav")
-			effect.play()
-			if i.explodeTime > 10:
-
-				pygame.draw.circle(screen, BLACK, (int(center(i)[0]), int(center(i)[1])), detRange-player.size[0], 1)
-
-
-		if i.explodeTime <= 0:
-			bombs.remove(i)
-
-		if not i.stuck:
-			if i.vel[1] < maxFallSpeed:
-				i.vel[1] += gravity
-			i.coords[0] += i.vel[0]
-			i.coords[1] += i.vel[1]
-
-		if not i.armed:
-			i.time += 1
-			if i.time >= i.arm:
-				i.armed = True
-				effect = pygame.mixer.Sound("assets/Sounds/throw.wav")
-				effect.play()
-
-		screen.blit(i.img, i.coords)
-
-
-		if i.stuckOn != None: #Follow what it is stuck to
-			pass
-
-		for p in bricks:
-			i.Collide(p)
-		for p in movingblocks:
-			i.Collide(p)
-		screen.blit(i.img,i.coords)
-
-
-	if bombsExplode:
-		for i in bombs:
-			if i.armed:
-				if (i.type != 3) or (isNear(center(i), mousepos, 32)) or (isNear(center(i), center(player), 20)):
-					i.isExploding = True
-					i.img = normalBombImgs[0]
-					i.Detonate(player)
-					for p in movingblocks:
-						if i.type in [0,1]:
-							i.Detonate(p)
-					i.stuck = True
-					i.vel = [0, 0]
 
 
 	# Moving Blocks
@@ -820,7 +768,7 @@ while Running:
 		if i.isExploding:
 			i.explodeTime -= 1
 			i.incrementSprite(1, i.explodeTime)
-			effect = pygame.mixer.Sound("assets/Explosion.wav")
+			effect = pygame.mixer.Sound("assets/Sounds/Explosion.wav")
 			effect.play()
 			if i.explodeTime > 10:
 
@@ -840,7 +788,7 @@ while Running:
 			i.time += 1
 			if i.time >= i.arm:
 				i.armed = True
-				effect = pygame.mixer.Sound("assets/throw.wav")
+				effect = pygame.mixer.Sound("assets/Sounds/throw.wav")
 				effect.play()
 
 		if (i.stuckOn != None):
