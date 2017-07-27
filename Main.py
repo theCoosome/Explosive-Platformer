@@ -159,14 +159,14 @@ class Person(object):
 
 	def Kill(self):
 		print "Ded"
-		createLevel(currLvl)
+		#createLevel(currLvl)
 		
 	def Collide(self, i):
 		if collide(i.coords, i.size, self.coords, self.size):  # UP
 			
 			if self.dualColliding:
 				self.Kill()
-			
+				
 			if type(i) == movingBlock:
 				if i.vel[1] > 5:
 					self.Kill()
@@ -480,7 +480,7 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 	spawnChar()
 	if (lvl == 0):
 		borderedLevel()
-		createMovingBlock(32, 200, 4, 4)
+		createMovingBlock(320, 6, 4, 4)
 		createFloor(32, 300, 1, 15)
 		createFloor(200, 200, 1, 8)
 		createFloor(264, 216, 1, 2)
@@ -497,7 +497,8 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		crates.append(Crate((432, 160), (16, 16), crateImg))
 		keys.append(Key((432, 160), (8, 8), keyImg))
 		gates.append(Gate((896, 626), (64, 64), lockImg, False))
-		movingblocks.append(movingBlock(0,[64,64],(16,16)))
+		#movingblocks.append(movingBlock(0,[64,64],(16,16)))
+		movingblocks.append(movingBlock(0,[320,60],(48,32)))
 
 	elif (lvl == 1):
 		createFloor(0, 688, 2, 64)
