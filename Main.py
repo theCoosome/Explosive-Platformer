@@ -157,6 +157,14 @@ class Person(object):
 		self.img = 0
 
 	def Collide(self, i):
+		if collide(i.coords, i.size, self.coords, self.size):  # UP
+			p1 = center(self)
+			#if center(self)[1] < center(i)[1]: #FLOOR
+			if self.vel[1] > 0 and self.coords[1] <= i.coords[1]:
+				self.coords[1] = i.coords[1] - self.size[1]
+				self.vel[1] = 0
+				self.floor = True
+				pygame.draw.line(screen, BLUE, p1, center(self))
 		if collide(self.coords, self.size, (i.coords[0], i.coords[1] + 3), (i.size[0], i.size[1] - 3)):  # LEFT / RIGHT
 			p1 = center(self)
 			if self.vel[0] > 0 and self.coords[0] <= i.coords[0]:
@@ -169,13 +177,8 @@ class Person(object):
 				pygame.draw.line(screen, RED, p1, center(self))
 		if collide(i.coords, i.size, self.coords, self.size):  # UP
 			p1 = center(self)
-			if center(self)[1] < center(i)[1]: #FLOOR
-				self.coords[1] = i.coords[1] - self.size[1]
-				self.vel[1] = 0
-				self.floor = True
-				pygame.draw.line(screen, BLUE, p1, center(self))
-			p1 = center(self)
-			if center(self)[1] > center(i)[1]:
+			#if center(self)[1] > center(i)[1]:
+			if self.vel[1] < 0 and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1]:
 				self.coords[1] = i.coords[1] + i.size[1]
 				self.vel[1] = 0
 				pygame.draw.line(screen, GREEN, p1, center(self))
