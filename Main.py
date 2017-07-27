@@ -271,11 +271,52 @@ class Gate(object):
 		self.size = size
 		self.img = pygame.transform.scale(img, size)
 		self.open = open
+	def Collide(self, i):
+		if collide(self.coords, self.size, i.coords, i.size):  # LEFT / RIGHT
+			if self.vel[0] > 0 and self.coords[0] <= i.coords[0]:
+				self.coords[0] = i.coords[0] - self.size[0]
+				self.vel[0] = 0
+			if self.vel[0] < 0 and self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
+				self.coords[0] = i.coords[0] + i.size[0]
+				self.vel[0] = 0
+		if collide(i.coords, i.size, self.coords, self.size):  # DOWN
+			if center(self)[1] < center(i)[1]:
+				self.coords[1] = i.coords[1] - self.size[1]
+				self.vel[1] = 0
+				self.floor = True
+		if collide(i.coords, i.size, self.coords, self.size):  # UP
+			if center(self)[1] > center(i)[1]:  # Up-ing
+				self.coords[1] = i.coords[1] + i.size[1]
+				self.vel[1] = 0
+
+		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
+			self.floor = True
 class Crate(object):
 	def __init__(self,coords,size,img):
 		self.coords = coords
 		self.size = size
 		self.img = img
+
+	def Collide(self, i):
+		if collide(self.coords, self.size, i.coords, i.size):  # LEFT / RIGHT
+			if self.vel[0] > 0 and self.coords[0] <= i.coords[0]:
+				self.coords[0] = i.coords[0] - self.size[0]
+				self.vel[0] = 0
+			if self.vel[0] < 0 and self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
+				self.coords[0] = i.coords[0] + i.size[0]
+				self.vel[0] = 0
+		if collide(i.coords, i.size, self.coords, self.size):  # DOWN
+			if center(self)[1] < center(i)[1]:
+				self.coords[1] = i.coords[1] - self.size[1]
+				self.vel[1] = 0
+				self.floor = True
+		if collide(i.coords, i.size, self.coords, self.size):  # UP
+			if center(self)[1] > center(i)[1]:  # Up-ing
+				self.coords[1] = i.coords[1] + i.size[1]
+				self.vel[1] = 0
+
+		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
+			self.floor = True
 
 class bomb(object):
 	def __init__(self, type, coords, vel, size, pow, arm, img):
@@ -451,7 +492,7 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		createFloor(220, 190, 1, 1)
 		createFloor(300, 256, 1, 10)
 
-		platforms.append(Platform((896, 626), (64, 64), platformImg))
+		#platforms.append(Platform((896, 626), (64, 64), platformImg))
 		switchs.append(Switch("Switch", (256, 284), (32, 32), switchImg, False))
 		crates.append(Crate((432, 160), (16, 16), crateImg))
 		keys.append(Key((432, 160), (8, 8), keyImg))
@@ -670,13 +711,39 @@ while Running:
 
 	player.floor = False
 	drawBricks()
+
+	for k in keys:
+		if isNear(player.coords, k.coords):
+			player.hasKey = True
+			effect = pygame.mixer.Sound("assets/Sounds/Win.wav")
+			effect.play()
+			print("1")
+			keys.remove(k)
+	for g in gates:
+		if isNear(g.coords, player.coords):
+			if player.hasKey == True:
+				effect = pygame.mixer.Sound("assets/Sounds/Open.wav")
+				effect.play()
+				print("2")
+	for i in bricks:
+		screen.blit(i.img, i.coords)
+		player.Collide(i)
+	for i in movingblocks:
+		player.Collide(i)
+	for i in platforms:
+		player.Collide(i)
+	for i in crates:
+		player.Collide(i)
+	for g in gates:
+		player.Collide(g)
+
 	for i in movingblocks: #Moving blocks collide with each other
 		for p in movingblocks:
 			if not (p == i):
 				p.Collide(i)
 	
-	for i in platforms: #Player collide with platforms
-		player.Collide(i)
+
+			p
 	if player.vel[0] == 0 and player.vel[1] == 0:
 		movingLeft = False
 		movingRight = False
@@ -709,8 +776,10 @@ while Running:
 				personimg = right[player.index]
 
 
-	# Bombs
+			personimg = left[player.index]
 
+
+	screen.blit(personimg, player.coords)
 
 
 	# Moving Blocks
@@ -794,6 +863,8 @@ while Running:
 		if (i.stuckOn != None):
 			if (i.stuckOn in movingblocks): #Follow what it is stuck to
 				i.coords = [i.stuckOn.coords[0]+i.relative[0], i.stuckOn.coords[1]+i.relative[1]]
+			elif (i.stuckOn in crates): #Follow what it is stuck to
+				i.coords = [i.stuckOn.coords[0]+i.relative[0], i.stuckOn.coords[1]+i.relative[1]]
 			else:
 				i.stuck = False
 				i.stuckOn = None
@@ -802,6 +873,8 @@ while Running:
 			for p in bricks:
 				i.Collide(p)
 			for p in movingblocks:
+				i.Collide(p)
+			for p in crates:
 				i.Collide(p)
 		screen.blit(i.img,i.coords)
 
