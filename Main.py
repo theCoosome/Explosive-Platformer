@@ -767,9 +767,6 @@ while Running:
 		for p in movingblocks:
 			if not (p == i):
 				p.Collide(i)
-
-	for i in platforms: #Player collide with platforms
-		player.Collide(i)
 	if player.vel[0] == 0 and player.vel[1] == 0:
 		movingLeft = False
 		movingRight = False
@@ -800,9 +797,6 @@ while Running:
 					if player.index >= len(right):
 						player.index = 0
 			personimg = right[player.index]
-
-
-
 
 	screen.blit(personimg, player.coords)
 
