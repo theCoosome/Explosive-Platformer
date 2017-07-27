@@ -542,7 +542,7 @@ while Running:
 				player.Crouch()
 			if event.key in [K_UP, K_w] and player.floor:  # ^
 				player.vel[1] = -8
-				effect = pygame.mixer.Sound("assets/Jump3.wav")
+				effect = pygame.mixer.Sound("assets/Sounds/Jump3.wav")
 				effect.play()
 				player.floor = False
 			if event.key == K_r:  # slow down
@@ -686,35 +686,86 @@ while Running:
 		else:
 			personimg = crouchImg[0]
 	else:
-		if player.motion[0] > 0:
+		if player.motion[0] == 0:
+			personimg = right[1]
+		elif player.motion[0] < 0:
+			if not movingRight:
+				counter += 1
+				if counter == 10:
+					player.index += 1
+					counter = 0
+				if player.index >= len(left):
+					player.index = 0
+			personimg = left[player.index]
+		elif player.motion[0] > 0:
 			if movingRight:
-				if isCrouching == False:
+				if not isCrouching :
 					counter += 1
 					if counter == 10:
 						player.index += 1
 						counter = 0
 					if player.index >= len(right):
 						player.index = 0
-
 				personimg = right[player.index]
-		elif player.motion[0] == 0:
-			personimg = right[1]
-		elif player.motion[0] < 0:
-			counter += 1
-			if counter == 10:
-				player.index += 1
-				counter = 0
-			if player.index >= len(left):
-				player.index = 0
-
-
-			personimg = left[player.index]
 
 
 	screen.blit(personimg, player.coords)
 	# Bombs
-	
-	
+
+	for i in bombs:
+		if i.isExploding:
+			i.explodeTime -= 1
+			i.incrementSprite(1, i.explodeTime)
+			effect = pygame.mixer.Sound("assets/Sounds/Explosion.wav")
+			effect.play()
+			if i.explodeTime > 10:
+
+				pygame.draw.circle(screen, BLACK, (int(center(i)[0]), int(center(i)[1])), detRange-player.size[0], 1)
+
+
+		if i.explodeTime <= 0:
+			bombs.remove(i)
+
+		if not i.stuck:
+			if i.vel[1] < maxFallSpeed:
+				i.vel[1] += gravity
+			i.coords[0] += i.vel[0]
+			i.coords[1] += i.vel[1]
+
+		if not i.armed:
+			i.time += 1
+			if i.time >= i.arm:
+				i.armed = True
+				effect = pygame.mixer.Sound("assets/Sounds/throw.wav")
+				effect.play()
+
+		screen.blit(i.img, i.coords)
+
+
+		if i.stuckOn != None: #Follow what it is stuck to
+			pass
+
+		for p in bricks:
+			i.Collide(p)
+		for p in movingblocks:
+			i.Collide(p)
+		screen.blit(i.img,i.coords)
+
+
+	if bombsExplode:
+		for i in bombs:
+			if i.armed:
+				if (i.type != 3) or (isNear(center(i), mousepos, 32)) or (isNear(center(i), center(player), 20)):
+					i.isExploding = True
+					i.img = normalBombImgs[0]
+					i.Detonate(player)
+					for p in movingblocks:
+						if i.type in [0,1]:
+							i.Detonate(p)
+					i.stuck = True
+					i.vel = [0, 0]
+
+
 	# Moving Blocks
 	for i in movingblocks: #Player collide with moving blocks
 		player.Collide(i)

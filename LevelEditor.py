@@ -17,6 +17,7 @@ GREEN = pygame.Color(0, 255, 0)
 BLUE = pygame.Color(0, 0, 255)
 LGRAY = pygame.Color(214, 214, 194)
 
+
 clock = pygame.time.Clock()
 
 pygame.mouse.set_visible(False)
@@ -34,11 +35,14 @@ def getImg(name):  # gets images and prints their retrieval
 		print "--File not found. Substituting"
 		return pygame.image.load("assets/wip.png")
 
-brickImg = getImg("Brick")
-personimg = getImg("Derek")
-movingImg = getImg("BrickMoving")
-destructableImg = getImg("BrickDestructable")
+brickImg = getImg("Bricks/Brick")
+personimg = getImg("Dereks/Derek")
+movingImg = getImg("Bricks/BrickMoving")
+destructableImg = getImg("Bricks/BrickDestructable")
+multiImg = getImg("Bricks/BrickMulti")
 bombImg = getImg("Bomb")
+
+bricks = []
 
 #Mouse Images
 AimImg = getImg("Mouse/Aim")
@@ -51,8 +55,20 @@ RemoveImg = getImg("Mouse/Remove")
 mouseImgs = [AimImg, BrickPlaceImg, DPlaceImg, MovablePlaceImg, MultiPlaceImg, ExitPlaceImg, RemoveImg]
 mouseImg = mouseImgs[0]
 
+
 def center(obj):  # finds center of object sent to function
 	return (obj.coords[0] + (obj.size[0] / 2), obj.coords[1] + (obj.size[1] / 2))
+
+def pointCollide(p1, p2, p3):
+	if p1[0] + p2[0] > p3[0] and p1[0] < p3[0] and p1[1] + p2[1] > p3[1] and p1[1] < p3[1]:
+		return True
+
+def collide(p1, p2, p3, p4):
+	# if right side is right of left side, and left side left of right side
+	if p1[1] + p2[1] > p3[1] and p1[1] < p3[1] + p4[1]:
+		# if bottom is below top and top is above bottom
+		if p1[0] + p2[0] > p3[0] and p1[0] < p3[0] + p4[0]:
+			return True
 
 class Person(object):
 	def __init__(self, coords, size):
@@ -100,6 +116,10 @@ class Person(object):
 		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
 			self.floor = True
 
+CBRICK = -1
+CMOVABLE = 0
+CDESTRUCTABLE = 1
+CMULTI = 2
 
 class movingBlock(object):
 	def __init__(self, type, coords, size):
@@ -116,7 +136,7 @@ class movingBlock(object):
 			self.img = pygame.transform.scale(destructableImg, size)
 
 		if type == 2:  # Movable and Destructable
-			self.img = pygame.transform.scale(destructableImg, size)
+			self.img = pygame.transform.scale(multiImg, size)
 
 	def Collide(self, i):
 		if collide(self.coords, self.size, i.coords, i.size):  # LEFT / RIGHT
@@ -146,6 +166,17 @@ class Brick(object):
 		self.coords = coords
 		self.size = size
 		self.img = pygame.transform.scale(img, size)
+
+
+def drawBricks():
+	for i in bricks:
+		screen.blit(i.img, i.coords)
+
+def createFloor(coordx, coordy, ry, rx, type):
+	if type == -1:
+		bricks.append(Brick(type, [coordx, coordy], (rx * 16, ry * 16), brickImg))
+	else:
+		bricks.append(movingBlock(type, [coordx, coordy], (rx * 16, ry * 16)))
 
 
 placeMode = "brick"
@@ -232,9 +263,43 @@ gL = 0
 Running = True
 pressedLMB = False
 
+all = []
+
+def saveFile():
+	file = open("saves/Level Editor Save.txt", "w")
+	file.truncate
+	writeList = []
+	for i in bricks:
+		writeContents = "$"
+		writeContents += str(i.type)
+		writeContents += " "
+		writeContents += str(i.coords)
+		writeContents += " "
+		writeContents += str(i.size)
+		writeContents += "\n"
+		writeList.append(writeContents)
+
+	for i in movingblocks:
+		writeContents = "@"
+		writeContents += str(i.type)
+		writeContents += " "
+		writeContents += str(i.coords)
+		writeContents += " "
+		writeContents += str(i.size)
+		writeContents += "\n"
+		writeList.append(writeContents)
+	print writeList
+	file.writelines(writeList)
+	file.close()
+
+
+
 while Running:
 	mousepos = pygame.mouse.get_pos()
 	screen.fill(WHITE)
+	currImgNum = mouseImgs.index(mouseImg)
+
+	placeRect = Rect(0,0,0,0)
 
 	w, h = size
 
@@ -262,6 +327,8 @@ while Running:
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_q:  # quiting
 				Running = False
+			if event.key == pygame.K_s:
+				saveFile()
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			print event.button
@@ -279,10 +346,37 @@ while Running:
 				if newImgNum < 0:
 					newImgNum = len(mouseImgs)-1
 				mouseImg = mouseImgs[newImgNum]
+		#Associations: [AimImg, BrickPlaceImg, DPlaceImg, MovablePlaceImg, MultiPlaceImg, ExitPlaceImg, RemoveImg]
 		if event.type == pygame.MOUSEBUTTONUP:
 			if event.button == 1:
 				pressedLMB = False
+				rectX, rectY = placeRect.topleft
+				brx, bry = placeRect.bottomright
+				if(currImgNum == 1):
+					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry-rectY)/16)), int(math.fabs((brx-rectX)/16)), CBRICK)
+				elif (currImgNum == 2):
+					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry - rectY) / 16)),
+								int(math.fabs((brx - rectX) / 16)), CDESTRUCTABLE)
+				elif(currImgNum == 3):
+					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry - rectY) / 16)),
+								int(math.fabs((brx - rectX) / 16)), CMOVABLE)
+				elif (currImgNum == 4):
+					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry - rectY) / 16)),
+							int(math.fabs((brx - rectX) / 16)), CMULTI)
+				elif(currImgNum == 6):
+					delList = []
+					for i in range(len(bricks)):
+						coords = (min(rectX, brx), min(rectY, bry))
+						pSize = (int(math.fabs(brx-rectX)), int(math.fabs(bry-rectY)))
+						if collide(coords, pSize, bricks[i].coords, bricks[i].size):
+							print "Touching"
+							delList.append(bricks[i])
+					for i in delList:
+						del bricks[bricks.index(i)]
 
+
+
+	drawBricks()
 	screen.blit(mouseImg, (mousepos[0] - 3, mousepos[1] - 3))
 	pygame.display.update()
 	clock.tick(60)
