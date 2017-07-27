@@ -157,6 +157,14 @@ class Person(object):
 		self.img = 0
 
 	def Collide(self, i):
+		if collide(i.coords, i.size, self.coords, self.size):  # UP
+			p1 = center(self)
+			#if center(self)[1] < center(i)[1]: #FLOOR
+			if self.vel[1] > 0 and self.coords[1] <= i.coords[1]:
+				self.coords[1] = i.coords[1] - self.size[1]
+				self.vel[1] = 0
+				self.floor = True
+				pygame.draw.line(screen, BLUE, p1, center(self))
 		if collide(self.coords, self.size, (i.coords[0], i.coords[1] + 3), (i.size[0], i.size[1] - 3)):  # LEFT / RIGHT
 			p1 = center(self)
 			if self.vel[0] > 0 and self.coords[0] <= i.coords[0]:
@@ -169,13 +177,8 @@ class Person(object):
 				pygame.draw.line(screen, RED, p1, center(self))
 		if collide(i.coords, i.size, self.coords, self.size):  # UP
 			p1 = center(self)
-			if center(self)[1] < center(i)[1]: #FLOOR
-				self.coords[1] = i.coords[1] - self.size[1]
-				self.vel[1] = 0
-				self.floor = True
-				pygame.draw.line(screen, BLUE, p1, center(self))
-			p1 = center(self)
-			if center(self)[1] > center(i)[1]:
+			#if center(self)[1] > center(i)[1]:
+			if self.vel[1] < 0 and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1]:
 				self.coords[1] = i.coords[1] + i.size[1]
 				self.vel[1] = 0
 				pygame.draw.line(screen, GREEN, p1, center(self))
@@ -273,7 +276,10 @@ class bomb(object):
 		self.isExploding = False
 		self.floor = False
 		self.stuck = False
+		
 		self.stuckOn = None
+		self.relative = (0, 0)
+		
 		self.vel = vel
 		self.detRange = 72
 
@@ -287,22 +293,33 @@ class bomb(object):
 				self.coords[0] = i.coords[0] - self.size[0]
 				self.vel[0] = 0
 				self.stuck = True
+				if type(i) == movingBlock:
+					self.stuckOn = i
+					self.relative = (self.coords[0]-i.coords[0], self.coords[1]-i.coords[1])
 			if self.vel[0] < 0 and self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
 				self.coords[0] = i.coords[0] + i.size[0]
 				self.vel[0] = 0
 				self.stuck = True
+				if type(i) == movingBlock:
+					self.stuckOn = i
+					self.relative = (self.coords[0]-i.coords[0], self.coords[1]-i.coords[1])
 		if collide(i.coords, i.size, self.coords, self.size):  # DOWN
 			if center(self)[1] < center(i)[1]:
 				self.coords[1] = i.coords[1] - self.size[1]
 				self.vel[1] = 0
 				self.floor = True
 				self.stuck = True
-		if collide(i.coords, i.size, self.coords, self.size):  # UP
+				if type(i) == movingBlock:
+					self.stuckOn = i
+					self.relative = (self.coords[0]-i.coords[0], self.coords[1]-i.coords[1])
 			if center(self)[1] > center(i)[1]:  # Up-ing
 				self.coords[1] = i.coords[1] + i.size[1]
 				self.vel[1] = 0
 				self.stuck = True
-
+				if type(i) == movingBlock:
+					self.stuckOn = i
+					self.relative = (self.coords[0]-i.coords[0], self.coords[1]-i.coords[1])
+		
 		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
 			self.floor = True
 
@@ -681,6 +698,7 @@ while Running:
 
 	screen.blit(personimg, player.coords)
 	# Bombs
+
 	for i in bombs:
 		if i.isExploding:
 			i.explodeTime -= 1
@@ -735,25 +753,9 @@ while Running:
 					i.vel = [0, 0]
 
 
-
-
 	# Moving Blocks
 	for i in movingblocks:
-
 		player.Collide(i)
-
-		i.floor = False
-		if i.vel[1] < maxFallSpeed:  # Gravity
-			i.vel[1] += gravity
-		i.coords[0] += i.vel[0]
-		i.coords[1] += i.vel[1]
-		for p in bricks:
-			i.Collide(p)
-		if i.floor:
-			i.vel[0] = Zero(i.vel[0], friction)
-		screen.blit(i.img, i.coords)
-	# Moving Blocks
-
 		if i.type in [0, 2]:
 			i.floor = False
 			if i.vel[1] < maxFallSpeed:  # Gravity
@@ -796,6 +798,63 @@ while Running:
 					print "you won!"
 				mb.Collide(p)
 			screen.blit(p.img,p.coords)
+	
+	for i in bombs:
+		if i.isExploding:
+			i.explodeTime -= 1
+			i.incrementSprite(1, i.explodeTime)
+			effect = pygame.mixer.Sound("assets/Explosion.wav")
+			effect.play()
+			if i.explodeTime > 10:
+
+				pygame.draw.circle(screen, BLACK, (int(center(i)[0]), int(center(i)[1])), detRange-player.size[0], 1)
+
+
+		if i.explodeTime <= 0:
+			bombs.remove(i)
+
+		if not i.stuck:
+			if i.vel[1] < maxFallSpeed:
+				i.vel[1] += gravity
+			i.coords[0] += i.vel[0]
+			i.coords[1] += i.vel[1]
+
+		if not i.armed:
+			i.time += 1
+			if i.time >= i.arm:
+				i.armed = True
+				effect = pygame.mixer.Sound("assets/throw.wav")
+				effect.play()
+
+		if (i.stuckOn != None):
+			if (i.stuckOn in movingblocks): #Follow what it is stuck to
+				i.coords = [i.stuckOn.coords[0]+i.relative[0], i.stuckOn.coords[1]+i.relative[1]]
+			else:
+				i.stuck = False
+				i.stuckOn = None
+		
+		if not i.stuck:
+			for p in bricks:
+				i.Collide(p)
+			for p in movingblocks:
+				i.Collide(p)
+		screen.blit(i.img,i.coords)
+
+
+	if bombsExplode:
+		for i in bombs:
+			if i.armed:
+				if (i.type != 3) or (isNear(center(i), mousepos, 32)) or (isNear(center(i), center(player), 20)):
+					i.isExploding = True
+					i.img = normalBombImgs[0]
+					i.Detonate(player)
+					for p in movingblocks:
+						if p.type in [0,2]:
+							i.Detonate(p)
+					i.stuck = True
+					i.stuckOn = None
+					i.vel = [0, 0]
+
 
 	#UI display
 	screen.blit(DetCurrent.img, (4, 4))
