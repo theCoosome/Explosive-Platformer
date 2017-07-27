@@ -79,8 +79,8 @@ mouseImg = AimImg
 
 #Anim
 derek = getImg("Dereks/Derek")
-right = [getImg("Dereks/anim1r"),getImg("Dereks/Derek"),getImg("Dereks/anim2r")]
 left = [getImg("Dereks/anim1l"),getImg("Dereks/anim2l"),getImg("Dereks/anim3l")]
+right = [getImg("Dereks/anim1r"),getImg("Dereks/Derek"),getImg("Dereks/anim2r")]
 crouchImg = [getImg("Dereks/DerekCrouch"),getImg("Dereks/derekcrouchl")]
 
 def toggle(bool):  # is used to make bomb and players stop when in contact with floor
@@ -742,8 +742,6 @@ while Running:
 			if not (p == i):
 				p.Collide(i)
 	
-
-			p
 	if player.vel[0] == 0 and player.vel[1] == 0:
 		movingLeft = False
 		movingRight = False
@@ -773,7 +771,7 @@ while Running:
 						counter = 0
 					if player.index >= len(right):
 						player.index = 0
-				personimg = right[player.index]
+			personimg = right[player.index]
 
 
 			personimg = left[player.index]
@@ -801,8 +799,6 @@ while Running:
 
 			if i.vel[1] >= 16:
 				i.vel[1] = 16
-
-
 
 			i.coords[0] += i.vel[0]
 			i.coords[1] += i.vel[1]
@@ -906,6 +902,113 @@ while Running:
 	screen.blit(mouseImg, (mousepos[0]-3, mousepos[1]-3))
 	pygame.display.update()
 	clock.tick(fps)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
