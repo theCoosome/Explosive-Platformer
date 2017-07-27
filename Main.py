@@ -709,7 +709,6 @@ while Running:
 				personimg = right[player.index]
 
 
-	screen.blit(personimg, player.coords)
 	# Bombs
 
 	for i in bombs:
@@ -878,6 +877,7 @@ while Running:
 		player.vel[0] = Zero(player.vel[0], friction)
 
 	#UI display
+	screen.blit(personimg, player.coords)
 	screen.blit(DetCurrent.img, (4, 4))
 	if DetCurrent.type == 3:
 		pygame.draw.circle(screen, RED, mousepos, 32, 1)
