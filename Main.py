@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 import math
 from decimal import *
+import time
 
 pygame.mixer.pre_init(44100, -16, 2, 2048)
 pygame.init()
@@ -599,8 +600,13 @@ while Running:
 			if event.key in [K_LEFT, K_a]:  # move <-
 				player.motion[0] -= 2.0
 				gL =0
+				time.sleep(.02)
 				movingLeft = True
 				movingRight = False
+			if event.key in [K_RIGHT and K_a, K_LEFT and K_d]:  # move ->
+				movingRight = False
+				movingLeft = False
+				playerimg=derek
 			if event.key in [K_DOWN, K_s]:  # v
 				player.motion[1] += 0.5
 				player.Crouch()
@@ -796,6 +802,7 @@ while Running:
 						counter = 0
 					if player.index >= len(right):
 						player.index = 0
+
 			personimg = right[player.index]
 
 	screen.blit(personimg, player.coords)
