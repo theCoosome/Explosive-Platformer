@@ -57,6 +57,13 @@ lockImg = getImg("bars")
 keyImg = getImg("key")
 crateImg = getImg("crate")
 
+#Anim
+derek = getImg("Dereks/Derek")
+left = [getImg("Dereks/anim1l"),getImg("Dereks/anim3l")]
+right = [getImg("Dereks/anim1r"),getImg("Dereks/anim2r")]
+crouchImg = [getImg("Dereks/DerekCrouch"),getImg("Dereks/derekcrouchl")]
+'''left = [getImg("Dereks/anim1l"),getImg("Dereks/anim2l"),getImg("Dereks/anim3l")]
+right = [getImg("Dereks/anim1r"),getImg("Dereks/Derek"),getImg("Dereks/anim2r")]'''
 
 
 
@@ -80,11 +87,6 @@ normalExplode = [getImg("")]
 AimImg = getImg("Mouse/Aim")
 mouseImg = AimImg
 
-#Anim
-derek = getImg("Dereks/Derek")
-left = [getImg("Dereks/anim1l"),getImg("Dereks/anim2l"),getImg("Dereks/anim3l")]
-right = [getImg("Dereks/anim1r"),getImg("Dereks/Derek"),getImg("Dereks/anim2r")]
-crouchImg = [getImg("Dereks/DerekCrouch"),getImg("Dereks/derekcrouchl")]
 
 def toggle(bool):  # is used to make bomb and players stop when in contact with floor
 	if bool:
@@ -449,6 +451,9 @@ def wipeFloor():
 	del bricks[:]
 	del bombs[:]
 	del movingblocks[:]
+	del switchs[:]
+	del gates[:]
+	del platforms[:]
 
 def createWall(coordx, coordy, rx, ry, dir):
 	if dir == "down":
@@ -459,8 +464,7 @@ def createWall(coordx, coordy, rx, ry, dir):
 
 
 def createMovingBlock(coordx, coordy, rx, ry, type):
-	for i in range(rx, ry):
-		movingblocks.append(movingBlock(type,[coordx + (16 * i), coordy], (16 * rx, 16)))
+	movingblocks.append(movingBlock(type, [coordx, coordy], [rx*16, ry*16]))
 
 
 
@@ -503,8 +507,6 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		openReadFile("saves/Level Editor Save.txt")
 	elif (lvl == 0):
 		borderedLevel()
-		createMovingBlock(32, 200, 4, 4, 0)
-		createMovingBlock(320, 6, 4, 4, 0)
 		createFloor(32, 300, 1, 15)
 		createFloor(200, 200, 1, 8)
 		createFloor(264, 216, 1, 2)
@@ -567,8 +569,6 @@ counter = 0
 
 createLevel(currLvl)
 
-createMovingBlock(5,5,5,5,2)
-
 while Running:
 	mousepos = pygame.mouse.get_pos()
 	if bombWaitTime > 0:  # sets off bomb
@@ -595,18 +595,19 @@ while Running:
 			if event.key in [K_RIGHT, K_d]:  # move ->
 				player.motion[0] += 2.0
 				gR = 0
+				personimg = right[player.index]
 				movingRight = True
 				movingLeft = False
 			if event.key in [K_LEFT, K_a]:  # move <-
 				player.motion[0] -= 2.0
 				gL =0
 				time.sleep(.02)
+				personimg = left[player.index]
 				movingLeft = True
 				movingRight = False
 			if event.key in [K_RIGHT and K_a, K_LEFT and K_d]:  # move ->
 				movingRight = False
 				movingLeft = False
-				playerimg=derek
 			if event.key in [K_DOWN, K_s]:  # v
 				player.motion[1] += 0.5
 				player.Crouch()
@@ -785,7 +786,7 @@ while Running:
 			personimg = crouchImg[0]
 	else:
 		if player.motion[0] == 0:
-			personimg = right[1]
+			personimg = derek
 		elif player.motion[0] < 0:
 			if movingLeft:
 				counter += 1
@@ -922,115 +923,3 @@ while Running:
 	screen.blit(mouseImg, (mousepos[0]-3, mousepos[1]-3))
 	pygame.display.update()
 	clock.tick(fps)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
