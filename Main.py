@@ -48,6 +48,8 @@ def getImg(name):  # gets images and prints their retrieval
 brickImg = getImg("Bricks/Brick")
 personimg = getImg("Dereks/Derek")
 movingImg = getImg("Bricks/BrickMoving")
+destructableImg = getImg("Bricks/BrickDestructable")
+multiImg = getImg("Bricks/BrickMulti")
 
 switches= [getImg("Switch"),getImg("Switch2")]
 switchImg = switches[0]
@@ -55,7 +57,7 @@ lockImg = getImg("bars")
 keyImg = getImg("key")
 crateImg = getImg("crate")
 
-destructableImg = getImg("Bricks/BrickDestructable")
+
 
 
 #Bombs
@@ -111,7 +113,7 @@ def pointCollide(p1, p2, p3):
 
 
 def isNear(p1, p2, dist = 32):
-	
+
 	xChng = p1[0] - p2[0]
 	yChng = p1[1] - p2[1]
 
@@ -146,7 +148,7 @@ class Person(object):
 		self.index = 0
 		self.img = 0
 		self.hasKey = hasKey
-		
+
 		self.dualColliding = False
 
 	def Crouch(self):
@@ -161,18 +163,16 @@ class Person(object):
 	def Kill(self):
 		print "Ded"
 		createLevel(currLvl)
-		
 	def Collide(self, i):
 		if collide(i.coords, i.size, self.coords, self.size):  # UP
-			
+
 			if self.dualColliding:
 				self.Kill()
-			
 			if type(i) == movingBlock:
 				if i.vel[1] > 5:
 					self.Kill()
 				self.dualColliding = True
-					
+
 			p1 = center(self)
 			#if center(self)[1] < center(i)[1]: #FLOOR
 			if self.vel[1] > 0 and self.coords[1] <= i.coords[1]:
@@ -220,7 +220,7 @@ class movingBlock(object):
 			self.img = pygame.transform.scale(destructableImg, size)
 
 		if type == 2: #Movable and Destructable
-			self.img = pygame.transform.scale(destructableImg, size)
+			self.img = pygame.transform.scale(multiImg, size)
 
 	def Collide(self, i):
 		if collide(self.coords, self.size, i.coords, i.size):  # LEFT / RIGHT
@@ -333,10 +333,10 @@ class bomb(object):
 		self.isExploding = False
 		self.floor = False
 		self.stuck = False
-		
+
 		self.stuckOn = None
 		self.relative = (0, 0)
-		
+
 		self.vel = vel
 		self.detRange = 72
 
@@ -376,7 +376,7 @@ class bomb(object):
 				if type(i) == movingBlock:
 					self.stuckOn = i
 					self.relative = (self.coords[0]-i.coords[0], self.coords[1]-i.coords[1])
-		
+
 		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
 			self.floor = True
 
@@ -436,6 +436,8 @@ def spawnChar():
 		player.coords = [50, 250]
 	elif currLvl == 1:
 		player.coords = [50, 500]
+	else:
+		player.coords = [50, 250]
 	print currLvl
 	player.vel[1] = 0
 	player.vel[0] = 0
@@ -456,9 +458,9 @@ def createWall(coordx, coordy, rx, ry, dir):
 
 
 
-def createMovingBlock(coordx, coordy, rx, ry):
+def createMovingBlock(coordx, coordy, rx, ry, type):
 	for i in range(rx, ry):
-		movingblocks.append(movingBlock(0,[coordx + (16 * i), coordy], (16 * rx, 16)))
+		movingblocks.append(movingBlock(type,[coordx + (16 * i), coordy], (16 * rx, 16)))
 
 
 
@@ -474,14 +476,34 @@ keys = []
 gates = []
 crates = []
 platforms = []
+
+
+def openReadFile(filePath):
+	file = open(filePath, "r")
+	cont = file.readlines()
+	for i in cont:
+		symbol, type, x, y, xs, ys = i.split("*")
+		if symbol == "$":
+			if type == "-1":
+				print "worked"
+				createFloor(int(x), int(y), int(int(ys) / 16), int(int(xs) / 16))
+			else:
+				print "moveBlock"
+				createMovingBlock(int(x), int(y), int(int(xs) / 16), int(int(ys) / 16), int(type))
+
+
 currLvl = 0
 totalLvls = 2	#CHANGE THIS WHEN ADDING LVLS
+
 def createLevel(lvl):	#Almost all refrences of this should be written createLevel(currLvl). Only use an int for bugtesting.
 	wipeFloor()
 	spawnChar()
-	if (lvl == 0):
+	if (lvl == -1):
+		openReadFile("saves/Level Editor Save.txt")
+	elif (lvl == 0):
 		borderedLevel()
-		createMovingBlock(32, 200, 4, 4)
+		createMovingBlock(32, 200, 4, 4, 0)
+		createMovingBlock(320, 6, 4, 4)
 		createFloor(32, 300, 1, 15)
 		createFloor(200, 200, 1, 8)
 		createFloor(264, 216, 1, 2)
@@ -498,7 +520,8 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		crates.append(Crate((432, 160), (16, 16), crateImg))
 		keys.append(Key((432, 160), (8, 8), keyImg))
 		gates.append(Gate((896, 626), (64, 64), lockImg, False))
-		movingblocks.append(movingBlock(0,[64,64],(16,16)))
+		#movingblocks.append(movingBlock(0,[64,64],(16,16)))
+		movingblocks.append(movingBlock(0,[320,60],(48,32)))
 
 	elif (lvl == 1):
 		createFloor(0, 688, 2, 64)
@@ -609,7 +632,7 @@ while Running:
 					i.vel[1] = 0
 				player.floor = toggle(player.floor)
 				player.vel[1] = 0
-			if event.key == pygame.K_q:  # quiting
+			if event.key == pygame.K_q:  # quitting
 				Running = False
 			if event.key == K_p:  # Increment level by 1
 				currLvl += 1
@@ -621,6 +644,9 @@ while Running:
 				if currLvl < 0:
 					currLvl = totalLvls - 1
 				createLevel(currLvl)
+			if event.key == K_l:  # slow down
+				currLvl = -1
+				createLevel(-1)
 			if event.key == pygame.K_SPACE:  # exploding
 				bombsExplode = True
 			if event.key == pygame.K_t:  # print cursor location, useful for putting stuff in the right spot
@@ -747,7 +773,6 @@ while Running:
 		for p in movingblocks:
 			if not (p == i):
 				p.Collide(i)
-	
 	if player.vel[0] == 0 and player.vel[1] == 0:
 		movingLeft = False
 		movingRight = False
@@ -780,9 +805,6 @@ while Running:
 
 			personimg = right[player.index]
 
-
-
-
 	screen.blit(personimg, player.coords)
 
 
@@ -808,7 +830,7 @@ while Running:
 
 			i.coords[0] += i.vel[0]
 			i.coords[1] += i.vel[1]
-			
+
 			for p in bricks:
 				i.Collide(p)
 			if i.floor:
@@ -830,11 +852,11 @@ while Running:
 					print "you won!"
 				mb.Collide(p)
 			screen.blit(p.img,p.coords)
-	
+
 	for i in bricks:
 		screen.blit(i.img, i.coords)
 		player.Collide(i)
-	
+
 	for i in bombs:
 		if i.isExploding:
 			i.explodeTime -= 1
@@ -870,7 +892,7 @@ while Running:
 			else:
 				i.stuck = False
 				i.stuckOn = None
-		
+
 		if not i.stuck:
 			for p in bricks:
 				i.Collide(p)
@@ -895,7 +917,7 @@ while Running:
 					i.stuckOn = None
 					i.vel = [0, 0]
 
-	
+
 	if player.floor:
 		player.vel[0] = Zero(player.vel[0], friction)
 
