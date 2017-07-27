@@ -758,7 +758,7 @@ while Running:
 		if player.motion[0] == 0:
 			personimg = right[1]
 		elif player.motion[0] < 0:
-			if not movingRight:
+			if movingLeft:
 				counter += 1
 				if counter == 10:
 					player.index += 1
@@ -778,7 +778,6 @@ while Running:
 			personimg = right[player.index]
 
 
-			personimg = left[player.index]
 
 
 	screen.blit(personimg, player.coords)
