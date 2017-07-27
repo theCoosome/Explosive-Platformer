@@ -745,6 +745,7 @@ while Running:
 	player.floor = False
 
 	for k in keys:
+		screen.blit(k.img,k.coords)
 		if isNear(player.coords, k.coords):
 			player.hasKey = True
 			effect = pygame.mixer.Sound("assets/Sounds/Win.wav")
@@ -757,14 +758,19 @@ while Running:
 				effect = pygame.mixer.Sound("assets/Sounds/Open.wav")
 				effect.play()
 				print("2")
-	for i in bricks:
-		player.Collide(i)
+	
+	if len(movingblocks) > 0:
+		for i in bricks:
+			player.Collide(i)
+		
 	for i in platforms:
 		player.Collide(i)
 	for i in crates:
 		player.Collide(i)
+		screen.blit(i.img,i.coords)
 	for g in gates:
 		player.Collide(g)
+		screen.blit(g.img,g.coords)
 
 	for i in movingblocks: #Moving blocks collide with each other
 		for p in movingblocks:
@@ -830,14 +836,6 @@ while Running:
 				i.vel[0] = Zero(i.vel[0], friction)
 		screen.blit(i.img,i.coords)
 		
-		for s in switchs:
-			screen.blit(s.img, s.coords)
-		for k in keys:
-			screen.blit(k.img,k.coords)
-		for g in gates:
-			screen.blit(g.img,g.coords)
-		for c in crates:
-			screen.blit(c.img,c.coords)
 		for p in platforms:
 			player.Collide(p)
 			for mb in movingblocks:
@@ -914,6 +912,8 @@ while Running:
 	if player.floor:
 		player.vel[0] = Zero(player.vel[0], friction)
 
+	for s in switchs:
+		screen.blit(s.img, s.coords)
 	#UI display
 	screen.blit(personimg, player.coords)
 	screen.blit(DetCurrent.img, (4, 4))
