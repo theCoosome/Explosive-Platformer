@@ -155,7 +155,6 @@ class Person(object):
 		self.crouch = True
 		self.img = 1
 
-
 	def unCrouch(self):
 		self.crouch = False
 		self.img = 0
@@ -484,6 +483,7 @@ def openReadFile(filePath):
 	for i in cont:
 		symbol, type, x, y, xs, ys = i.split("*")
 		if symbol == "$":
+
 			if type == "-1":
 				print "worked"
 				createFloor(int(x), int(y), int(int(ys) / 16), int(int(xs) / 16))
@@ -564,10 +564,9 @@ gL = 0
 isCrouching = False
 counter = 0
 
-
-
 createLevel(currLvl)
 
+createMovingBlock(5,5,5,5,2)
 
 while Running:
 	mousepos = pygame.mouse.get_pos()
