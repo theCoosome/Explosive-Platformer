@@ -502,7 +502,7 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 	elif (lvl == 0):
 		borderedLevel()
 		createMovingBlock(32, 200, 4, 4, 0)
-		createMovingBlock(320, 6, 4, 4)
+		createMovingBlock(320, 6, 4, 4, 0)
 		createFloor(32, 300, 1, 15)
 		createFloor(200, 200, 1, 8)
 		createFloor(264, 216, 1, 2)
