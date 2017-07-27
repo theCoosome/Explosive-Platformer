@@ -671,29 +671,27 @@ while Running:
 		else:
 			personimg = crouchImg[0]
 	else:
-		if player.motion[0] > 0:
+		if player.motion[0] == 0:
+			personimg = right[1]
+		elif player.motion[0] < 0:
+			if not movingRight:
+				counter += 1
+				if counter == 10:
+					player.index += 1
+					counter = 0
+				if player.index >= len(left):
+					player.index = 0
+			personimg = left[player.index]
+		elif player.motion[0] > 0:
 			if movingRight:
-				if isCrouching == False:
+				if not isCrouching :
 					counter += 1
 					if counter == 10:
 						player.index += 1
 						counter = 0
 					if player.index >= len(right):
 						player.index = 0
-
 				personimg = right[player.index]
-		elif player.motion[0] == 0:
-			personimg = right[1]
-		elif player.motion[0] < 0:
-			counter += 1
-			if counter == 10:
-				player.index += 1
-				counter = 0
-			if player.index >= len(left):
-				player.index = 0
-
-
-			personimg = left[player.index]
 
 
 	screen.blit(personimg, player.coords)
