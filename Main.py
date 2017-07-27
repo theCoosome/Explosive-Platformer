@@ -449,6 +449,9 @@ def wipeFloor():
 	del bricks[:]
 	del bombs[:]
 	del movingblocks[:]
+	del switchs[:]
+	del gates[:]
+	del platforms[:]
 
 def createWall(coordx, coordy, rx, ry, dir):
 	if dir == "down":
@@ -459,8 +462,7 @@ def createWall(coordx, coordy, rx, ry, dir):
 
 
 def createMovingBlock(coordx, coordy, rx, ry, type):
-	for i in range(rx, ry):
-		movingblocks.append(movingBlock(type,[coordx + (16 * i), coordy], (16 * rx, 16)))
+	movingblocks.append(movingBlock(type, [coordx, coordy], [rx*16, ry*16]))
 
 
 
@@ -503,8 +505,6 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		openReadFile("saves/Level Editor Save.txt")
 	elif (lvl == 0):
 		borderedLevel()
-		createMovingBlock(32, 200, 4, 4, 0)
-		createMovingBlock(320, 6, 4, 4, 0)
 		createFloor(32, 300, 1, 15)
 		createFloor(200, 200, 1, 8)
 		createFloor(264, 216, 1, 2)
@@ -566,8 +566,6 @@ isCrouching = False
 counter = 0
 
 createLevel(currLvl)
-
-createMovingBlock(5,5,5,5,2)
 
 while Running:
 	mousepos = pygame.mouse.get_pos()

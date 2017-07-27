@@ -2,11 +2,6 @@ import pygame
 from pygame.locals import *
 import math
 from decimal import *
-import plyer
-from plyer import notification
-
-
-
 
 pygame.mixer.pre_init(44100, -16, 2, 2048)
 pygame.init()
@@ -21,7 +16,6 @@ RED = pygame.Color(255, 0, 0)
 GREEN = pygame.Color(0, 255, 0)
 BLUE = pygame.Color(0, 0, 255)
 LGRAY = pygame.Color(214, 214, 194)
-
 
 clock = pygame.time.Clock()
 
@@ -290,7 +284,7 @@ def saveFile():
 		writeContents += str(ys)
 		writeContents += "\n"
 		writeList.append(writeContents)
-
+	'''
 	for i in movingblocks:
 		x, y = i.coords
 		xs, ys = i.size
@@ -307,6 +301,7 @@ def saveFile():
 		writeContents += str(ys)
 		writeContents += "\n"
 		writeList.append(writeContents)
+	'''
 	print writeList
 	file.writelines(writeList)
 	file.close()
@@ -355,12 +350,7 @@ while Running:
 			if event.key == pygame.K_q:  # quiting
 				Running = False
 			if event.key == pygame.K_s:
-				notification.notify(
-					title='Saved',
-					message='Your level has been saved',
-					app_name='Here is the application name',
-					app_icon='path/to/the/icon.png'
-				)
+				print "SAVED!"
 				saveFile()
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
@@ -406,8 +396,6 @@ while Running:
 							delList.append(bricks[i])
 					for i in delList:
 						del bricks[bricks.index(i)]
-
-
 
 	drawBricks()
 	screen.blit(mouseImg, (mousepos[0] - 3, mousepos[1] - 3))
