@@ -2,6 +2,11 @@ import pygame
 from pygame.locals import *
 import math
 from decimal import *
+import plyer
+from plyer import notification
+
+
+
 
 pygame.mixer.pre_init(44100, -16, 2, 2048)
 pygame.init()
@@ -350,6 +355,12 @@ while Running:
 			if event.key == pygame.K_q:  # quiting
 				Running = False
 			if event.key == pygame.K_s:
+				notification.notify(
+					title='Saved',
+					message='Your level has been saved',
+					app_name='Here is the application name',
+					app_icon='path/to/the/icon.png'
+				)
 				saveFile()
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
