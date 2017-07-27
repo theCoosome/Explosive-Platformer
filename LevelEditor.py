@@ -55,6 +55,7 @@ RemoveImg = getImg("Mouse/Remove")
 mouseImgs = [AimImg, BrickPlaceImg, DPlaceImg, MovablePlaceImg, MultiPlaceImg, ExitPlaceImg, RemoveImg]
 mouseImg = mouseImgs[0]
 
+
 def center(obj):  # finds center of object sent to function
 	return (obj.coords[0] + (obj.size[0] / 2), obj.coords[1] + (obj.size[1] / 2))
 
@@ -264,6 +265,35 @@ pressedLMB = False
 
 all = []
 
+def saveFile():
+	file = open("saves/Level Editor Save.txt", "w")
+	file.truncate
+	writeList = []
+	for i in bricks:
+		writeContents = "$"
+		writeContents += str(i.type)
+		writeContents += " "
+		writeContents += str(i.coords)
+		writeContents += " "
+		writeContents += str(i.size)
+		writeContents += "\n"
+		writeList.append(writeContents)
+
+	for i in movingblocks:
+		writeContents = "@"
+		writeContents += str(i.type)
+		writeContents += " "
+		writeContents += str(i.coords)
+		writeContents += " "
+		writeContents += str(i.size)
+		writeContents += "\n"
+		writeList.append(writeContents)
+	print writeList
+	file.writelines(writeList)
+	file.close()
+
+
+
 while Running:
 	mousepos = pygame.mouse.get_pos()
 	screen.fill(WHITE)
@@ -297,6 +327,8 @@ while Running:
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_q:  # quiting
 				Running = False
+			if event.key == pygame.K_s:
+				saveFile()
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			print event.button
