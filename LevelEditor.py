@@ -295,6 +295,14 @@ def saveFile():
 
 
 while Running:
+	delList = []
+	for i in bricks:
+		if i.size[0] == 0 or i.size[1] == 0:
+			delList.append(i)
+	for i in delList:
+		del bricks[bricks.index(i)]
+	delList = []
+
 	mousepos = pygame.mouse.get_pos()
 	screen.fill(WHITE)
 	currImgNum = mouseImgs.index(mouseImg)
