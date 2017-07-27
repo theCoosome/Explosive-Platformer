@@ -138,7 +138,7 @@ class Platform(object):
 		self.stuck = False
 
 class Person(object):
-	def __init__(self, coords, size,hasKey):
+	def __init__(self, coords, size, hasKey):
 		self.coords = coords
 		self.size = size
 		self.vel = [0, -15]  # starts going up
@@ -168,7 +168,7 @@ class Person(object):
 			if self.dualColliding:
 				self.Kill()
 			if type(i) == movingBlock:
-				if i.vel[1] > 5:
+				if i.vel[1] > 5 and center(player)[1] > center(i)[1]:
 					self.Kill()
 				self.dualColliding = True
 
@@ -180,25 +180,31 @@ class Person(object):
 					self.vel[1] = 0
 				self.floor = True
 				pygame.draw.line(screen, BLUE, p1, center(self))
-		if collide(self.coords, self.size, (i.coords[0], i.coords[1] + 3), (i.size[0], i.size[1] - 3)):  # LEFT / RIGHT
-			p1 = center(self)
-			if self.coords[0] <= i.coords[0]:
-				self.coords[0] = i.coords[0] - self.size[0]
-				self.vel[0] = 0
-				pygame.draw.line(screen, RED, p1, center(self))
-			if self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
-				self.coords[0] = i.coords[0] + i.size[0]
-				self.vel[0] = 0
-				pygame.draw.line(screen, RED, p1, center(self))
-		if collide(i.coords, i.size, self.coords, self.size):  # UP
-			p1 = center(self)
-			#if center(self)[1] > center(i)[1]:
+			if collide(self.coords, self.size, (i.coords[0], i.coords[1] + 3), (i.size[0], i.size[1] - 3)):  # LEFT / RIGHT
+				p1 = center(self)
+				if self.coords[0] <= i.coords[0]:
+					self.coords[0] = i.coords[0] - self.size[0]
+					self.vel[0] = 0
+					pygame.draw.line(screen, RED, p1, center(self))
+				if self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
+					self.coords[0] = i.coords[0] + i.size[0]
+					self.vel[0] = 0
+					pygame.draw.line(screen, RED, p1, center(self))
+					
 			if self.vel[1] < 0 and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1]:
 				self.coords[1] = i.coords[1] + i.size[1]
 				self.vel[1] = 0
 				pygame.draw.line(screen, GREEN, p1, center(self))
 		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
 			self.floor = True
+		
+	def floorCol(self, i):
+		if collide(i.coords, i.size, self.coords, self.size):  # UP
+			if self.vel[1] > 0 and self.coords[1] <= i.coords[1]:
+				self.coords[1] = i.coords[1] - self.size[1]
+				if self.vel[1] > 0:
+					self.vel[1] = 0
+				self.floor = True
 
 
 player = Person([50, 250], (standardSize),False)
@@ -423,11 +429,6 @@ bombs = []
 
 bricks = []
 
-
-def drawBricks():
-	for i in bricks:
-		player.Collide(i)
-		screen.blit(i.img, i.coords)
 
 
 def spawnChar():
@@ -741,9 +742,9 @@ while Running:
 
 
 	player.floor = False
-	drawBricks()
 
 	for k in keys:
+		screen.blit(k.img,k.coords)
 		if isNear(player.coords, k.coords):
 			player.hasKey = True
 			effect = pygame.mixer.Sound("assets/Sounds/Win.wav")
@@ -756,17 +757,19 @@ while Running:
 				effect = pygame.mixer.Sound("assets/Sounds/Open.wav")
 				effect.play()
 				print("2")
-	for i in bricks:
-		screen.blit(i.img, i.coords)
-		player.Collide(i)
-	for i in movingblocks:
-		player.Collide(i)
+	
+	if len(movingblocks) > 0:
+		for i in bricks:
+			player.Collide(i)
+		
 	for i in platforms:
 		player.Collide(i)
 	for i in crates:
 		player.Collide(i)
+		screen.blit(i.img,i.coords)
 	for g in gates:
 		player.Collide(g)
+		screen.blit(g.img,g.coords)
 
 	for i in movingblocks: #Moving blocks collide with each other
 		for p in movingblocks:
@@ -801,11 +804,7 @@ while Running:
 						counter = 0
 					if player.index >= len(right):
 						player.index = 0
-
 			personimg = right[player.index]
-
-	screen.blit(personimg, player.coords)
-
 
 	# Moving Blocks
 	for i in movingblocks: #Player collide with moving blocks
@@ -835,15 +834,7 @@ while Running:
 			if i.floor:
 				i.vel[0] = Zero(i.vel[0], friction)
 		screen.blit(i.img,i.coords)
-
-		for s in switchs:
-			screen.blit(s.img, s.coords)
-		for k in keys:
-			screen.blit(k.img,k.coords)
-		for g in gates:
-			screen.blit(g.img,g.coords)
-		for c in crates:
-			screen.blit(c.img,c.coords)
+		
 		for p in platforms:
 			player.Collide(p)
 			for mb in movingblocks:
@@ -920,6 +911,8 @@ while Running:
 	if player.floor:
 		player.vel[0] = Zero(player.vel[0], friction)
 
+	for s in switchs:
+		screen.blit(s.img, s.coords)
 	#UI display
 	screen.blit(personimg, player.coords)
 	screen.blit(DetCurrent.img, (4, 4))
