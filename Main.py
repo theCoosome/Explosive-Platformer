@@ -505,24 +505,13 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		openReadFile("saves/Level Editor Save.txt")
 	elif (lvl == 0):
 		borderedLevel()
-		createFloor(32, 300, 1, 15)
-		createFloor(200, 200, 1, 8)
-		createFloor(264, 216, 1, 2)
-		createFloor(200, 400, 3, 10)
-		createFloor(600, 500, 1, 14)
-		createFloor(500, 300, 1, 1)
-		createFloor(300, 170, 1, 15)
-		createFloor(378, 245, 1, 3)
-		createFloor(220, 190, 1, 1)
-		createFloor(300, 256, 1, 10)
+		openReadFile("saves/Level0.txt")
 
 		#platforms.append(Platform((896, 626), (64, 64), platformImg))
-		switchs.append(Switch("Switch", (256, 284), (32, 32), switchImg, False))
+		#switchs.append(Switch("Switch", (256, 284), (32, 32), switchImg, False))
 		crates.append(Crate((432, 160), (16, 16), crateImg))
 		keys.append(Key((432, 160), (8, 8), keyImg))
 		gates.append(Gate((896, 626), (64, 64), lockImg, False))
-		#movingblocks.append(movingBlock(0,[64,64],(16,16)))
-		movingblocks.append(movingBlock(0,[320,60],(48,32)))
 
 	elif (lvl == 1):
 		createFloor(0, 688, 2, 64)
@@ -581,13 +570,15 @@ while Running:
 		if event.type == pygame.KEYDOWN:
 
 			#Switches and Interactable Objects
-			if (isNear(center(switchs[0]), center(player))):
-				if event.key in [K_e]:
-					movingblocks.append(movingBlock(0, [64, 64], (16, 16)))
+			'''
+			if(len(switches) != 0):
+				if (isNear(center(switchs[0]), center(player))):
+					if event.key in [K_e]:
+						movingblocks.append(movingBlock(0, [64, 64], (16, 16)))
 
-					switchs[0].img = switches[1]
-
-
+						switchs[0].img = switches[1]
+	
+			'''
 
 			# movement
 			if event.key in [K_RIGHT, K_d]:  # move ->
