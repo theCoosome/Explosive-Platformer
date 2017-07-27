@@ -509,7 +509,7 @@ while Running:
 				player.Crouch()
 			if event.key in [K_UP, K_w] and player.floor:  # ^
 				player.vel[1] = -8
-				effect = pygame.mixer.Sound("assets/Jump3.wav")
+				effect = pygame.mixer.Sound("assets/Sounds/Jump3.wav")
 				effect.play()
 				player.floor = False
 			if event.key == K_r:  # slow down
@@ -685,7 +685,7 @@ while Running:
 		if i.isExploding:
 			i.explodeTime -= 1
 			i.incrementSprite(1, i.explodeTime)
-			effect = pygame.mixer.Sound("assets/Explosion.wav")
+			effect = pygame.mixer.Sound("assets/Sounds/Explosion.wav")
 			effect.play()
 			if i.explodeTime > 10:
 
@@ -705,7 +705,7 @@ while Running:
 			i.time += 1
 			if i.time >= i.arm:
 				i.armed = True
-				effect = pygame.mixer.Sound("assets/throw.wav")
+				effect = pygame.mixer.Sound("assets/Sounds/throw.wav")
 				effect.play()
 
 		screen.blit(i.img, i.coords)
