@@ -17,6 +17,7 @@ GREEN = pygame.Color(0, 255, 0)
 BLUE = pygame.Color(0, 0, 255)
 LGRAY = pygame.Color(214, 214, 194)
 
+
 clock = pygame.time.Clock()
 
 pygame.mouse.set_visible(False)
@@ -36,8 +37,9 @@ def getImg(name):  # gets images and prints their retrieval
 
 brickImg = getImg("Bricks/Brick")
 personimg = getImg("Dereks/Derek")
-movingImg = getImg("BrickMoving")
-destructableImg = getImg("BrickDestructable")
+movingImg = getImg("Bricks/BrickMoving")
+destructableImg = getImg("Bricks/BrickDestructable")
+multiImg = getImg("Bricks/BrickMulti")
 bombImg = getImg("Bomb")
 
 bricks = []
@@ -113,6 +115,10 @@ class Person(object):
 		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
 			self.floor = True
 
+CBRICK = -1
+CMOVABLE = 0
+CDESTRUCTABLE = 1
+CMULTI = 2
 
 class movingBlock(object):
 	def __init__(self, type, coords, size):
@@ -129,7 +135,7 @@ class movingBlock(object):
 			self.img = pygame.transform.scale(destructableImg, size)
 
 		if type == 2:  # Movable and Destructable
-			self.img = pygame.transform.scale(destructableImg, size)
+			self.img = pygame.transform.scale(multiImg, size)
 
 	def Collide(self, i):
 		if collide(self.coords, self.size, i.coords, i.size):  # LEFT / RIGHT
@@ -166,10 +172,10 @@ def drawBricks():
 		screen.blit(i.img, i.coords)
 
 def createFloor(coordx, coordy, ry, rx, type):
-	if type == 0:
+	if type == -1:
 		bricks.append(Brick(type, [coordx, coordy], (rx * 16, ry * 16), brickImg))
 	else:
-		
+		bricks.append(movingBlock(type, [coordx, coordy], (rx * 16, ry * 16)))
 
 
 placeMode = "brick"
@@ -308,23 +314,33 @@ while Running:
 				if newImgNum < 0:
 					newImgNum = len(mouseImgs)-1
 				mouseImg = mouseImgs[newImgNum]
+		#Associations: [AimImg, BrickPlaceImg, DPlaceImg, MovablePlaceImg, MultiPlaceImg, ExitPlaceImg, RemoveImg]
 		if event.type == pygame.MOUSEBUTTONUP:
 			if event.button == 1:
 				pressedLMB = False
 				rectX, rectY = placeRect.topleft
 				brx, bry = placeRect.bottomright
 				if(currImgNum == 1):
-					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry-rectY)/16)), int(math.fabs((brx-rectX)/16)), 0)
-				elif(currImgNum == 2):
+					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry-rectY)/16)), int(math.fabs((brx-rectX)/16)), CBRICK)
+				elif (currImgNum == 2):
 					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry - rectY) / 16)),
-								int(math.fabs((brx - rectX) / 16)), 2)
+								int(math.fabs((brx - rectX) / 16)), CDESTRUCTABLE)
+				elif(currImgNum == 3):
+					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry - rectY) / 16)),
+								int(math.fabs((brx - rectX) / 16)), CMOVABLE)
+				elif (currImgNum == 4):
+					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry - rectY) / 16)),
+							int(math.fabs((brx - rectX) / 16)), CMULTI)
 				elif(currImgNum == 6):
-					for i in bricks:
+					delList = []
+					for i in range(len(bricks)):
 						coords = (min(rectX, brx), min(rectY, bry))
-						pSize = (int(math.fabs(bry-rectY)),int(math.fabs(brx-rectX)))
-						if collide(coords, pSize, i.coords, i.size):
+						pSize = (int(math.fabs(brx-rectX)), int(math.fabs(bry-rectY)))
+						if collide(coords, pSize, bricks[i].coords, bricks[i].size):
 							print "Touching"
-							del bricks[bricks.index(i)]
+							delList.append(bricks[i])
+					for i in delList:
+						del bricks[bricks.index(i)]
 
 
 
