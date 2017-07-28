@@ -926,6 +926,18 @@ while Running:
 		if not i.stuck:
 			if i.vel[1] < maxFallSpeed:
 				i.vel[1] += gravity
+
+			if i.vel[0] <= -16:
+				i.vel[0] = -16
+
+			if i.vel[1] <= -16:
+				i.vel[1] = -16
+
+			if i.vel[0] >= 16:
+				i.vel[0] = 16
+
+			if i.vel[1] >= 16:
+				i.vel[1] = 16
 				
 			p1 = center(i)
 			i.coords[0] += i.vel[0]
