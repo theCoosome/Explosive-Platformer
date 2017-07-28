@@ -924,20 +924,20 @@ while Running:
 			bombs.remove(i)
 
 		if not i.stuck:
-			if i.vel[1] < maxFallSpeed:
-				i.vel[1] += gravity
+			if i.vel[1] < 8:
+				i.vel[1] += gravity*.75
 
-			if i.vel[0] <= -16:
-				i.vel[0] = -16
+			if i.vel[0] <= -8:
+				i.vel[0] = -8
 
-			if i.vel[1] <= -16:
-				i.vel[1] = -16
+			if i.vel[1] <= -8:
+				i.vel[1] = -8
 
-			if i.vel[0] >= 16:
-				i.vel[0] = 16
+			if i.vel[0] >= 8:
+				i.vel[0] = 8
 
-			if i.vel[1] >= 16:
-				i.vel[1] = 16
+			if i.vel[1] >= 8:
+				i.vel[1] = 8
 				
 			p1 = center(i)
 			i.coords[0] += i.vel[0]
