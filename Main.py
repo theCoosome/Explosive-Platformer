@@ -7,13 +7,15 @@ import time
 pygame.mixer.pre_init(44100, -16, 2, 2048)
 pygame.init()
 fps = 60
-debugon = True
+debugon = False
 
 WHITE = pygame.Color(255, 255, 255)
 BLACK = pygame.Color(0, 0, 0)
 RED = pygame.Color(255, 0, 0)
+YELLOW = pygame.Color(255, 255, 0)
 GREEN = pygame.Color(0, 255, 0)
 BLUE = pygame.Color(0, 0, 255)
+PURPLE = pygame.Color(255, 0, 255)
 
 pygame.mouse.set_visible(False)
 font = pygame.font.SysFont('couriernew', 13)
@@ -31,6 +33,7 @@ screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
 pygame.display.set_caption("Explosive Platformer")
 
+debugOverlay = pygame.Surface(size, pygame.SRCALPHA, 32).convert_alpha()
 
 # pygame.mouse.set_visible(False)
 
@@ -181,22 +184,22 @@ class Person(object):
 				if self.vel[1] > 0:
 					self.vel[1] = 0
 				self.floor = True
-				pygame.draw.line(screen, BLUE, p1, center(self))
+				pygame.draw.line(debugOverlay, BLUE, p1, center(self))
 			if collide(self.coords, self.size, (i.coords[0], i.coords[1] + 3), (i.size[0], i.size[1] - 3)):  # LEFT / RIGHT
 				p1 = center(self)
 				if self.coords[0] <= i.coords[0]:
 					self.coords[0] = i.coords[0] - self.size[0]
 					self.vel[0] = 0
-					pygame.draw.line(screen, RED, p1, center(self))
+					pygame.draw.line(debugOverlay, YELLOW, p1, center(self))
 				if self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
 					self.coords[0] = i.coords[0] + i.size[0]
 					self.vel[0] = 0
-					pygame.draw.line(screen, RED, p1, center(self))
+					pygame.draw.line(debugOverlay, RED, p1, center(self))
 					
 			if self.vel[1] < 0 and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1]:
 				self.coords[1] = i.coords[1] + i.size[1]
 				self.vel[1] = 0
-				pygame.draw.line(screen, GREEN, p1, center(self))
+				pygame.draw.line(debugOverlay, GREEN, p1, center(self))
 		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
 			self.floor = True
 		
@@ -230,22 +233,27 @@ class movingBlock(object):
 			self.img = pygame.transform.scale(multiImg, size)
 
 	def Collide(self, i):
+		p1 = center(self)
 		if collide(self.coords, self.size, i.coords, i.size):  # LEFT / RIGHT
 			if self.vel[0] > 0 and self.coords[0] <= i.coords[0]:
 				self.coords[0] = i.coords[0] - self.size[0]
 				self.vel[0] = 0
+				pygame.draw.line(debugOverlay, YELLOW, p1, center(self))
 			if self.vel[0] < 0 and self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
 				self.coords[0] = i.coords[0] + i.size[0]
 				self.vel[0] = 0
+				pygame.draw.line(debugOverlay, RED, p1, center(self))
 		if collide(i.coords, i.size, self.coords, self.size):  # DOWN
 			if center(self)[1] < center(i)[1]:
 				self.coords[1] = i.coords[1] - self.size[1]
 				self.vel[1] = 0
 				self.floor = True
+				pygame.draw.line(debugOverlay, BLUE, p1, center(self))
 		if collide(i.coords, i.size, self.coords, self.size):  # UP
 			if center(self)[1] > center(i)[1]:  # Up-ing
 				self.coords[1] = i.coords[1] + i.size[1]
 				self.vel[1] = 0
+				pygame.draw.line(debugOverlay, GREEN, p1, center(self))
 
 		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
 			self.floor = True
@@ -498,10 +506,10 @@ def openReadFile(filePath):
 		if symbol == "$":
 
 			if type == "-1":
-				print "worked"
+				#print "worked"
 				createFloor(int(x), int(y), int(int(ys) / 16), int(int(xs) / 16))
 			else:
-				print "moveBlock"
+				#print "moveBlock"
 				createMovingBlock(int(x), int(y), int(int(xs) / 16), int(int(ys) / 16), int(type))
 
 
@@ -524,7 +532,7 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		gates.append(Gate((896, 626), (64, 64), lockImg, False))
 
 	elif (lvl == 1):
-		createFloor(0, 688, 2, 64)
+		openReadFile("saves/Level0.txt")
 		
 	if lvl == 2:
 		openReadFile("saves/LevelMotion.txt")
@@ -574,6 +582,8 @@ createLevel(currLvl)
 
 while Running:
 	mousepos = pygame.mouse.get_pos()
+	if debugon:
+		debugOverlay = pygame.Surface(size, pygame.SRCALPHA, 32).convert_alpha()
 	if bombWaitTime > 0:  # sets off bomb
 		bombWaitTime -= 1
 	bombsExplode = False
@@ -624,6 +634,11 @@ while Running:
 				fps /= 2
 			if event.key == K_f:  # speed up
 				fps = 60
+			if event.key == K_c:
+				if debugon:
+					debugon = False
+				else:
+					debugon = True
 			if event.key == K_x:
 				createLevel(currLvl)
 			if event.key == K_z:
@@ -796,7 +811,7 @@ while Running:
 	else:
 		if player.motion[0] == 0:
 
-			personimg = right[1]
+			personimg = derek
 		if player.motion[0] < 0:
 			counter += 1
 			if counter == 10:
@@ -836,8 +851,12 @@ while Running:
 			if i.vel[1] >= 16:
 				i.vel[1] = 16
 
+			p1 = center(i)
 			i.coords[0] += i.vel[0]
 			i.coords[1] += i.vel[1]
+			if debugon:
+				pygame.draw.line(debugOverlay, PURPLE, p1, center(i))
+				pygame.draw.rect(debugOverlay, PURPLE, (i.coords[0], i.coords[1], i.size[0], i.size[1]), 1)
 
 			for p in bricks:
 				i.Collide(p)
@@ -945,5 +964,7 @@ while Running:
 		pygame.draw.circle(screen, RED, mousepos, 32, 1)
 
 	screen.blit(mouseImg, (mousepos[0]-3, mousepos[1]-3))
+	if debugon:
+		screen.blit(debugOverlay, (0, 0))
 	pygame.display.update()
 	clock.tick(fps)
