@@ -2,6 +2,10 @@ import pygame
 from pygame.locals import *
 import math
 from decimal import *
+#from plyer import notification
+
+
+
 
 pygame.mixer.pre_init(44100, -16, 2, 2048)
 pygame.init()
@@ -16,7 +20,6 @@ RED = pygame.Color(255, 0, 0)
 GREEN = pygame.Color(0, 255, 0)
 BLUE = pygame.Color(0, 0, 255)
 LGRAY = pygame.Color(214, 214, 194)
-
 
 clock = pygame.time.Clock()
 
@@ -285,7 +288,7 @@ def saveFile():
 		writeContents += str(ys)
 		writeContents += "\n"
 		writeList.append(writeContents)
-
+	'''
 	for i in movingblocks:
 		x, y = i.coords
 		xs, ys = i.size
@@ -302,11 +305,12 @@ def saveFile():
 		writeContents += str(ys)
 		writeContents += "\n"
 		writeList.append(writeContents)
+	'''
 	print writeList
 	file.writelines(writeList)
 	file.close()
 
-
+oldImg = mouseImgs[0]
 
 while Running:
 	delList = []
@@ -350,14 +354,38 @@ while Running:
 			if event.key == pygame.K_q:  # quiting
 				Running = False
 			if event.key == pygame.K_s:
+				# notification.notify(
+				# 	title='Saved',
+				# 	message='Your level has been saved',
+				# 	app_name='Here is the application name',
+				# 	app_icon='path/to/the/icon.png'
+				# )
+
+				print "SAVED!"
 				saveFile()
+			if event.key == pygame.K_1:
+				mouseImg = mouseImgs[0]
+			if event.key == pygame.K_2:
+				mouseImg = mouseImgs[1]
+			if event.key == pygame.K_3:
+				mouseImg = mouseImgs[2]
+			if event.key == pygame.K_4:
+				mouseImg = mouseImgs[3]
+			if event.key == pygame.K_5:
+				mouseImg = mouseImgs[4]
+			if event.key == pygame.K_6:
+				mouseImg = mouseImgs[5]
+			if event.key == pygame.K_7:
+				mouseImg = mouseImgs[6]
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			print event.button
 			if event.button == 1:
 				pressedLMB = True
 				startLoc = mousepos
-
+			if event.button == 3:
+				pressedLMB = True
+				startLoc = mousepos
 			if event.button == 4:
 				newImgNum = mouseImgs.index(mouseImg) + 1
 				if newImgNum >= len(mouseImgs):
@@ -395,7 +423,19 @@ while Running:
 							delList.append(bricks[i])
 					for i in delList:
 						del bricks[bricks.index(i)]
-
+			if event.button == 3:
+				pressedLMB = False
+				rectX, rectY = placeRect.topleft
+				brx, bry = placeRect.bottomright
+				delList = []
+				for i in range(len(bricks)):
+					coords = (min(rectX, brx), min(rectY, bry))
+					pSize = (int(math.fabs(brx - rectX)), int(math.fabs(bry - rectY)))
+					if collide(coords, pSize, bricks[i].coords, bricks[i].size):
+						print "Touching"
+						delList.append(bricks[i])
+				for i in delList:
+					del bricks[bricks.index(i)]
 
 
 	drawBricks()

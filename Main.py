@@ -57,6 +57,13 @@ lockImg = getImg("bars")
 keyImg = getImg("key")
 crateImg = getImg("crate")
 
+#Anim
+derek = getImg("Dereks/Derek")
+left = [getImg("Dereks/anim1l"),getImg("Dereks/anim3l")]
+right = [getImg("Dereks/anim1r"),getImg("Dereks/anim2r")]
+crouchImg = [getImg("Dereks/DerekCrouch"),getImg("Dereks/derekcrouchl")]
+'''left = [getImg("Dereks/anim1l"),getImg("Dereks/anim2l"),getImg("Dereks/anim3l")]
+right = [getImg("Dereks/anim1r"),getImg("Dereks/Derek"),getImg("Dereks/anim2r")]'''
 
 
 
@@ -80,11 +87,6 @@ normalExplode = [getImg("")]
 AimImg = getImg("Mouse/Aim")
 mouseImg = AimImg
 
-#Anim
-derek = getImg("Dereks/Derek")
-left = [getImg("Dereks/anim1l"),getImg("Dereks/anim2l"),getImg("Dereks/anim3l")]
-right = [getImg("Dereks/anim1r"),getImg("Dereks/Derek"),getImg("Dereks/anim2r")]
-crouchImg = [getImg("Dereks/DerekCrouch"),getImg("Dereks/derekcrouchl")]
 
 def toggle(bool):  # is used to make bomb and players stop when in contact with floor
 	if bool:
@@ -138,7 +140,7 @@ class Platform(object):
 		self.stuck = False
 
 class Person(object):
-	def __init__(self, coords, size,hasKey):
+	def __init__(self, coords, size, hasKey):
 		self.coords = coords
 		self.size = size
 		self.vel = [0, -15]  # starts going up
@@ -155,7 +157,6 @@ class Person(object):
 		self.crouch = True
 		self.img = 1
 
-
 	def unCrouch(self):
 		self.crouch = False
 		self.img = 0
@@ -169,7 +170,7 @@ class Person(object):
 			if self.dualColliding:
 				self.Kill()
 			if type(i) == movingBlock:
-				if i.vel[1] > 5:
+				if i.vel[1] > 5 and center(player)[1] > center(i)[1]:
 					self.Kill()
 				self.dualColliding = True
 
@@ -181,25 +182,31 @@ class Person(object):
 					self.vel[1] = 0
 				self.floor = True
 				pygame.draw.line(screen, BLUE, p1, center(self))
-		if collide(self.coords, self.size, (i.coords[0], i.coords[1] + 3), (i.size[0], i.size[1] - 3)):  # LEFT / RIGHT
-			p1 = center(self)
-			if self.coords[0] <= i.coords[0]:
-				self.coords[0] = i.coords[0] - self.size[0]
-				self.vel[0] = 0
-				pygame.draw.line(screen, RED, p1, center(self))
-			if self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
-				self.coords[0] = i.coords[0] + i.size[0]
-				self.vel[0] = 0
-				pygame.draw.line(screen, RED, p1, center(self))
-		if collide(i.coords, i.size, self.coords, self.size):  # UP
-			p1 = center(self)
-			#if center(self)[1] > center(i)[1]:
+			if collide(self.coords, self.size, (i.coords[0], i.coords[1] + 3), (i.size[0], i.size[1] - 3)):  # LEFT / RIGHT
+				p1 = center(self)
+				if self.coords[0] <= i.coords[0]:
+					self.coords[0] = i.coords[0] - self.size[0]
+					self.vel[0] = 0
+					pygame.draw.line(screen, RED, p1, center(self))
+				if self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
+					self.coords[0] = i.coords[0] + i.size[0]
+					self.vel[0] = 0
+					pygame.draw.line(screen, RED, p1, center(self))
+					
 			if self.vel[1] < 0 and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1]:
 				self.coords[1] = i.coords[1] + i.size[1]
 				self.vel[1] = 0
 				pygame.draw.line(screen, GREEN, p1, center(self))
 		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
 			self.floor = True
+		
+	def floorCol(self, i):
+		if collide(i.coords, i.size, self.coords, self.size):  # UP
+			if self.vel[1] > 0 and self.coords[1] <= i.coords[1]:
+				self.coords[1] = i.coords[1] - self.size[1]
+				if self.vel[1] > 0:
+					self.vel[1] = 0
+				self.floor = True
 
 
 player = Person([50, 250], (standardSize),False)
@@ -425,11 +432,6 @@ bombs = []
 bricks = []
 
 
-def drawBricks():
-	for i in bricks:
-		player.Collide(i)
-		screen.blit(i.img, i.coords)
-
 
 def spawnChar():
 	if currLvl == 0:
@@ -449,6 +451,9 @@ def wipeFloor():
 	del bricks[:]
 	del bombs[:]
 	del movingblocks[:]
+	del switchs[:]
+	del gates[:]
+	del platforms[:]
 
 def createWall(coordx, coordy, rx, ry, dir):
 	if dir == "down":
@@ -459,8 +464,7 @@ def createWall(coordx, coordy, rx, ry, dir):
 
 
 def createMovingBlock(coordx, coordy, rx, ry, type):
-	for i in range(rx, ry):
-		movingblocks.append(movingBlock(type,[coordx + (16 * i), coordy], (16 * rx, 16)))
+	movingblocks.append(movingBlock(type, [coordx, coordy], [rx*16, ry*16]))
 
 
 
@@ -484,6 +488,7 @@ def openReadFile(filePath):
 	for i in cont:
 		symbol, type, x, y, xs, ys = i.split("*")
 		if symbol == "$":
+
 			if type == "-1":
 				print "worked"
 				createFloor(int(x), int(y), int(int(ys) / 16), int(int(xs) / 16))
@@ -502,26 +507,13 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		openReadFile("saves/Level Editor Save.txt")
 	elif (lvl == 0):
 		borderedLevel()
-		createMovingBlock(32, 200, 4, 4, 0)
-		createMovingBlock(320, 6, 4, 4, 0)
-		createFloor(32, 300, 1, 15)
-		createFloor(200, 200, 1, 8)
-		createFloor(264, 216, 1, 2)
-		createFloor(200, 400, 3, 10)
-		createFloor(600, 500, 1, 14)
-		createFloor(500, 300, 1, 1)
-		createFloor(300, 170, 1, 15)
-		createFloor(378, 245, 1, 3)
-		createFloor(220, 190, 1, 1)
-		createFloor(300, 256, 1, 10)
+		openReadFile("saves/Level0.txt")
 
 		#platforms.append(Platform((896, 626), (64, 64), platformImg))
-		switchs.append(Switch("Switch", (256, 284), (32, 32), switchImg, False))
+		switchs.append(Switch("Switch", (256, 288), (32, 32), switchImg, False))
 		crates.append(Crate((432, 160), (16, 16), crateImg))
 		keys.append(Key((432, 160), (8, 8), keyImg))
 		gates.append(Gate((896, 626), (64, 64), lockImg, False))
-		#movingblocks.append(movingBlock(0,[64,64],(16,16)))
-		movingblocks.append(movingBlock(0,[320,60],(48,32)))
 
 	elif (lvl == 1):
 		createFloor(0, 688, 2, 64)
@@ -564,10 +556,7 @@ gL = 0
 isCrouching = False
 counter = 0
 
-
-
 createLevel(currLvl)
-
 
 while Running:
 	mousepos = pygame.mouse.get_pos()
@@ -583,28 +572,32 @@ while Running:
 		if event.type == pygame.KEYDOWN:
 
 			#Switches and Interactable Objects
-			if (isNear(center(switchs[0]), center(player))):
-				if event.key in [K_e]:
-					switchs[0].img = switches[1]
-                    
+			if(len(switches) != 0):
+				if (isNear(center(switchs[0]), center(player))):
+					if event.key in [K_e]:
+						movingblocks.append(movingBlock(0, [64, 64], (16, 16)))
+						switchs[0].img = switches[1]
 
+
+						switchs[0].img = switches[1]
 
 			# movement
 			if event.key in [K_RIGHT, K_d]:  # move ->
 				player.motion[0] += 2.0
 				gR = 0
+				personimg = right[player.index]
 				movingRight = True
 				movingLeft = False
 			if event.key in [K_LEFT, K_a]:  # move <-
 				player.motion[0] -= 2.0
 				gL =0
 				time.sleep(.02)
+				personimg = left[player.index]
 				movingLeft = True
 				movingRight = False
 			if event.key in [K_RIGHT and K_a, K_LEFT and K_d]:  # move ->
 				movingRight = False
 				movingLeft = False
-				playerimg=derek
 			if event.key in [K_DOWN, K_s]:  # v
 				player.motion[1] += 0.5
 				player.Crouch()
@@ -740,9 +733,9 @@ while Running:
 
 
 	player.floor = False
-	drawBricks()
 
 	for k in keys:
+		screen.blit(k.img,k.coords)
 		if isNear(player.coords, k.coords):
 			player.hasKey = True
 			effect = pygame.mixer.Sound("assets/Sounds/Win.wav")
@@ -755,17 +748,19 @@ while Running:
 				effect = pygame.mixer.Sound("assets/Sounds/Open.wav")
 				effect.play()
 				print("2")
-	for i in bricks:
-		screen.blit(i.img, i.coords)
-		player.Collide(i)
-	for i in movingblocks:
-		player.Collide(i)
+	
+	if len(movingblocks) > 0:
+		for i in bricks:
+			player.Collide(i)
+		
 	for i in platforms:
 		player.Collide(i)
 	for i in crates:
 		player.Collide(i)
+		screen.blit(i.img,i.coords)
 	for g in gates:
 		player.Collide(g)
+		screen.blit(g.img,g.coords)
 
 	for i in movingblocks: #Moving blocks collide with each other
 		for p in movingblocks:
@@ -786,6 +781,7 @@ while Running:
 			personimg = crouchImg[0]
 	else:
 		if player.motion[0] == 0:
+
 			personimg = right[1]
 		if player.motion[0] < 0:
 			counter += 1
@@ -802,12 +798,9 @@ while Running:
 					player.index += 1
 					counter = 0
 				if player.index >= len(right):
-				    player.index = 0
+					player.index = 0
 
 			personimg = right[player.index]
-
-	screen.blit(personimg, player.coords)
-
 
 	# Moving Blocks
 	for i in movingblocks: #Player collide with moving blocks
@@ -837,6 +830,15 @@ while Running:
 			if i.floor:
 				i.vel[0] = Zero(i.vel[0], friction)
 		screen.blit(i.img,i.coords)
+
+		
+		for p in platforms:
+			player.Collide(p)
+			for mb in movingblocks:
+				if isOnTop(p,mb) and isNear(center(p),center(mb)):
+					print "you won!"
+				mb.Collide(p)
+			screen.blit(p.img,p.coords)
 
 
 		screen.blit(p.img,p.coords)
@@ -922,6 +924,8 @@ while Running:
 	if player.floor:
 		player.vel[0] = Zero(player.vel[0], friction)
 
+	for s in switchs:
+		screen.blit(s.img, s.coords)
 	#UI display
 	screen.blit(personimg, player.coords)
 	screen.blit(DetCurrent.img, (4, 4))
@@ -931,115 +935,3 @@ while Running:
 	screen.blit(mouseImg, (mousepos[0]-3, mousepos[1]-3))
 	pygame.display.update()
 	clock.tick(fps)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
