@@ -55,6 +55,7 @@ DPlaceImg = getImg("Mouse/Destructable")
 MovablePlaceImg = getImg("Mouse/Movable")
 MultiPlaceImg = getImg("Mouse/Multi")
 ExitPlaceImg = getImg("Mouse/Exit")
+EntrancePlaceImg = getImg("Mouse/Entrance")
 RemoveImg = getImg("Mouse/Remove")
 mouseImgs = [AimImg, BrickPlaceImg, DPlaceImg, MovablePlaceImg, MultiPlaceImg, ExitPlaceImg, RemoveImg]
 mouseImg = mouseImgs[0]
@@ -430,6 +431,8 @@ while Running:
 				mouseImg = mouseImgs[5]
 			if event.key == pygame.K_7:
 				mouseImg = mouseImgs[6]
+			if event.key == pygame.K_8:
+				mouseImg = mouseImgs[7]
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			print event.button
@@ -469,7 +472,10 @@ while Running:
 				elif (currImgNum == 5):
 					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry - rectY) / 16)),
 							int(math.fabs((brx - rectX) / 16)), CMULTI)
-				elif(currImgNum == 6):
+				elif (currImgNum == 6):
+					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry - rectY) / 16)),
+							int(math.fabs((brx - rectX) / 16)), CMULTI)
+				elif(currImgNum == 7):
 					delList = []
 					for i in range(len(bricks)):
 						coords = (min(rectX, brx), min(rectY, bry))
