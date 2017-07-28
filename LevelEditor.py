@@ -23,6 +23,8 @@ LGRAY = pygame.Color(214, 214, 194)
 
 clock = pygame.time.Clock()
 
+drawOverlay = pygame.display.set_mode(size)
+
 pygame.mouse.set_visible(False)
 font = pygame.font.SysFont('couriernew', 13)
 fontComp = pygame.font.SysFont('couriernew', 16, True)
@@ -57,7 +59,7 @@ MultiPlaceImg = getImg("Mouse/Multi")
 ExitPlaceImg = getImg("Mouse/Exit")
 EntrancePlaceImg = getImg("Mouse/Entrance")
 RemoveImg = getImg("Mouse/Remove")
-mouseImgs = [AimImg, BrickPlaceImg, DPlaceImg, MovablePlaceImg, MultiPlaceImg, ExitPlaceImg, EntrancePlaceImg, RemoveImg]
+mouseImgs = [AimImg, BrickPlaceImg, BrickPlaceImg, DPlaceImg, MovablePlaceImg, MultiPlaceImg, ExitPlaceImg, EntrancePlaceImg, RemoveImg]
 mouseImg = mouseImgs[0]
 
 
@@ -125,6 +127,7 @@ CBRICK = -1
 CMOVABLE = 0
 CDESTRUCTABLE = 1
 CMULTI = 2
+CGRATE = 3
 
 
 class movingBlock(object):
@@ -173,6 +176,13 @@ class Brick(object):
 		self.size = size
 		self.img = pygame.transform.scale(img, size)
 
+class Grate(object):
+	def __init__(self, type, coords, size, img):
+		self.type = type
+		self.coords = coords
+		self.size = size
+		self.img = pygame.transform.scale(img, size)
+
 def drawMeasurement(rect, axis):
 	#If our axis is horizontal
 	cenx, ceny = rect.center
@@ -192,14 +202,14 @@ def drawMeasurement(rect, axis):
 			endy += 8
 		start = startx, starty
 		end = endx, endy
-		pygame.draw.line(screen, RED, start, ((startx + (endx - startx) / 2) - 8, starty))
-		pygame.draw.line(screen, RED, ((startx + (endx - startx) / 2) + 8, starty), end)
+		pygame.draw.line(drawOverlay, RED, start, ((startx + (endx - startx) / 2) - 8, starty))
+		pygame.draw.line(drawOverlay, RED, ((startx + (endx - startx) / 2) + 8, starty), end)
 
 		hText = smallfont.render(str(int(math.fabs(rect.width/16))), False, (0, 0, 0))
 		screen.blit(hText, (startx + ((endx - startx) / 2) - 8, starty - 8))
 
-		pygame.draw.line(screen, RED, (startx, starty - 4), (startx, starty + 4))
-		pygame.draw.line(screen, RED, (endx, endy - 4), (endx, endy + 4))
+		pygame.draw.line(drawOverlay, RED, (startx, starty - 4), (startx, starty + 4))
+		pygame.draw.line(drawOverlay, RED, (endx, endy - 4), (endx, endy + 4))
 	if axis == 1:
 		startx, starty = cenx - w2, ceny - h2
 		endx, endy = cenx - w2, ceny + h2
@@ -214,14 +224,14 @@ def drawMeasurement(rect, axis):
 		start = startx, starty
 		end = endx, endy
 
-		pygame.draw.line(screen, RED, start, (startx,  (starty + (endy - starty) / 2) - 8))
-		pygame.draw.line(screen, RED, (startx, (starty + (endy - starty) / 2) + 8), end)
+		pygame.draw.line(drawOverlay, RED, start, (startx,  (starty + (endy - starty) / 2) - 8))
+		pygame.draw.line(drawOverlay, RED, (startx, (starty + (endy - starty) / 2) + 8), end)
 
 		wText = smallfont.render(str(int(math.fabs(rect.height/16))), False, (0, 0, 0))
-		screen.blit(wText, (startx - 8, starty + ((endy-starty)/2) - 8))
+		drawOverlay.blit(wText, (startx - 8, starty + ((endy-starty)/2) - 8))
 
-		pygame.draw.line(screen, RED, (startx - 4, starty), (startx + 4, starty))
-		pygame.draw.line(screen, RED, (endx - 4, endy), (endx + 4, endy))
+		pygame.draw.line(drawOverlay, RED, (startx - 4, starty), (startx + 4, starty))
+		pygame.draw.line(drawOverlay, RED, (endx - 4, endy), (endx + 4, endy))
 
 def drawBricks():
 	for i in bricks:
@@ -230,6 +240,8 @@ def drawBricks():
 def createFloor(coordx, coordy, ry, rx, type):
 	if type == -1:
 		bricks.append(Brick(type, [coordx, coordy], (rx * 16, ry * 16), brickImg))
+	elif type == 3:
+		bricks.append(Grate(type, [coordx, coordy], (rx*16, ry*16), brickImg))
 	else:
 		bricks.append(movingBlock(type, [coordx, coordy], (rx * 16, ry * 16)))
 
@@ -433,6 +445,8 @@ while Running:
 				mouseImg = mouseImgs[6]
 			if event.key == pygame.K_8:
 				mouseImg = mouseImgs[7]
+			if event.key == pygame.K_9:
+				mouseImg = mouseImgs[8]
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			print event.button
@@ -462,20 +476,23 @@ while Running:
 					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry-rectY)/16)), int(math.fabs((brx-rectX)/16)), CBRICK)
 				elif (currImgNum == 2):
 					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry - rectY) / 16)),
+								int(math.fabs((brx - rectX) / 16)), CGRATE)
+				elif (currImgNum == 3):
+					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry - rectY) / 16)),
 								int(math.fabs((brx - rectX) / 16)), CDESTRUCTABLE)
-				elif(currImgNum == 3):
+				elif(currImgNum == 4):
 					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry - rectY) / 16)),
 								int(math.fabs((brx - rectX) / 16)), CMOVABLE)
-				elif (currImgNum == 4):
-					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry - rectY) / 16)),
-							int(math.fabs((brx - rectX) / 16)), CMULTI)
 				elif (currImgNum == 5):
 					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry - rectY) / 16)),
 							int(math.fabs((brx - rectX) / 16)), CMULTI)
 				elif (currImgNum == 6):
 					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry - rectY) / 16)),
 							int(math.fabs((brx - rectX) / 16)), CMULTI)
-				elif(currImgNum == 7):
+				elif (currImgNum == 7):
+					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry - rectY) / 16)),
+							int(math.fabs((brx - rectX) / 16)), CMULTI)
+				elif(currImgNum == 8):
 					delList = []
 					for i in range(len(bricks)):
 						coords = (min(rectX, brx), min(rectY, bry))
@@ -501,6 +518,7 @@ while Running:
 
 
 	drawBricks()
+	screen.blit(drawOverlay, (0,0))
 	screen.blit(mouseImg, (mousepos[0] - 3, mousepos[1] - 3))
 	pygame.display.update()
 	clock.tick(60)
