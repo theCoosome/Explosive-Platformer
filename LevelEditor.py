@@ -42,6 +42,7 @@ brickImg = getImg("Bricks/Brick")
 personimg = getImg("Dereks/Derek")
 movingImg = getImg("Bricks/BrickMoving")
 destructableImg = getImg("Bricks/BrickDestructable")
+checkpointImg = getImg("Bricks/checkpoint")
 multiImg = getImg("Bricks/BrickMulti")
 bombImg = getImg("Bomb")
 
@@ -123,6 +124,7 @@ CBRICK = -1
 CMOVABLE = 0
 CDESTRUCTABLE = 1
 CMULTI = 2
+
 
 class movingBlock(object):
 	def __init__(self, type, coords, size):
@@ -462,6 +464,9 @@ while Running:
 					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry - rectY) / 16)),
 								int(math.fabs((brx - rectX) / 16)), CMOVABLE)
 				elif (currImgNum == 4):
+					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry - rectY) / 16)),
+							int(math.fabs((brx - rectX) / 16)), CMULTI)
+				elif (currImgNum == 5):
 					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry - rectY) / 16)),
 							int(math.fabs((brx - rectX) / 16)), CMULTI)
 				elif(currImgNum == 6):

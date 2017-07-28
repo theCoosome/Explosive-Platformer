@@ -7,13 +7,15 @@ import time
 pygame.mixer.pre_init(44100, -16, 2, 2048)
 pygame.init()
 fps = 60
-debugon = True
+debugon = False
 
 WHITE = pygame.Color(255, 255, 255)
 BLACK = pygame.Color(0, 0, 0)
 RED = pygame.Color(255, 0, 0)
+YELLOW = pygame.Color(255, 255, 0)
 GREEN = pygame.Color(0, 255, 0)
 BLUE = pygame.Color(0, 0, 255)
+PURPLE = pygame.Color(255, 0, 255)
 
 pygame.mouse.set_visible(False)
 font = pygame.font.SysFont('couriernew', 13)
@@ -31,6 +33,7 @@ screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
 pygame.display.set_caption("Explosive Platformer")
 
+debugOverlay = pygame.Surface(size, pygame.SRCALPHA, 32).convert_alpha()
 
 # pygame.mouse.set_visible(False)
 
@@ -99,7 +102,7 @@ def center(obj):  # finds center of object sent to function
 	return (obj.coords[0] + (obj.size[0] / 2), obj.coords[1] + (obj.size[1] / 2))
 
 
-# object one coord pair, size, object two coord pair and size
+# object one coord par, size, object two coord pair and size
 def collide(p1, p2, p3, p4):
 	# if right side is right of left side, and left side left of right side
 	if p1[1] + p2[1] > p3[1] and p1[1] < p3[1] + p4[1]:
@@ -181,25 +184,27 @@ class Person(object):
 				if self.vel[1] > 0:
 					self.vel[1] = 0
 				self.floor = True
-				pygame.draw.line(screen, BLUE, p1, center(self))
+				pygame.draw.line(debugOverlay, BLUE, p1, center(self))
 			if collide(self.coords, self.size, (i.coords[0], i.coords[1] + 3), (i.size[0], i.size[1] - 3)):  # LEFT / RIGHT
 				p1 = center(self)
 				if self.coords[0] <= i.coords[0]:
 					self.coords[0] = i.coords[0] - self.size[0]
 					self.vel[0] = 0
-					pygame.draw.line(screen, RED, p1, center(self))
+					pygame.draw.line(debugOverlay, YELLOW, p1, center(self))
 				if self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
 					self.coords[0] = i.coords[0] + i.size[0]
 					self.vel[0] = 0
-					pygame.draw.line(screen, RED, p1, center(self))
+
+					pygame.draw.line(debugOverlay, RED, p1, center(self))
 					
+
 			if self.vel[1] < 0 and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1]:
 				self.coords[1] = i.coords[1] + i.size[1]
 				self.vel[1] = 0
-				pygame.draw.line(screen, GREEN, p1, center(self))
+				pygame.draw.line(debugOverlay, GREEN, p1, center(self))
 		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
 			self.floor = True
-		
+
 	def floorCol(self, i):
 		if collide(i.coords, i.size, self.coords, self.size):  # UP
 			if self.vel[1] > 0 and self.coords[1] <= i.coords[1]:
@@ -230,22 +235,27 @@ class movingBlock(object):
 			self.img = pygame.transform.scale(multiImg, size)
 
 	def Collide(self, i):
+		p1 = center(self)
 		if collide(self.coords, self.size, i.coords, i.size):  # LEFT / RIGHT
 			if self.vel[0] > 0 and self.coords[0] <= i.coords[0]:
 				self.coords[0] = i.coords[0] - self.size[0]
 				self.vel[0] = 0
+				pygame.draw.line(debugOverlay, YELLOW, p1, center(self))
 			if self.vel[0] < 0 and self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
 				self.coords[0] = i.coords[0] + i.size[0]
 				self.vel[0] = 0
+				pygame.draw.line(debugOverlay, RED, p1, center(self))
 		if collide(i.coords, i.size, self.coords, self.size):  # DOWN
 			if center(self)[1] < center(i)[1]:
 				self.coords[1] = i.coords[1] - self.size[1]
 				self.vel[1] = 0
 				self.floor = True
+				pygame.draw.line(debugOverlay, BLUE, p1, center(self))
 		if collide(i.coords, i.size, self.coords, self.size):  # UP
 			if center(self)[1] > center(i)[1]:  # Up-ing
 				self.coords[1] = i.coords[1] + i.size[1]
 				self.vel[1] = 0
+				pygame.draw.line(debugOverlay, GREEN, p1, center(self))
 
 		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
 			self.floor = True
@@ -357,6 +367,7 @@ class bomb(object):
 				self.coords[0] = i.coords[0] - self.size[0]
 				self.vel[0] = 0
 				self.stuck = True
+				pygame.draw.line(debugOverlay, YELLOW, p1, center(self))
 				if type(i) == movingBlock:
 					self.stuckOn = i
 					self.relative = (self.coords[0]-i.coords[0], self.coords[1]-i.coords[1])
@@ -364,6 +375,7 @@ class bomb(object):
 				self.coords[0] = i.coords[0] + i.size[0]
 				self.vel[0] = 0
 				self.stuck = True
+				pygame.draw.line(debugOverlay, RED, p1, center(self))
 				if type(i) == movingBlock:
 					self.stuckOn = i
 					self.relative = (self.coords[0]-i.coords[0], self.coords[1]-i.coords[1])
@@ -373,6 +385,7 @@ class bomb(object):
 				self.vel[1] = 0
 				self.floor = True
 				self.stuck = True
+				pygame.draw.line(debugOverlay, BLUE, p1, center(self))
 				if type(i) == movingBlock:
 					self.stuckOn = i
 					self.relative = (self.coords[0]-i.coords[0], self.coords[1]-i.coords[1])
@@ -380,6 +393,7 @@ class bomb(object):
 				self.coords[1] = i.coords[1] + i.size[1]
 				self.vel[1] = 0
 				self.stuck = True
+				pygame.draw.line(debugOverlay, GREEN, p1, center(self))
 				if type(i) == movingBlock:
 					self.stuckOn = i
 					self.relative = (self.coords[0]-i.coords[0], self.coords[1]-i.coords[1])
@@ -438,6 +452,8 @@ def spawnChar():
 		player.coords = [50, 250]
 	elif currLvl == 1:
 		player.coords = [50, 500]
+	elif currLvl == 2:
+		player.coords = [112, 544]
 	else:
 		player.coords = [50, 250]
 	print currLvl
@@ -448,12 +464,18 @@ def createFloor(coordx, coordy, ry, rx, type=0):
 	bricks.append(Brick(type, [coordx, coordy], (rx * 16, ry * 16), brickImg))
 
 def wipeFloor():
-	del bricks[:]
-	del bombs[:]
-	del movingblocks[:]
-	del switchs[:]
-	del gates[:]
-	del platforms[:]
+	global bricks
+	global bombs
+	global movingblocks
+	global switches
+	global gates
+	global platforms
+	bricks = []
+	bombs = []
+	movingblocks = []
+	switches = []
+	gates = []
+	platforms = []
 
 def createWall(coordx, coordy, rx, ry, dir):
 	if dir == "down":
@@ -490,15 +512,15 @@ def openReadFile(filePath):
 		if symbol == "$":
 
 			if type == "-1":
-				print "worked"
+				#print "worked"
 				createFloor(int(x), int(y), int(int(ys) / 16), int(int(xs) / 16))
 			else:
-				print "moveBlock"
+				#print "moveBlock"
 				createMovingBlock(int(x), int(y), int(int(xs) / 16), int(int(ys) / 16), int(type))
 
 
 currLvl = 0
-totalLvls = 2	#CHANGE THIS WHEN ADDING LVLS
+totalLvls = 3	#CHANGE THIS WHEN ADDING LVLS
 
 def createLevel(lvl):	#Almost all refrences of this should be written createLevel(currLvl). Only use an int for bugtesting.
 	wipeFloor()
@@ -517,6 +539,12 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 
 	elif (lvl == 1):
 		openReadFile("saves/Level0.txt")
+		
+	if lvl == 2:
+		openReadFile("saves/LevelMotion.txt")
+	
+	else:
+		createFloor(0, 688, 2, 64)
 
 # Current main screen, basic level.
 Running = True
@@ -560,26 +588,27 @@ createLevel(currLvl)
 
 while Running:
 	mousepos = pygame.mouse.get_pos()
+	if debugon:
+		debugOverlay = pygame.Surface(size, pygame.SRCALPHA, 32).convert_alpha()
 	if bombWaitTime > 0:  # sets off bomb
 		bombWaitTime -= 1
 	bombsExplode = False
 	player.dualColliding = False
 	bombType = 1
 	screen.fill(WHITE)
-
+	counterSwitches = 0
+	startTimer = False
 	# user input
 	for event in pygame.event.get():
 		if event.type == pygame.KEYDOWN:
-
 			#Switches and Interactable Objects
-			if(len(switches) != 0):
+			if(len(switches) > 0):
 				if (isNear(center(switchs[0]), center(player))):
-					if event.key in [K_e]:
-						movingblocks.append(movingBlock(0, [64, 64], (16, 16)))
-						switchs[0].img = switches[1]
-
-
-						switchs[0].img = switches[1]
+					if counterSwitches == 0:
+						if event.key in [K_e]:
+						    movingblocks.append(movingBlock(0, [64, 64], (16, 16)))
+						    switchs[0].img = switches[1]
+						    switchs[0].img = switches[0]
 
 			# movement
 			if event.key in [K_RIGHT, K_d]:  # move ->
@@ -610,6 +639,11 @@ while Running:
 				fps /= 2
 			if event.key == K_f:  # speed up
 				fps = 60
+			if event.key == K_c:
+				if debugon:
+					debugon = False
+				else:
+					debugon = True
 			if event.key == K_x:
 				createLevel(currLvl)
 			if event.key == K_z:
@@ -685,11 +719,21 @@ while Running:
 
 				bombWaitTime = normalBombWait
 
+	while startTimer == True and counterSwitches < 60:
+		counterSwitches += 1
+		print counterSwitches
+	if counterSwitches == 60:
+		print "yes"
+		switchs[0].img = switches[0]
+		counterSwitches = 0
+	if startTimer == True:
+		counterSwitches += 1
+
+
 	# Player
 	# if not player.floor:
 	if player.vel[1] < maxFallSpeed:  # maxFallSpeed
 		player.vel[1] += gravity
-
 
 	#PLAYER MOVEMENT INPUT
 	if (not player.floor):
@@ -724,9 +768,12 @@ while Running:
 		player.vel[1] = 16
 
 
-
+	p1 = center(player)
 	player.coords[0] += player.vel[0]
 	player.coords[1] += player.vel[1]
+	if debugon:
+		pygame.draw.line(debugOverlay, PURPLE, p1, center(player))
+		pygame.draw.rect(debugOverlay, PURPLE, (player.coords[0], player.coords[1], player.size[0], player.size[1]), 1)
 
 	if not collide(player.coords, player.size, (0, 0), size):
 		player.Kill()
@@ -748,11 +795,11 @@ while Running:
 				effect = pygame.mixer.Sound("assets/Sounds/Open.wav")
 				effect.play()
 				print("2")
-	
+
 	if len(movingblocks) > 0:
 		for i in bricks:
 			player.Collide(i)
-		
+
 	for i in platforms:
 		player.Collide(i)
 	for i in crates:
@@ -822,8 +869,12 @@ while Running:
 			if i.vel[1] >= 16:
 				i.vel[1] = 16
 
+			p1 = center(i)
 			i.coords[0] += i.vel[0]
 			i.coords[1] += i.vel[1]
+			if debugon:
+				pygame.draw.line(debugOverlay, PURPLE, p1, center(i))
+				pygame.draw.rect(debugOverlay, PURPLE, (i.coords[0], i.coords[1], i.size[0], i.size[1]), 1)
 
 			for p in bricks:
 				i.Collide(p)
@@ -831,7 +882,7 @@ while Running:
 				i.vel[0] = Zero(i.vel[0], friction)
 		screen.blit(i.img,i.coords)
 
-		
+
 		for p in platforms:
 			player.Collide(p)
 			for mb in movingblocks:
@@ -842,8 +893,6 @@ while Running:
 
 
 		screen.blit(p.img,p.coords)
-	for s in switchs:
-		screen.blit(s.img, s.coords)
 	for k in keys:
 		screen.blit(k.img, k.coords)
 	for g in gates:
@@ -877,8 +926,13 @@ while Running:
 		if not i.stuck:
 			if i.vel[1] < maxFallSpeed:
 				i.vel[1] += gravity
+				
+			p1 = center(i)
 			i.coords[0] += i.vel[0]
 			i.coords[1] += i.vel[1]
+			if debugon:
+				pygame.draw.line(debugOverlay, PURPLE, p1, center(i))
+				pygame.draw.rect(debugOverlay, PURPLE, (i.coords[0], i.coords[1], i.size[0], i.size[1]), 1)
 
 		if not i.armed:
 			i.time += 1
@@ -933,5 +987,7 @@ while Running:
 		pygame.draw.circle(screen, RED, mousepos, 32, 1)
 
 	screen.blit(mouseImg, (mousepos[0]-3, mousepos[1]-3))
+	if debugon:
+		screen.blit(debugOverlay, (0, 0))
 	pygame.display.update()
 	clock.tick(fps)
