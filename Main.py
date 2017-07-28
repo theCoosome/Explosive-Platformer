@@ -516,7 +516,7 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		gates.append(Gate((896, 626), (64, 64), lockImg, False))
 
 	elif (lvl == 1):
-		createFloor(0, 688, 2, 64)
+		openReadFile("saves/Level0.txt")
 
 # Current main screen, basic level.
 Running = True
