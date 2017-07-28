@@ -59,6 +59,7 @@ switchImg = switches[0]
 lockImg = getImg("bars")
 keyImg = getImg("key")
 crateImg = getImg("crate")
+grateImg = getImg("grate")
 
 #Anim
 derek = getImg("Dereks/Derek")
@@ -294,6 +295,14 @@ class Gate(object):
 		self.size = size
 		self.img = pygame.transform.scale(img, size)
 		self.open = open
+class Grate(object):
+	def __init__(self,coords,size, blocked): #allowed is list of strings: ["guy", "bomb", "moving", "dest"]
+		self.coords = coords
+		self.size = size
+		self.img = pygame.transform.scale(grateImg, size)
+		self.blocked = blocked
+grates = []
+		
 		
 class Crate(object):
 	def __init__(self,coords,size,img):
@@ -345,7 +354,7 @@ class bomb(object):
 				if type(i) == movingBlock:
 					self.stuckOn = i
 					self.relative = (self.coords[0]-i.coords[0], self.coords[1]-i.coords[1])
-			elif self.vel[1] > 0 and self.coords[1] <= i.coords[1]+8: #FLOOR
+			elif self.vel[1] > 0 and self.coords[1] <= i.coords[1]: #FLOOR
 				p1 = center(self)
 				self.coords[1] = i.coords[1] - self.size[1]
 				self.vel[1] = 0
@@ -355,7 +364,7 @@ class bomb(object):
 				if type(i) == movingBlock:
 					self.stuckOn = i
 					self.relative = (self.coords[0]-i.coords[0], self.coords[1]-i.coords[1])
-			elif self.vel[1] < 0 and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1] - 8: #CEILING
+			elif self.vel[1] < 0 and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1]: #CEILING
 				p1 = center(self)
 				self.coords[1] = i.coords[1] + i.size[1]
 				self.vel[1] = 0
@@ -438,6 +447,8 @@ def wipeFloor():
 	global switches
 	global gates
 	global platforms
+	global grates
+	grates = []
 	bricks = []
 	bombs = []
 	movingblocks = []
@@ -774,10 +785,8 @@ while Running:
 		player.Collide(i)
 	for i in crates:
 		player.Collide(i)
-		screen.blit(i.img,i.coords)
 	for g in gates:
 		player.Collide(g)
-		screen.blit(g.img,g.coords)
 
 	for i in movingblocks: #Moving blocks collide with each other
 		for p in movingblocks:
@@ -863,12 +872,6 @@ while Running:
 
 
 		screen.blit(p.img,p.coords)
-	for k in keys:
-		screen.blit(k.img, k.coords)
-	for g in gates:
-		screen.blit(g.img, g.coords)
-	for c in crates:
-		screen.blit(c.img, c.coords)
 	for p in platforms:
 		player.Collide(p)
 	for mb in movingblocks:
@@ -878,6 +881,16 @@ while Running:
 	for i in bricks:
 		screen.blit(i.img, i.coords)
 		player.Collide(i)
+	for i in grates:
+		if "guy" in i.blocked:
+			player.collide(i)
+		if "bomb" in i.blocked:
+			for p in bombs:
+				p.collide(i)
+		if "moving" in i.blocked:
+			for p in movingblocks:
+				if (p.type == 0) or ("dest" in i.blocked and p.type == 2):
+					p.collide(i)
 
 	for i in bombs:
 		if i.isExploding:
@@ -962,6 +975,14 @@ while Running:
 
 	for s in switchs:
 		screen.blit(s.img, s.coords)
+	for k in keys:
+		screen.blit(k.img, k.coords)
+	for g in gates:
+		screen.blit(g.img, g.coords)
+	for i in grates:
+		screen.blit(i.img, i.coords)
+	for c in crates:
+		screen.blit(c.img, c.coords)
 	#UI display
 	screen.blit(personimg, player.coords)
 	screen.blit(DetCurrent.img, (4, 4))
