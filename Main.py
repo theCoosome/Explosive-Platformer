@@ -53,6 +53,9 @@ personimg = getImg("Dereks/Derek")
 movingImg = getImg("Bricks/BrickMoving")
 destructableImg = getImg("Bricks/BrickDestructable")
 multiImg = getImg("Bricks/BrickMulti")
+sens1Img = getImg("Bricks/SensorMoving")
+sens2Img = getImg("Bricks/SensorDest")
+sens3Img = getImg("Bricks/SensorMulti")
 
 switches= [getImg("Switch"),getImg("Switch2")]
 switchImg = switches[0]
@@ -272,7 +275,29 @@ class Brick(object):
 		self.type = type
 		self.coords = coords
 		self.size = size
-		self.img = pygame.transform.scale(img, size)
+		self.img = pygame.transform.scale(brickImg, size)
+
+class Sensor(object):
+	def __init__(self, type, coords, size):
+		self.type = type
+		self.coords = coords
+		self.size = size
+		self.trigger = None
+		self.On = False
+		self.actions = []
+		
+		if self.type == 0:
+			self.img = pygame.transform.scale(sens1Img, size)
+		if self.type == 2:
+			self.img = pygame.transform.scale(sens3Img, size)
+	
+	def collide(self, i):
+		if i.type == self.type:
+			if collide(i.coords, i.size, self.coords, self.size):
+				self.On = True
+				self.trigger.Trigger(self.actions)
+
+sensors = []
 
 class Switch(object):
 	def __init__(self,type,coords,size,img,toggle):
@@ -281,6 +306,7 @@ class Switch(object):
 		self.size = size
 		self.img = img
 		self.toggle = toggle
+		self.trigger = None
 movingblocks = []
 
 
@@ -289,18 +315,31 @@ class Key(object):
 		self.coords = coords
 		self.size = size
 		self.img = pygame.transform.scale(img, size)
+		
 class Gate(object):
 	def __init__(self,coords,size,img,open):
 		self.coords = coords
 		self.size = size
 		self.img = pygame.transform.scale(img, size)
 		self.open = open
+		
+	def Trigger(self, actions):
+		self.open = actions
+		
 class Grate(object):
 	def __init__(self,coords,size, blocked): #allowed is list of strings: ["guy", "bomb", "moving", "dest"]
 		self.coords = coords
 		self.size = size
 		self.img = pygame.transform.scale(grateImg, size)
 		self.blocked = blocked
+		
+	def Trigger(self, actions):
+		for x in actions:
+			if x in self.blocked:
+				self.blocked.remove(x)
+			else:
+				self.blocked.append(x)
+				
 grates = []
 		
 		
@@ -448,6 +487,8 @@ def wipeFloor():
 	global gates
 	global platforms
 	global grates
+	global sensors
+	sensors = []
 	grates = []
 	bricks = []
 	bombs = []
