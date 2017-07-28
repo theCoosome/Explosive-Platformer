@@ -68,9 +68,11 @@ grateImg = getImg("grate")
 derek = getImg("Dereks/Derek")
 left = [getImg("Dereks/anim1l"),getImg("Dereks/anim3l")]
 right = [getImg("Dereks/anim1r"),getImg("Dereks/anim2r")]
-crouchImg = [getImg("Dereks/DerekCrouch"),getImg("Dereks/derekcrouchl")]
 '''left = [getImg("Dereks/anim1l"),getImg("Dereks/anim2l"),getImg("Dereks/anim3l")]
 right = [getImg("Dereks/anim1r"),getImg("Dereks/Derek"),getImg("Dereks/anim2r")]'''
+
+crouchImg = [getImg("Dereks/DerekCrouch"),getImg("Dereks/derekcrouchl")]
+
 
 
 
