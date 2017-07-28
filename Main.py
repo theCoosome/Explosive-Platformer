@@ -99,7 +99,7 @@ def center(obj):  # finds center of object sent to function
 	return (obj.coords[0] + (obj.size[0] / 2), obj.coords[1] + (obj.size[1] / 2))
 
 
-# object one coord pair, size, object two coord pair and size
+# object one coord par, size, object two coord pair and size
 def collide(p1, p2, p3, p4):
 	# if right side is right of left side, and left side left of right side
 	if p1[1] + p2[1] > p3[1] and p1[1] < p3[1] + p4[1]:
@@ -192,14 +192,14 @@ class Person(object):
 					self.coords[0] = i.coords[0] + i.size[0]
 					self.vel[0] = 0
 					pygame.draw.line(screen, RED, p1, center(self))
-					
+
 			if self.vel[1] < 0 and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1]:
 				self.coords[1] = i.coords[1] + i.size[1]
 				self.vel[1] = 0
 				pygame.draw.line(screen, GREEN, p1, center(self))
 		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
 			self.floor = True
-		
+
 	def floorCol(self, i):
 		if collide(i.coords, i.size, self.coords, self.size):  # UP
 			if self.vel[1] > 0 and self.coords[1] <= i.coords[1]:
@@ -566,20 +566,19 @@ while Running:
 	player.dualColliding = False
 	bombType = 1
 	screen.fill(WHITE)
-
+	counterSwitches = 0
+	startTimer = False
 	# user input
 	for event in pygame.event.get():
 		if event.type == pygame.KEYDOWN:
-
 			#Switches and Interactable Objects
 			if(len(switches) != 0):
 				if (isNear(center(switchs[0]), center(player))):
-					if event.key in [K_e]:
-						movingblocks.append(movingBlock(0, [64, 64], (16, 16)))
-						switchs[0].img = switches[1]
-
-
-						switchs[0].img = switches[1]
+					if counterSwitches == 0:
+						if event.key in [K_e]:
+						    movingblocks.append(movingBlock(0, [64, 64], (16, 16)))
+						    switchs[0].img = switches[1]
+						    switchs[0].img = switches[0]
 
 			# movement
 			if event.key in [K_RIGHT, K_d]:  # move ->
@@ -685,11 +684,21 @@ while Running:
 
 				bombWaitTime = normalBombWait
 
+	while startTimer == True and counterSwitches < 60:
+		counterSwitches += 1
+		print counterSwitches
+	if counterSwitches == 60:
+		print "yes"
+		switchs[0].img = switches[0]
+		counterSwitches = 0
+	if startTimer == True:
+		counterSwitches += 1
+
+
 	# Player
 	# if not player.floor:
 	if player.vel[1] < maxFallSpeed:  # maxFallSpeed
 		player.vel[1] += gravity
-
 
 	#PLAYER MOVEMENT INPUT
 	if (not player.floor):
@@ -748,11 +757,11 @@ while Running:
 				effect = pygame.mixer.Sound("assets/Sounds/Open.wav")
 				effect.play()
 				print("2")
-	
+
 	if len(movingblocks) > 0:
 		for i in bricks:
 			player.Collide(i)
-		
+
 	for i in platforms:
 		player.Collide(i)
 	for i in crates:
@@ -831,7 +840,7 @@ while Running:
 				i.vel[0] = Zero(i.vel[0], friction)
 		screen.blit(i.img,i.coords)
 
-		
+
 		for p in platforms:
 			player.Collide(p)
 			for mb in movingblocks:
