@@ -389,8 +389,8 @@ class bomb(object):
 
 	def Detonate(self, mob):
 
-		px, py = mob.coords
-		bx, by = self.coords
+		px, py = center(mob)
+		bx, by = center(self)
 
 		xd = px - bx
 		yd = py - by
@@ -782,7 +782,7 @@ while Running:
 	else:
 		if player.motion[0] == 0:
 
-			personimg = right[1]
+			personimg = derek
 		if player.motion[0] < 0:
 			counter += 1
 			if counter == 10:
