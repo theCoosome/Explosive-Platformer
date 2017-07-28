@@ -510,7 +510,7 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		openReadFile("saves/Level0.txt")
 
 		#platforms.append(Platform((896, 626), (64, 64), platformImg))
-		#switchs.append(Switch("Switch", (256, 284), (32, 32), switchImg, False))
+		switchs.append(Switch("Switch", (256, 288), (32, 32), switchImg, False))
 		crates.append(Crate((432, 160), (16, 16), crateImg))
 		keys.append(Key((432, 160), (8, 8), keyImg))
 		gates.append(Gate((896, 626), (64, 64), lockImg, False))
@@ -572,15 +572,12 @@ while Running:
 		if event.type == pygame.KEYDOWN:
 
 			#Switches and Interactable Objects
-			'''
 			if(len(switches) != 0):
 				if (isNear(center(switchs[0]), center(player))):
 					if event.key in [K_e]:
 						movingblocks.append(movingBlock(0, [64, 64], (16, 16)))
 
 						switchs[0].img = switches[1]
-	
-			'''
 
 			# movement
 			if event.key in [K_RIGHT, K_d]:  # move ->
