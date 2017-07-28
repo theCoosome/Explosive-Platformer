@@ -468,13 +468,11 @@ class bomb(object):
 
 		if pow > 0:
 			if (td != 0):
-				if debugon:
-					pygame.draw.line(debugOverlay, RED, cm, cs)
+				pygame.draw.line(debugOverlay, RED, cm, cs)
 				sight = True
 				square = (getLower(cm[0], cs[0]), getLower(cm[1], cs[1]), abs(xd), abs(yd))
 				for x in bricks:
-					if collide(x.coords, x.size, (square[0], square[1]), (square[2], square[3])):
-						print "dat collide"
+					if collide(x.coords, x.size, square[0:2], square[2:4]):
 						if DualLine(square[0:2], square[2:4], x):
 							sight = False
 				if sight:
