@@ -178,8 +178,7 @@ class Person(object):
 				self.dualColliding = True
 
 			p1 = center(self)
-			#if center(self)[1] < center(i)[1]: #FLOOR
-			if self.vel[1] > 0 and self.coords[1] <= i.coords[1]:
+			if self.vel[1] > 0 and self.coords[1] <= i.coords[1]: #FLOOR
 				self.coords[1] = i.coords[1] - self.size[1]
 				if self.vel[1] > 0:
 					self.vel[1] = 0
@@ -198,7 +197,8 @@ class Person(object):
 					pygame.draw.line(debugOverlay, RED, p1, center(self))
 					
 
-			if self.vel[1] < 0 and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1]:
+			p1 = center(self)
+			if self.vel[1] < 0 and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1]: #CEILING
 				self.coords[1] = i.coords[1] + i.size[1]
 				self.vel[1] = 0
 				pygame.draw.line(debugOverlay, GREEN, p1, center(self))
@@ -235,24 +235,29 @@ class movingBlock(object):
 			self.img = pygame.transform.scale(multiImg, size)
 
 	def Collide(self, i):
-		p1 = center(self)
-		if collide(self.coords, self.size, i.coords, i.size):  # LEFT / RIGHT
-			if self.vel[0] > 0 and self.coords[0] <= i.coords[0]:
-				self.coords[0] = i.coords[0] - self.size[0]
-				self.vel[0] = 0
-				pygame.draw.line(debugOverlay, YELLOW, p1, center(self))
-			if self.vel[0] < 0 and self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
-				self.coords[0] = i.coords[0] + i.size[0]
-				self.vel[0] = 0
-				pygame.draw.line(debugOverlay, RED, p1, center(self))
-		if collide(i.coords, i.size, self.coords, self.size):  # DOWN
-			if center(self)[1] < center(i)[1]:
+		if collide(i.coords, i.size, self.coords, self.size):  # UP
+			p1 = center(self)
+			if self.vel[1] > 0 and self.coords[1] <= i.coords[1]: #FLOOR
 				self.coords[1] = i.coords[1] - self.size[1]
-				self.vel[1] = 0
+				if self.vel[1] > 0:
+					self.vel[1] = 0
 				self.floor = True
 				pygame.draw.line(debugOverlay, BLUE, p1, center(self))
-		if collide(i.coords, i.size, self.coords, self.size):  # UP
-			if center(self)[1] > center(i)[1]:  # Up-ing
+				
+			if collide(self.coords, self.size, i.coords, i.size):  # LEFT / RIGHT
+				p1 = center(self)
+				if self.coords[0] <= i.coords[0]:
+					self.coords[0] = i.coords[0] - self.size[0]
+					self.vel[0] = 0
+					pygame.draw.line(debugOverlay, YELLOW, p1, center(self))
+					
+				if self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
+					self.coords[0] = i.coords[0] + i.size[0]
+					self.vel[0] = 0
+					pygame.draw.line(debugOverlay, RED, p1, center(self))
+					
+			p1 = center(self)
+			if self.vel[1] < 0 and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1]: #CEILING
 				self.coords[1] = i.coords[1] + i.size[1]
 				self.vel[1] = 0
 				pygame.draw.line(debugOverlay, GREEN, p1, center(self))
@@ -289,52 +294,12 @@ class Gate(object):
 		self.size = size
 		self.img = pygame.transform.scale(img, size)
 		self.open = open
-	def Collide(self, i):
-		if collide(self.coords, self.size, i.coords, i.size):  # LEFT / RIGHT
-			if self.vel[0] > 0 and self.coords[0] <= i.coords[0]:
-				self.coords[0] = i.coords[0] - self.size[0]
-				self.vel[0] = 0
-			if self.vel[0] < 0 and self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
-				self.coords[0] = i.coords[0] + i.size[0]
-				self.vel[0] = 0
-		if collide(i.coords, i.size, self.coords, self.size):  # DOWN
-			if center(self)[1] < center(i)[1]:
-				self.coords[1] = i.coords[1] - self.size[1]
-				self.vel[1] = 0
-				self.floor = True
-		if collide(i.coords, i.size, self.coords, self.size):  # UP
-			if center(self)[1] > center(i)[1]:  # Up-ing
-				self.coords[1] = i.coords[1] + i.size[1]
-				self.vel[1] = 0
-
-		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
-			self.floor = True
+		
 class Crate(object):
 	def __init__(self,coords,size,img):
 		self.coords = coords
 		self.size = size
 		self.img = img
-
-	def Collide(self, i):
-		if collide(self.coords, self.size, i.coords, i.size):  # LEFT / RIGHT
-			if self.vel[0] > 0 and self.coords[0] <= i.coords[0]:
-				self.coords[0] = i.coords[0] - self.size[0]
-				self.vel[0] = 0
-			if self.vel[0] < 0 and self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
-				self.coords[0] = i.coords[0] + i.size[0]
-				self.vel[0] = 0
-		if collide(i.coords, i.size, self.coords, self.size):  # DOWN
-			if center(self)[1] < center(i)[1]:
-				self.coords[1] = i.coords[1] - self.size[1]
-				self.vel[1] = 0
-				self.floor = True
-		if collide(i.coords, i.size, self.coords, self.size):  # UP
-			if center(self)[1] > center(i)[1]:  # Up-ing
-				self.coords[1] = i.coords[1] + i.size[1]
-				self.vel[1] = 0
-
-		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
-			self.floor = True
 
 class bomb(object):
 	def __init__(self, type, coords, vel, size, pow, arm, img):
@@ -362,7 +327,8 @@ class bomb(object):
 		self.img = normalBombImgs[curr]
 
 	def Collide(self, i):
-		if collide(self.coords, self.size, i.coords, i.size):  # LEFT / RIGHT
+		if collide(i.coords, i.size, self.coords, self.size):
+			p1 = center(self)
 			if self.vel[0] > 0 and self.coords[0] <= i.coords[0]:
 				self.coords[0] = i.coords[0] - self.size[0]
 				self.vel[0] = 0
@@ -371,7 +337,7 @@ class bomb(object):
 				if type(i) == movingBlock:
 					self.stuckOn = i
 					self.relative = (self.coords[0]-i.coords[0], self.coords[1]-i.coords[1])
-			if self.vel[0] < 0 and self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
+			elif self.vel[0] < 0 and self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
 				self.coords[0] = i.coords[0] + i.size[0]
 				self.vel[0] = 0
 				self.stuck = True
@@ -379,8 +345,8 @@ class bomb(object):
 				if type(i) == movingBlock:
 					self.stuckOn = i
 					self.relative = (self.coords[0]-i.coords[0], self.coords[1]-i.coords[1])
-		if collide(i.coords, i.size, self.coords, self.size):  # DOWN
-			if center(self)[1] < center(i)[1]:
+			elif self.vel[1] > 0 and self.coords[1] <= i.coords[1]+8: #FLOOR
+				p1 = center(self)
 				self.coords[1] = i.coords[1] - self.size[1]
 				self.vel[1] = 0
 				self.floor = True
@@ -389,7 +355,8 @@ class bomb(object):
 				if type(i) == movingBlock:
 					self.stuckOn = i
 					self.relative = (self.coords[0]-i.coords[0], self.coords[1]-i.coords[1])
-			if center(self)[1] > center(i)[1]:  # Up-ing
+			elif self.vel[1] < 0 and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1] - 8: #CEILING
+				p1 = center(self)
 				self.coords[1] = i.coords[1] + i.size[1]
 				self.vel[1] = 0
 				self.stuck = True
@@ -397,7 +364,8 @@ class bomb(object):
 				if type(i) == movingBlock:
 					self.stuckOn = i
 					self.relative = (self.coords[0]-i.coords[0], self.coords[1]-i.coords[1])
-
+				
+				
 		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
 			self.floor = True
 
@@ -637,6 +605,8 @@ while Running:
 				player.floor = False
 			if event.key == K_r:  # slow down
 				fps /= 2
+				if fps < 1:
+					fps = 1
 			if event.key == K_f:  # speed up
 				fps = 60
 			if event.key == K_c:
