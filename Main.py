@@ -54,8 +54,8 @@ movingImg = getImg("Bricks/BrickMoving")
 destructableImg = getImg("Bricks/BrickDestructable")
 multiImg = getImg("Bricks/BrickMulti")
 
-switches= [getImg("Switch"),getImg("Switch2")]
-switchImg = switches[0]
+switchImages= [getImg("Switch"),getImg("Switch2")]
+switchImg = switchImages[0]
 lockImg = getImg("bars")
 keyImg = getImg("key")
 crateImg = getImg("crate")
@@ -470,6 +470,8 @@ def wipeFloor():
 	global switches
 	global gates
 	global platforms
+	global crates
+	crates = []
 	bricks = []
 	bombs = []
 	movingblocks = []
@@ -483,8 +485,6 @@ def createWall(coordx, coordy, rx, ry, dir):
 	if dir == "up":
 		bricks.append(Brick("type", [coordx, coordy], (ry * 16, rx * 16), brickImg))
 
-
-
 def createMovingBlock(coordx, coordy, rx, ry, type):
 	movingblocks.append(movingBlock(type, [coordx, coordy], [rx*16, ry*16]))
 
@@ -497,7 +497,7 @@ def borderedLevel():
 	createFloor(992, 32, 41, 2)
 # creates floors and walls based on coor and size
 
-switchs = []
+switches = []
 keys = []
 gates = []
 crates = []
@@ -532,7 +532,7 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		openReadFile("saves/Level0.txt")
 
 		#platforms.append(Platform((896, 626), (64, 64), platformImg))
-		switchs.append(Switch("Switch", (256, 288), (32, 32), switchImg, False))
+		switches.append(Switch("Switch", (256, 288), (32, 32), switchImg, False))
 		crates.append(Crate((432, 160), (16, 16), crateImg))
 		keys.append(Key((432, 160), (8, 8), keyImg))
 		gates.append(Gate((896, 626), (64, 64), lockImg, False))
@@ -596,19 +596,17 @@ while Running:
 	player.dualColliding = False
 	bombType = 1
 	screen.fill(WHITE)
-	counterSwitches = 0
 	startTimer = False
 	# user input
 	for event in pygame.event.get():
 		if event.type == pygame.KEYDOWN:
 			#Switches and Interactable Objects
 			if(len(switches) > 0):
-				if (isNear(center(switchs[0]), center(player))):
-					if counterSwitches == 0:
+				if (isNear(center(switches[0]), center(player))):
 						if event.key in [K_e]:
-						    movingblocks.append(movingBlock(0, [64, 64], (16, 16)))
-						    switchs[0].img = switches[1]
-						    switchs[0].img = switches[0]
+							movingblocks.append(movingBlock(0, [64, 64], (16, 16)))
+							switches[0].img = switchImages[1]
+
 
 			# movement
 			if event.key in [K_RIGHT, K_d]:  # move ->
@@ -719,15 +717,6 @@ while Running:
 
 				bombWaitTime = normalBombWait
 
-	while startTimer == True and counterSwitches < 60:
-		counterSwitches += 1
-		print counterSwitches
-	if counterSwitches == 60:
-		print "yes"
-		switchs[0].img = switches[0]
-		counterSwitches = 0
-	if startTimer == True:
-		counterSwitches += 1
 
 
 	# Player
@@ -978,7 +967,7 @@ while Running:
 	if player.floor:
 		player.vel[0] = Zero(player.vel[0], friction)
 
-	for s in switchs:
+	for s in switches:
 		screen.blit(s.img, s.coords)
 	#UI display
 	screen.blit(personimg, player.coords)
