@@ -119,7 +119,35 @@ def collide(p1, p2, p3, p4):
 def pointCollide(p1, p2, p3):
 	if p1[0] + p2[0] > p3[0] and p1[0] < p3[0] and p1[1] + p2[1] > p3[1] and p1[1] < p3[1]:
 		return True
-
+		
+def within(p1, p2, p3): #if value 1 is within p2 and p3
+	if p2 > p3:
+		if p1 < p2 and p1 > p3:
+			return True
+	else:
+		if p1 > p2 and p1 < p3:
+			return True
+		
+def DualLine(p1, p2, box):
+	if p2[0]-p1[0] == 0: #Straight up line
+		m = 2000
+	else:
+		m = (p2[1]-p1[1])/(p2[0]-p1[0])
+	b = p1[1]-(m*p1[0])
+	#having m and b:
+	def f(x):
+		return m*x+b
+			
+	if (box.coords[0] > f(box.coords[0]) and box.coords[0]+box.size[0] > f(box.coords[0]+box.size[0])) or (box.coords[0] < f(box.coords[0]) and box.coords[0]+box.size[0] < f(box.coords[0]+box.size[0])):
+		return True
+	else:
+		return False
+		
+def getLower(p1, p2):
+	if p1 > p2:
+		return p2
+	else:
+		return p1
 
 def isNear(p1, p2, dist = 32):
 
@@ -255,16 +283,19 @@ class movingBlock(object):
 					self.vel[0] = 0
 					pygame.draw.line(debugOverlay, YELLOW, p1, center(self))
 					
-				if self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
+				if self.coords[0] + 16 >= i.coords[0] + i.size[0]:
 					self.coords[0] = i.coords[0] + i.size[0]
 					self.vel[0] = 0
-					pygame.draw.line(debugOverlay, RED, p1, center(self))
+					p2 = center(self)
+					pygame.draw.line(debugOverlay, RED, (p1[0], p1[1]-1), (p2[0], p2[1]-1))
 					
-			p1 = center(self)
-			if self.vel[1] < 0 and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1]: #CEILING
-				self.coords[1] = i.coords[1] + i.size[1]
-				self.vel[1] = 0
-				pygame.draw.line(debugOverlay, GREEN, p1, center(self))
+			if collide(i.coords, i.size, self.coords, self.size):  # UP
+				if self.vel[1] < 0 and self.coords[1] + 16 >= i.coords[1] + i.size[1]: #CEILING
+					p1 = center(self)
+					self.coords[1] = i.coords[1] + i.size[1]
+					self.vel[1] = 0
+					p2 = center(self)
+					pygame.draw.line(debugOverlay, GREEN, (p1[0]-1, p1[1]), (p2[0]-1, p2[1]))
 
 		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
 			self.floor = True
@@ -350,12 +381,13 @@ class Crate(object):
 		self.img = img
 
 class bomb(object):
-	def __init__(self, type, coords, vel, size, pow, arm, img):
+	def __init__(self, type, coords, vel, size, pow, pow2, arm, img):
 		self.type = type
 		self.coords = coords
 		self.size = size
 		self.img = img
 		self.pow = pow
+		self.pow2 = pow2
 		self.time = 0
 		self.arm = arm
 		self.armed = False
@@ -419,22 +451,33 @@ class bomb(object):
 
 	def Detonate(self, mob):
 
-		px, py = center(mob)
-		bx, by = center(self)
+		cm = center(mob)
+		cs = center(self)
 
-		xd = px - bx
-		yd = py - by
+		xd = cm[0]-cs[0]
+		yd = cm[1]-cs[1]
 
 		td = math.hypot(xd, yd)
 
-		pow = self.pow * ((self.detRange - td) / self.detRange)
+		if type(mob) == Person:
+			pow = self.pow * ((self.detRange - td) / self.detRange)
+		else:
+			pow = self.pow2 * ((self.detRange - td) / self.detRange)
 
-		if pow < 0:
-			pow = 0
-
-		if (td != 0):
-			mob.vel[0] += (xd / td) * pow
-			mob.vel[1] += (yd / td) * pow
+		if pow > 0:
+			if (td != 0):
+				if debugon:
+					pygame.draw.line(debugOverlay, RED, cm, cs)
+				sight = True
+				square = (getLower(cm[0], cs[0]), getLower(cm[1], cs[1]), abs(xd), abs(yd))
+				for x in bricks:
+					if collide(x.coords, x.size, (square[0], square[1]), (square[2], square[3])):
+						print "dat collide"
+						if DualLine(square[0:2], square[2:4], x):
+							sight = False
+				if sight:
+					mob.vel[0] += (xd / td) * pow
+					mob.vel[1] += (yd / td) * pow
 
 
 class detonator(object):
@@ -448,7 +491,7 @@ class detonator(object):
 		self.img = img #Detonator image
 		self.bomb = img2 #Bomb image
 	def newBomb(self, coords, vel):
-		return bomb(self.type, coords, vel, (8, 8), self.kbP, self.arm, self.bomb)
+		return bomb(self.type, coords, vel, (8, 8), self.kbP, self.kbB, self.arm, self.bomb)
 
 DetGod = detonator(0, 16, 16, 5, 0, 99999, getImg("UI/DetDefault"), bombImg)
 DetNorm = detonator(1, 2, 8, 5, 30, 4, getImg("UI/DetDefault"), bombImg)
@@ -655,9 +698,7 @@ while Running:
 				effect.play()
 				player.floor = False
 			if event.key == K_r:  # slow down
-				fps /= 2
-				if fps < 1:
-					fps = 1
+				fps = 1
 			if event.key == K_f:  # speed up
 				fps = 60
 			if event.key == K_c:
