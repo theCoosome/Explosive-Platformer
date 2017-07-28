@@ -782,7 +782,7 @@ while Running:
 	else:
 		if player.motion[0] == 0:
 
-			personimg = right[1]
+			personimg = derek
 		if player.motion[0] < 0:
 			counter += 1
 			if counter == 10:
