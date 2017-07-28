@@ -585,10 +585,8 @@ while Running:
 			#Switches and Interactable Objects
 			if (isNear(center(switchs[0]), center(player))):
 				if event.key in [K_e]:
-					movingblocks.append(movingBlock(0, [64, 64], (16, 16)))
-
 					switchs[0].img = switches[1]
-
+                    
 
 
 			# movement
@@ -773,6 +771,11 @@ while Running:
 		for p in movingblocks:
 			if not (p == i):
 				p.Collide(i)
+
+
+
+
+
 	if player.vel[0] == 0 and player.vel[1] == 0:
 		movingLeft = False
 		movingRight = False
@@ -784,24 +787,22 @@ while Running:
 	else:
 		if player.motion[0] == 0:
 			personimg = right[1]
-		elif player.motion[0] < 0:
-			if movingLeft:
+		if player.motion[0] < 0:
+			counter += 1
+			if counter == 10:
+				player.index += 1
+				counter = 0
+			if player.index >= len(left):
+				player.index = 0
+			personimg = left[player.index]
+		if player.motion[0] > 0:
+			if not isCrouching :
 				counter += 1
 				if counter == 10:
 					player.index += 1
 					counter = 0
-				if player.index >= len(left):
-					player.index = 0
-			personimg = left[player.index]
-		elif player.motion[0] > 0:
-			if movingRight:
-				if not isCrouching :
-					counter += 1
-					if counter == 10:
-						player.index += 1
-						counter = 0
-					if player.index >= len(right):
-						player.index = 0
+				if player.index >= len(right):
+				    player.index = 0
 
 			personimg = right[player.index]
 
@@ -837,22 +838,22 @@ while Running:
 				i.vel[0] = Zero(i.vel[0], friction)
 		screen.blit(i.img,i.coords)
 
-		for s in switchs:
-			screen.blit(s.img, s.coords)
-		for k in keys:
-			screen.blit(k.img,k.coords)
-		for g in gates:
-			screen.blit(g.img,g.coords)
-		for c in crates:
-			screen.blit(c.img,c.coords)
-		for p in platforms:
-			player.Collide(p)
-			for mb in movingblocks:
-				if isOnTop(p,mb) and isNear(center(p),center(mb)):
-					print "you won!"
-				mb.Collide(p)
-			screen.blit(p.img,p.coords)
 
+		screen.blit(p.img,p.coords)
+	for s in switchs:
+		screen.blit(s.img, s.coords)
+	for k in keys:
+		screen.blit(k.img, k.coords)
+	for g in gates:
+		screen.blit(g.img, g.coords)
+	for c in crates:
+		screen.blit(c.img, c.coords)
+	for p in platforms:
+		player.Collide(p)
+	for mb in movingblocks:
+		if isOnTop(p, mb) and isNear(center(p), center(mb)):
+			print "you won!"
+		mb.Collide(p)
 	for i in bricks:
 		screen.blit(i.img, i.coords)
 		player.Collide(i)
