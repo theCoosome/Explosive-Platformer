@@ -42,7 +42,7 @@ brickImg = getImg("Bricks/Brick")
 personimg = getImg("Dereks/Derek")
 movingImg = getImg("Bricks/BrickMoving")
 destructableImg = getImg("Bricks/BrickDestructable")
-checkpointImg = getImg("Bricks/checkpoint")
+checkpointImg = getImg("Bricks/Exit")
 multiImg = getImg("Bricks/BrickMulti")
 bombImg = getImg("Bomb")
 
@@ -55,8 +55,9 @@ DPlaceImg = getImg("Mouse/Destructable")
 MovablePlaceImg = getImg("Mouse/Movable")
 MultiPlaceImg = getImg("Mouse/Multi")
 ExitPlaceImg = getImg("Mouse/Exit")
+EntrancePlaceImg = getImg("Mouse/Entrance")
 RemoveImg = getImg("Mouse/Remove")
-mouseImgs = [AimImg, BrickPlaceImg, DPlaceImg, MovablePlaceImg, MultiPlaceImg, ExitPlaceImg, RemoveImg]
+mouseImgs = [AimImg, BrickPlaceImg, DPlaceImg, MovablePlaceImg, MultiPlaceImg, ExitPlaceImg, EntrancePlaceImg, RemoveImg]
 mouseImg = mouseImgs[0]
 
 
@@ -172,6 +173,55 @@ class Brick(object):
 		self.size = size
 		self.img = pygame.transform.scale(img, size)
 
+def drawMeasurement(rect, axis):
+	#If our axis is horizontal
+	cenx, ceny = rect.center
+	w2 = (math.fabs(rect.width / 2))
+	h2 = (math.fabs(rect.height / 2))
+	if axis == 0:
+
+		startx, starty = cenx - w2, ceny - h2
+		endx, endy = cenx + w2, ceny - h2
+		if starty - 8 > 0:
+			starty -= 8
+			endy -= 8
+		else:
+			startx, starty = cenx - w2, ceny + h2
+			endx, endy = cenx + w2, ceny + h2
+			starty += 8
+			endy += 8
+		start = startx, starty
+		end = endx, endy
+		pygame.draw.line(screen, RED, start, ((startx + (endx - startx) / 2) - 8, starty))
+		pygame.draw.line(screen, RED, ((startx + (endx - startx) / 2) + 8, starty), end)
+
+		hText = smallfont.render(str(int(math.fabs(rect.width/16))), False, (0, 0, 0))
+		screen.blit(hText, (startx + ((endx - startx) / 2) - 8, starty - 8))
+
+		pygame.draw.line(screen, RED, (startx, starty - 4), (startx, starty + 4))
+		pygame.draw.line(screen, RED, (endx, endy - 4), (endx, endy + 4))
+	if axis == 1:
+		startx, starty = cenx - w2, ceny - h2
+		endx, endy = cenx - w2, ceny + h2
+		if startx -8 > 0:
+			startx -= 8
+			endx -= 8
+		else:
+			startx, starty = cenx + w2, ceny - h2
+			endx, endy = cenx + w2, ceny + h2
+			startx += 8
+			endx += 8
+		start = startx, starty
+		end = endx, endy
+
+		pygame.draw.line(screen, RED, start, (startx,  (starty + (endy - starty) / 2) - 8))
+		pygame.draw.line(screen, RED, (startx, (starty + (endy - starty) / 2) + 8), end)
+
+		wText = smallfont.render(str(int(math.fabs(rect.height/16))), False, (0, 0, 0))
+		screen.blit(wText, (startx - 8, starty + ((endy-starty)/2) - 8))
+
+		pygame.draw.line(screen, RED, (startx - 4, starty), (startx + 4, starty))
+		pygame.draw.line(screen, RED, (endx - 4, endy), (endx + 4, endy))
 
 def drawBricks():
 	for i in bricks:
@@ -348,6 +398,8 @@ while Running:
 		startY = round_int(startY)
 		placeRect = Rect(startX, startY, mouseX - startX, mouseY - startY)
 		pygame.draw.rect(screen, BLUE, placeRect, 2)
+		drawMeasurement(placeRect, 0)
+		drawMeasurement(placeRect, 1)
 
 
 
@@ -379,6 +431,8 @@ while Running:
 				mouseImg = mouseImgs[5]
 			if event.key == pygame.K_7:
 				mouseImg = mouseImgs[6]
+			if event.key == pygame.K_8:
+				mouseImg = mouseImgs[7]
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			print event.button
@@ -418,7 +472,10 @@ while Running:
 				elif (currImgNum == 5):
 					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry - rectY) / 16)),
 							int(math.fabs((brx - rectX) / 16)), CMULTI)
-				elif(currImgNum == 6):
+				elif (currImgNum == 6):
+					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry - rectY) / 16)),
+							int(math.fabs((brx - rectX) / 16)), CMULTI)
+				elif(currImgNum == 7):
 					delList = []
 					for i in range(len(bricks)):
 						coords = (min(rectX, brx), min(rectY, bry))
