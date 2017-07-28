@@ -53,20 +53,26 @@ personimg = getImg("Dereks/Derek")
 movingImg = getImg("Bricks/BrickMoving")
 destructableImg = getImg("Bricks/BrickDestructable")
 multiImg = getImg("Bricks/BrickMulti")
+sens1Img = getImg("Bricks/SensorMoving")
+sens2Img = getImg("Bricks/SensorDest")
+sens3Img = getImg("Bricks/SensorMulti")
 
-switches= [getImg("Switch"),getImg("Switch2")]
-switchImg = switches[0]
+switchImages= [getImg("Switch"),getImg("Switch2")]
+switchImg = switchImages[0]
 lockImg = getImg("bars")
 keyImg = getImg("key")
 crateImg = getImg("crate")
+grateImg = getImg("grate")
 
 #Anim
 derek = getImg("Dereks/Derek")
 left = [getImg("Dereks/anim1l"),getImg("Dereks/anim3l")]
 right = [getImg("Dereks/anim1r"),getImg("Dereks/anim2r")]
-crouchImg = [getImg("Dereks/DerekCrouch"),getImg("Dereks/derekcrouchl")]
 '''left = [getImg("Dereks/anim1l"),getImg("Dereks/anim2l"),getImg("Dereks/anim3l")]
 right = [getImg("Dereks/anim1r"),getImg("Dereks/Derek"),getImg("Dereks/anim2r")]'''
+
+crouchImg = [getImg("Dereks/DerekCrouch"),getImg("Dereks/derekcrouchl")]
+
 
 
 
@@ -271,7 +277,29 @@ class Brick(object):
 		self.type = type
 		self.coords = coords
 		self.size = size
-		self.img = pygame.transform.scale(img, size)
+		self.img = pygame.transform.scale(brickImg, size)
+
+class Sensor(object):
+	def __init__(self, type, coords, size):
+		self.type = type
+		self.coords = coords
+		self.size = size
+		self.trigger = None
+		self.On = False
+		self.actions = []
+		
+		if self.type == 0:
+			self.img = pygame.transform.scale(sens1Img, size)
+		if self.type == 2:
+			self.img = pygame.transform.scale(sens3Img, size)
+	
+	def collide(self, i):
+		if i.type == self.type:
+			if collide(i.coords, i.size, self.coords, self.size):
+				self.On = True
+				self.trigger.Trigger(self.actions)
+
+sensors = []
 
 class Switch(object):
 	def __init__(self,type,coords,size,img,toggle):
@@ -280,6 +308,7 @@ class Switch(object):
 		self.size = size
 		self.img = img
 		self.toggle = toggle
+		self.trigger = None
 movingblocks = []
 
 
@@ -288,12 +317,33 @@ class Key(object):
 		self.coords = coords
 		self.size = size
 		self.img = pygame.transform.scale(img, size)
+		
 class Gate(object):
 	def __init__(self,coords,size,img,open):
 		self.coords = coords
 		self.size = size
 		self.img = pygame.transform.scale(img, size)
 		self.open = open
+		
+	def Trigger(self, actions):
+		self.open = actions
+		
+class Grate(object):
+	def __init__(self,coords,size, blocked): #allowed is list of strings: ["guy", "bomb", "moving", "dest"]
+		self.coords = coords
+		self.size = size
+		self.img = pygame.transform.scale(grateImg, size)
+		self.blocked = blocked
+		
+	def Trigger(self, actions):
+		for x in actions:
+			if x in self.blocked:
+				self.blocked.remove(x)
+			else:
+				self.blocked.append(x)
+				
+grates = []
+		
 		
 class Crate(object):
 	def __init__(self,coords,size,img):
@@ -345,7 +395,7 @@ class bomb(object):
 				if type(i) == movingBlock:
 					self.stuckOn = i
 					self.relative = (self.coords[0]-i.coords[0], self.coords[1]-i.coords[1])
-			elif self.vel[1] > 0 and self.coords[1] <= i.coords[1]+8: #FLOOR
+			elif self.vel[1] > 0 and self.coords[1] <= i.coords[1]: #FLOOR
 				p1 = center(self)
 				self.coords[1] = i.coords[1] - self.size[1]
 				self.vel[1] = 0
@@ -355,7 +405,7 @@ class bomb(object):
 				if type(i) == movingBlock:
 					self.stuckOn = i
 					self.relative = (self.coords[0]-i.coords[0], self.coords[1]-i.coords[1])
-			elif self.vel[1] < 0 and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1] - 8: #CEILING
+			elif self.vel[1] < 0 and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1]: #CEILING
 				p1 = center(self)
 				self.coords[1] = i.coords[1] + i.size[1]
 				self.vel[1] = 0
@@ -438,6 +488,13 @@ def wipeFloor():
 	global switches
 	global gates
 	global platforms
+	global crates
+	crates = []
+	global grates
+	global sensors
+	sensors = []
+	grates = []
+
 	bricks = []
 	bombs = []
 	movingblocks = []
@@ -451,8 +508,6 @@ def createWall(coordx, coordy, rx, ry, dir):
 	if dir == "up":
 		bricks.append(Brick("type", [coordx, coordy], (ry * 16, rx * 16), brickImg))
 
-
-
 def createMovingBlock(coordx, coordy, rx, ry, type):
 	movingblocks.append(movingBlock(type, [coordx, coordy], [rx*16, ry*16]))
 
@@ -465,7 +520,7 @@ def borderedLevel():
 	createFloor(992, 32, 41, 2)
 # creates floors and walls based on coor and size
 
-switchs = []
+switches = []
 keys = []
 gates = []
 crates = []
@@ -500,7 +555,7 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		openReadFile("saves/Level0.txt")
 
 		#platforms.append(Platform((896, 626), (64, 64), platformImg))
-		switchs.append(Switch("Switch", (256, 288), (32, 32), switchImg, False))
+		switches.append(Switch("Switch", (256, 288), (32, 32), switchImg, False))
 		crates.append(Crate((432, 160), (16, 16), crateImg))
 		keys.append(Key((432, 160), (8, 8), keyImg))
 		gates.append(Gate((896, 626), (64, 64), lockImg, False))
@@ -564,19 +619,17 @@ while Running:
 	player.dualColliding = False
 	bombType = 1
 	screen.fill(WHITE)
-	counterSwitches = 0
 	startTimer = False
 	# user input
 	for event in pygame.event.get():
 		if event.type == pygame.KEYDOWN:
 			#Switches and Interactable Objects
 			if(len(switches) > 0):
-				if (isNear(center(switchs[0]), center(player))):
-					if counterSwitches == 0:
+				if (isNear(center(switches[0]), center(player))):
 						if event.key in [K_e]:
-						    movingblocks.append(movingBlock(0, [64, 64], (16, 16)))
-						    switchs[0].img = switches[1]
-						    switchs[0].img = switches[0]
+							movingblocks.append(movingBlock(0, [64, 64], (16, 16)))
+							switches[0].img = switchImages[1]
+
 
 			# movement
 			if event.key in [K_RIGHT, K_d]:  # move ->
@@ -689,15 +742,6 @@ while Running:
 
 				bombWaitTime = normalBombWait
 
-	while startTimer == True and counterSwitches < 60:
-		counterSwitches += 1
-		print counterSwitches
-	if counterSwitches == 60:
-		print "yes"
-		switchs[0].img = switches[0]
-		counterSwitches = 0
-	if startTimer == True:
-		counterSwitches += 1
 
 
 	# Player
@@ -774,10 +818,8 @@ while Running:
 		player.Collide(i)
 	for i in crates:
 		player.Collide(i)
-		screen.blit(i.img,i.coords)
 	for g in gates:
 		player.Collide(g)
-		screen.blit(g.img,g.coords)
 
 	for i in movingblocks: #Moving blocks collide with each other
 		for p in movingblocks:
@@ -863,12 +905,6 @@ while Running:
 
 
 		screen.blit(p.img,p.coords)
-	for k in keys:
-		screen.blit(k.img, k.coords)
-	for g in gates:
-		screen.blit(g.img, g.coords)
-	for c in crates:
-		screen.blit(c.img, c.coords)
 	for p in platforms:
 		player.Collide(p)
 	for mb in movingblocks:
@@ -878,6 +914,16 @@ while Running:
 	for i in bricks:
 		screen.blit(i.img, i.coords)
 		player.Collide(i)
+	for i in grates:
+		if "guy" in i.blocked:
+			player.collide(i)
+		if "bomb" in i.blocked:
+			for p in bombs:
+				p.collide(i)
+		if "moving" in i.blocked:
+			for p in movingblocks:
+				if (p.type == 0) or ("dest" in i.blocked and p.type == 2):
+					p.collide(i)
 
 	for i in bombs:
 		if i.isExploding:
@@ -960,8 +1006,16 @@ while Running:
 	if player.floor:
 		player.vel[0] = Zero(player.vel[0], friction)
 
-	for s in switchs:
+	for s in switches:
 		screen.blit(s.img, s.coords)
+	for k in keys:
+		screen.blit(k.img, k.coords)
+	for g in gates:
+		screen.blit(g.img, g.coords)
+	for i in grates:
+		screen.blit(i.img, i.coords)
+	for c in crates:
+		screen.blit(c.img, c.coords)
 	#UI display
 	screen.blit(personimg, player.coords)
 	screen.blit(DetCurrent.img, (4, 4))
