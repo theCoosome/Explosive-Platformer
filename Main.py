@@ -438,6 +438,8 @@ def spawnChar():
 		player.coords = [50, 250]
 	elif currLvl == 1:
 		player.coords = [50, 500]
+	elif currLvl == 2:
+		player.coords = [112, 544]
 	else:
 		player.coords = [50, 250]
 	print currLvl
@@ -448,12 +450,18 @@ def createFloor(coordx, coordy, ry, rx, type=0):
 	bricks.append(Brick(type, [coordx, coordy], (rx * 16, ry * 16), brickImg))
 
 def wipeFloor():
-	del bricks[:]
-	del bombs[:]
-	del movingblocks[:]
-	del switchs[:]
-	del gates[:]
-	del platforms[:]
+	global bricks
+	global bombs
+	global movingblocks
+	global switches
+	global gates
+	global platforms
+	bricks = []
+	bombs = []
+	movingblocks = []
+	switches = []
+	gates = []
+	platforms = []
 
 def createWall(coordx, coordy, rx, ry, dir):
 	if dir == "down":
@@ -498,7 +506,7 @@ def openReadFile(filePath):
 
 
 currLvl = 0
-totalLvls = 2	#CHANGE THIS WHEN ADDING LVLS
+totalLvls = 3	#CHANGE THIS WHEN ADDING LVLS
 
 def createLevel(lvl):	#Almost all refrences of this should be written createLevel(currLvl). Only use an int for bugtesting.
 	wipeFloor()
@@ -516,6 +524,12 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		gates.append(Gate((896, 626), (64, 64), lockImg, False))
 
 	elif (lvl == 1):
+		createFloor(0, 688, 2, 64)
+		
+	if lvl == 2:
+		openReadFile("saves/LevelMotion.txt")
+	
+	else:
 		createFloor(0, 688, 2, 64)
 
 # Current main screen, basic level.
@@ -572,7 +586,7 @@ while Running:
 		if event.type == pygame.KEYDOWN:
 
 			#Switches and Interactable Objects
-			if(len(switches) != 0):
+			if(len(switches) > 0):
 				if (isNear(center(switchs[0]), center(player))):
 					if event.key in [K_e]:
 						movingblocks.append(movingBlock(0, [64, 64], (16, 16)))
@@ -842,8 +856,6 @@ while Running:
 
 
 		screen.blit(p.img,p.coords)
-	for s in switchs:
-		screen.blit(s.img, s.coords)
 	for k in keys:
 		screen.blit(k.img, k.coords)
 	for g in gates:
