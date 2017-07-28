@@ -365,6 +365,7 @@ class bomb(object):
 				self.coords[0] = i.coords[0] - self.size[0]
 				self.vel[0] = 0
 				self.stuck = True
+				pygame.draw.line(debugOverlay, YELLOW, p1, center(self))
 				if type(i) == movingBlock:
 					self.stuckOn = i
 					self.relative = (self.coords[0]-i.coords[0], self.coords[1]-i.coords[1])
@@ -372,6 +373,7 @@ class bomb(object):
 				self.coords[0] = i.coords[0] + i.size[0]
 				self.vel[0] = 0
 				self.stuck = True
+				pygame.draw.line(debugOverlay, RED, p1, center(self))
 				if type(i) == movingBlock:
 					self.stuckOn = i
 					self.relative = (self.coords[0]-i.coords[0], self.coords[1]-i.coords[1])
@@ -381,6 +383,7 @@ class bomb(object):
 				self.vel[1] = 0
 				self.floor = True
 				self.stuck = True
+				pygame.draw.line(debugOverlay, BLUE, p1, center(self))
 				if type(i) == movingBlock:
 					self.stuckOn = i
 					self.relative = (self.coords[0]-i.coords[0], self.coords[1]-i.coords[1])
@@ -388,6 +391,7 @@ class bomb(object):
 				self.coords[1] = i.coords[1] + i.size[1]
 				self.vel[1] = 0
 				self.stuck = True
+				pygame.draw.line(debugOverlay, GREEN, p1, center(self))
 				if type(i) == movingBlock:
 					self.stuckOn = i
 					self.relative = (self.coords[0]-i.coords[0], self.coords[1]-i.coords[1])
@@ -753,9 +757,12 @@ while Running:
 		player.vel[1] = 16
 
 
-
+	p1 = center(player)
 	player.coords[0] += player.vel[0]
 	player.coords[1] += player.vel[1]
+	if debugon:
+		pygame.draw.line(debugOverlay, PURPLE, p1, center(player))
+		pygame.draw.rect(debugOverlay, PURPLE, (player.coords[0], player.coords[1], player.size[0], player.size[1]), 1)
 
 	if not collide(player.coords, player.size, (0, 0), size):
 		player.Kill()
@@ -908,8 +915,13 @@ while Running:
 		if not i.stuck:
 			if i.vel[1] < maxFallSpeed:
 				i.vel[1] += gravity
+				
+			p1 = center(i)
 			i.coords[0] += i.vel[0]
 			i.coords[1] += i.vel[1]
+			if debugon:
+				pygame.draw.line(debugOverlay, PURPLE, p1, center(i))
+				pygame.draw.rect(debugOverlay, PURPLE, (i.coords[0], i.coords[1], i.size[0], i.size[1]), 1)
 
 		if not i.armed:
 			i.time += 1
