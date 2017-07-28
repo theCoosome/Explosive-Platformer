@@ -388,8 +388,8 @@ class bomb(object):
 
 	def Detonate(self, mob):
 
-		px, py = mob.coords
-		bx, by = self.coords
+		px, py = center(mob)
+		bx, by = center(self)
 
 		xd = px - bx
 		yd = py - by
