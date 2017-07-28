@@ -42,7 +42,7 @@ brickImg = getImg("Bricks/Brick")
 personimg = getImg("Dereks/Derek")
 movingImg = getImg("Bricks/BrickMoving")
 destructableImg = getImg("Bricks/BrickDestructable")
-checkpointImg = getImg("Bricks/checkpoint")
+checkpointImg = getImg("Bricks/Exit")
 multiImg = getImg("Bricks/BrickMulti")
 bombImg = getImg("Bomb")
 
