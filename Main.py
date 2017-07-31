@@ -673,6 +673,9 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 	
 	else:
 		createFloor(0, 688, 2, 64)
+	if lvl == 100:
+		openReadFile("saves/LevelCutscene1.txt")
+		#switches.append(Switch("Switch",(256,)))
 
 def soundEffect(sfxkey):
 	if not muteon:
@@ -732,7 +735,7 @@ isCrouching = False
 counter = 0
 movingbA = 10
 createLevel(currLvl)
-
+isCutsecne = True
 def changeSwitch():
 	for s in switches:
 		s.img = switchImages[0]
@@ -748,7 +751,8 @@ while Running:
 	bombType = 1
 	screen.fill(WHITE)
 	startTimer = False
-
+	if isCutsecne == True:
+		createLevel(100)
 	# user input
 	for event in pygame.event.get():
 
@@ -1145,16 +1149,13 @@ while Running:
 	for s in switches:
 		if s.on == True:
 			s.time -= 1
-			print "3"
 
 		if s.time <= 0:
 			s.on = False
-			print "2"
 
 		if s.on == False:
 			s.img = switchImages[0]
 			s.time = 500
-			print "1"
 		screen.blit(s.img, s.coords)
 	for k in keys:
 		screen.blit(k.img, k.coords)
