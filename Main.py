@@ -718,7 +718,6 @@ def openReadFile(filePath):
 	for i in cont:
 		symbol, type, x, y, xs, ys = i.split("*")
 		if symbol == "$":
-
 			if type == "-1":
 				print "Floor"
 				createFloor(int(x), int(y), int(int(ys) / 16), int(int(xs) / 16))
