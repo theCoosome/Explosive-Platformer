@@ -721,7 +721,6 @@ def openReadFile(filePath):
 	for i in cont:
 		symbol, type, x, y, xs, ys = i.split("*")
 		if symbol == "$":
-
 			if type == "-1":
 				print "Floor"
 				createFloor(int(x), int(y), int(int(ys) / 16), int(int(xs) / 16))
@@ -742,9 +741,10 @@ currLvl = 0
 totalLvls = 10	#CHANGE THIS WHEN ADDING LVLS
 
 def createLevel(lvl):	#Almost all refrences of this should be written createLevel(currLvl). Only use an int for bugtesting.
+	entrances = [Entrance(0, [700, 250], [1, 1], entranceImg)]
 	wipeFloor()
 	if (lvl == -1):
-		openReadFile("saves/Level Editor Save.txt")
+		pass
 	elif (lvl == 0):
 		borderedLevel()
 		openReadFile("saves/Level0.txt")
@@ -810,6 +810,7 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 	if lvl == 100:
 		openReadFile("saves/LevelCutscene1.txt")
 		#switches.append(Switch("Switch",(256,)))
+	spawnChar(entrances[0])
 
 def soundEffect(sfxkey):
 	if not muteon:
