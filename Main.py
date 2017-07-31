@@ -139,11 +139,10 @@ def DualLine(p1, p2, box):
 	#having m and b:
 	def f(x):
 		return m*x+b
-			
-	if (box.coords[0] > f(box.coords[0]) and box.coords[0]+box.size[0] > f(box.coords[0]+box.size[0])) or (box.coords[0] < f(box.coords[0]) and box.coords[0]+box.size[0] < f(box.coords[0]+box.size[0])):
-		return True
-	else:
+	if (box.coords[1] > f(box.coords[0]) and box.coords[1] > f(box.coords[0]+box.size[0])) or (box.coords[1]+box.size[1] < f(box.coords[0]) and box.coords[1]+box.size[1] < f(box.coords[0]+box.size[0])):
 		return False
+	else:
+		return True
 		
 def getLower(p1, p2):
 	if p1 > p2:
@@ -473,8 +472,11 @@ class bomb(object):
 				square = (getLower(cm[0], cs[0]), getLower(cm[1], cs[1]), abs(xd), abs(yd))
 				for x in bricks:
 					if collide(x.coords, x.size, square[0:2], square[2:4]):
-						if DualLine(square[0:2], square[2:4], x):
+						print "===\nbig hit"
+						if DualLine(cm, cs, x):
+							print "line hit"
 							sight = False
+							pygame.draw.line(debugOverlay, PURPLE, cm, cs)
 				if sight:
 					mob.vel[0] += (xd / td) * pow
 					mob.vel[1] += (yd / td) * pow
