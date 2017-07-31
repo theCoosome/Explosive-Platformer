@@ -85,15 +85,14 @@ class DispObj(object):
 	#coords, img is blitable object or list of DispObj. simple is wether or not is list. size is needed if not simple.
 	def __init__(self, img, coords = (0, 0), simple = True, size = (0, 0)):
 		self.coords = coords
-		self.baseCoords = coords
-		self.img = img
-		self.all = img
+		self.img = img #Final image, use this to blit to screen
+		self.all = img #List of display objects, used if not simple
 		self.simple = simple
 		self.size = size
 		self.refresh()
 	
 #takes single string, max width, font used, and color of text. returns list of dispObj
-def wraptext(text, fullline, Font, render = False, color = (0,0,17)):  #need way to force indent in string
+def wraptext(text, fullline, Font, render = False, color = (0,0,0)):  #need way to force indent in string
 	Denting = True
 	max = fullline
 	size = Font.size(text)
