@@ -67,6 +67,7 @@ lockImg = getImg("bars")
 keyImg = getImg("key")
 crateImg = getImg("crate")
 grateImg = getImg("grate")
+no_thing = getImg("no_thing")
 
 #Anim
 derek = getImg("Dereks/Derek")
@@ -84,6 +85,9 @@ class DispObj(object):
 			for i in self.all:
 				final.blit(i.img, i.coords)
 			self.img = final
+		else:
+			self.img = pygame.Surface(self.size, pygame.SRCALPHA, 32).convert_alpha()
+			self.img.blit(self.all, (0, 0))
 	#coords, img is blitable object or list of DispObj. simple is wether or not is list. size is needed if not simple.
 	def __init__(self, img, coords = (0, 0), simple = True, size = (0, 0)):
 		self.coords = coords
@@ -139,6 +143,8 @@ def wraptext(text, fullline, Font, render = False, color = (0,0,0)):  #need way 
 TM1 = DispObj(wraptext("", 900, font, True), (10, 10), False, (900, 120)) #main room desc
 TM2 = DispObj(wraptext("", 900, font, True), (10, 130), False, (900, 119)) #room responses
 
+
+DB = DispObj(no_thing, (0, 0), True, size)
 
 #Bombs
 bombImg = getImg("Bomb")
@@ -364,7 +370,8 @@ class Brick(object):
 		self.type = type
 		self.coords = coords
 		self.size = size
-		self.img = pygame.transform.scale(brickImg, size)
+		rand = pygame.transform.scale(brickImg, size)
+		self.img = rand
 
 class Sensor(object):
 	def __init__(self, type, coords, size):
@@ -823,6 +830,10 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 	if lvl == 100:
 		openReadFile("saves/LevelCutscene1.txt")
 		#switches.append(Switch("Switch",(256,)))
+		
+	DB.refresh()
+	for i in bricks:
+		DB.img.blit(i.img, i.coords)
 	spawnChar(entrances[0])
 
 def soundEffect(sfxkey):
@@ -1202,7 +1213,7 @@ while Running:
 			print "you won!"
 		mb.Collide(p)'''
 	for i in bricks:
-		screen.blit(i.img, i.coords)
+		#screen.blit(i.img, i.coords)
 		player.Collide(i)
 	for i in grates:
 		if "guy" in i.blocked:
@@ -1315,6 +1326,8 @@ while Running:
 	for c in crates:
 		screen.blit(c.img, c.coords)
 	#UI display
+	screen.blit(DB.img, (0, 0))
+	
 	screen.blit(personimg, player.coords)
 	screen.blit(DetCurrent.img, (4, 4))
 	if DetCurrent.type == 3:
