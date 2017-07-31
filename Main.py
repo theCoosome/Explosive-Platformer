@@ -396,13 +396,15 @@ class Sensor(object):
 sensors = []
 
 class Switch(object):
-	def __init__(self,type,coords,size,img,toggle):
+	def __init__(self,type,coords,size,img,on):
 		self.type = type
 		self.coords = coords
 		self.size = size
 		self.img = img
-		self.toggle = toggle
+		self.on = on
 		self.trigger = None
+		self.time = 500
+		self.blockamount = 10
 movingblocks = []
 
 
@@ -770,9 +772,13 @@ gR = 0
 gL = 0
 isCrouching = False
 counter = 0
-
+movingbA = 10
 createLevel(currLvl)
 
+def changeSwitch():
+	for s in switches:
+		s.img = switchImages[0]
+timer = 10
 while Running:
 	mousepos = pygame.mouse.get_pos()
 	if debugon:
@@ -784,16 +790,23 @@ while Running:
 	bombType = 1
 	screen.fill(WHITE)
 	startTimer = False
+
 	# user input
 	for event in pygame.event.get():
+
 		if event.type == pygame.KEYDOWN:
-			#Switches and Interactable Objects
+		#Switches and Interactable Objects
 			if(len(switches) > 0):
 				if (isNear(center(switches[0]), center(player))):
 						if event.key in [K_e]:
-							movingblocks.append(movingBlock(0, [64, 64], (16, 16)))
-							switches[0].img = switchImages[1]
 
+
+								for s in switches:
+									if len(movingblocks) <= s.blockamount and s.on == False:
+
+										s.on = True
+										movingblocks.append(movingBlock(0, [64, 64], (16, 16)))
+										s.img = switchImages[1]
 
 			# movement
 			if event.key in [K_RIGHT, K_d]:  # move ->
@@ -885,7 +898,6 @@ while Running:
 				bombs = []
 				DetCurrent = DetDest
 
-
 		if event.type == pygame.KEYUP:
 			if event.key in [K_LEFT, K_a]:
 				player.motion[0] += 2.0
@@ -908,7 +920,6 @@ while Running:
 					bombs.append(DetCurrent.newBomb([player.coords[0], player.coords[1]], [((xChng / hy) * throwPower), ((yChng / hy) * throwPower)]))
 
 				bombWaitTime = normalBombWait
-
 
 
 	# Player
@@ -1174,6 +1185,18 @@ while Running:
 		player.vel[0] = Zero(player.vel[0], friction)
 
 	for s in switches:
+		if s.on == True:
+			s.time -= 1
+			print "3"
+
+		if s.time <= 0:
+			s.on = False
+			print "2"
+
+		if s.on == False:
+			s.img = switchImages[0]
+			s.time = 500
+			print "1"
 		screen.blit(s.img, s.coords)
 	for k in keys:
 		screen.blit(k.img, k.coords)
