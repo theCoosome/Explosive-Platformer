@@ -11,8 +11,6 @@ debugon = True
 sfxkey=0
 muteon=True
 
-hitTest = True
-
 WHITE = pygame.Color(255, 255, 255)
 BLACK = pygame.Color(0, 0, 0)
 RED = pygame.Color(255, 0, 0)
