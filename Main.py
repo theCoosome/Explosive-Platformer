@@ -1284,7 +1284,6 @@ while Running:
 				i.Collide(p)
 			for p in crates:
 				i.Collide(p)
-		screen.blit(i.img,i.coords)
 
 
 	if bombsExplode:
@@ -1304,6 +1303,10 @@ while Running:
 	if player.floor:
 		player.vel[0] = Zero(player.vel[0], friction)
 
+	screen.blit(DB.img, (0, 0))
+	
+	for i in bombs:
+		screen.blit(i.img, i.coords)
 	for s in switches:
 		if s.on == True:
 			s.time -= 1
@@ -1324,7 +1327,6 @@ while Running:
 	for c in crates:
 		screen.blit(c.img, c.coords)
 	#UI display
-	screen.blit(DB.img, (0, 0))
 	
 	screen.blit(personimg, player.coords)
 	screen.blit(DetCurrent.img, (4, 4))
