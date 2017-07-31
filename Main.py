@@ -350,13 +350,13 @@ class movingBlock(object):
 					self.vel[0] = 0
 					pygame.draw.line(debugOverlay, YELLOW, p1, center(self))
 					
-				if self.coords[0] + 16 >= i.coords[0] + i.size[0]:
+				if self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
 					self.coords[0] = i.coords[0] + i.size[0]
 					self.vel[0] = 0
 					p2 = center(self)
 					pygame.draw.line(debugOverlay, RED, (p1[0], p1[1]-1), (p2[0], p2[1]-1))
 					
-			if collide(i.coords, i.size, self.coords, self.size):  # UP
+			#if collide(i.coords, i.size, self.coords, self.size):  # UP
 				if self.vel[1] < 0 and self.coords[1] + 16 >= i.coords[1] + i.size[1]: #CEILING
 					p1 = center(self)
 					self.coords[1] = i.coords[1] + i.size[1]
@@ -603,7 +603,7 @@ class bomb(object):
 						mob.vel[1] += (netforce[1] * self.pow2) / mob.mass
 						print mob.vel
 					if mob.type in [1, 2]:
-						dmg = (netforce[0] * self.dmg) + (netforce[1] * self.dmg)
+						dmg = abs(netforce[0] * self.dmg) + abs(netforce[1] * self.dmg)
 						print dmg
 						mob.hp -= dmg
 						if mob.hp <= 0:
@@ -629,7 +629,7 @@ class detonator(object):
 
 DetGod = detonator(0, 16, 16, 5, 0, 99999, getImg("UI/DetGod"), bombImg)
 DetNorm = detonator(1, 2, 8, 5, 30, 4, getImg("UI/DetDefault"), bombImg)
-DetKB = detonator(2, 16, 16, 1, 20, 2, getImg("UI/DetJumper"), getImg("tosser"))
+DetKB = detonator(2, 16, 30, 1, 20, 2, getImg("UI/DetJumper"), getImg("tosser"))
 DetMulti = detonator(3, 1, 10, 5, 80, 10, getImg("UI/DetMulti"), getImg("Multi"))
 DetDest = detonator(4, 1, 1, 20, 30, 4, getImg("UI/DetDestructive"), getImg("Dest"))
 DetCurrent = DetGod
@@ -714,21 +714,24 @@ def openReadFile(filePath):
 	exits = [Exit(0, [250, 250], [1, 1], exitImg)]
 	file = open(filePath, "r")
 	cont = file.readlines()
+	print "----"
 	for i in cont:
 		symbol, type, x, y, xs, ys = i.split("*")
 		if symbol == "$":
 
 			if type == "-1":
-				#print "worked"
+				print "Floor"
 				createFloor(int(x), int(y), int(int(ys) / 16), int(int(xs) / 16))
 			elif type == "4":
+				print "Enterances"
 				entrances = [Entrance(4, [int(x), int(y)], [int(xs), int(ys)], entranceImg)]
 				screen.blit(entrances[0].img, entrances[0].coords)
 			elif type == "5":
+				print "Exits"
 				exits = [Exit(5, [int(x), int(y)], [int(xs), int(ys)], exitImg)]
 				screen.blit(exits[0].img, exits[0].coords)
 			else:
-				#print "moveBlock"
+				print "moveBlock"
 				createMovingBlock(int(x), int(y), int(int(xs) / 16), int(int(ys) / 16), int(type))
 	spawnChar(entrances[0])
 
@@ -754,9 +757,9 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		
 	elif lvl == 2:
 		openReadFile("saves/LevelMotion.txt")
-	if lvl == 3:
+	elif lvl == 3:
 		openReadFile("saves/LevelDestroy.txt")
-	if lvl == 4:
+	elif lvl == 4:
 		openReadFile("saves/LevelFast.txt")
 	
 	else:
@@ -1053,7 +1056,7 @@ while Running:
 
 	for i in movingblocks: #Moving blocks collide with each other
 		for p in movingblocks:
-			if not (p == i):
+			if not (p == i) and p.type != 1:
 				p.Collide(i)
 
 
