@@ -5,8 +5,6 @@ from decimal import *
 #from plyer import notification
 
 
-
-
 pygame.mixer.pre_init(44100, -16, 2, 2048)
 pygame.init()
 
@@ -41,10 +39,12 @@ def getImg(name):  # gets images and prints their retrieval
 		return pygame.image.load("assets/wip.png")
 
 brickImg = getImg("Bricks/Brick")
+grateImg = getImg("Bricks/Grate")
 personimg = getImg("Dereks/Derek")
 movingImg = getImg("Bricks/BrickMoving")
 destructableImg = getImg("Bricks/BrickDestructable")
-checkpointImg = getImg("Bricks/Exit")
+exitImg = getImg("Bricks/Exit")
+entranceImg = getImg("Bricks/Exit2")
 multiImg = getImg("Bricks/BrickMulti")
 bombImg = getImg("Bomb")
 
@@ -129,6 +129,8 @@ CMOVABLE = 0
 CDESTRUCTABLE = 1
 CMULTI = 2
 CGRATE = 3
+CENTRANCE = 4
+CEXIT = 5
 
 
 class movingBlock(object):
@@ -171,6 +173,20 @@ class movingBlock(object):
 
 
 class Brick(object):
+	def __init__(self, type, coords, size, img):
+		self.type = type
+		self.coords = coords
+		self.size = size
+		self.img = pygame.transform.scale(img, size)
+
+class Exit():
+	def __init__(self, type, coords, size, img):
+		self.type = type
+		self.coords = coords
+		self.size = size
+		self.img = pygame.transform.scale(img, size)
+
+class Entrance():
 	def __init__(self, type, coords, size, img):
 		self.type = type
 		self.coords = coords
@@ -242,7 +258,25 @@ def createFloor(coordx, coordy, ry, rx, type):
 	if type == -1:
 		bricks.append(Brick(type, [coordx, coordy], (rx * 16, ry * 16), brickImg))
 	elif type == 3:
-		bricks.append(Grate(type, [coordx, coordy], (rx*16, ry*16), brickImg))
+		bricks.append(Grate(type, [coordx, coordy], (rx*16, ry*16), grateImg))
+	elif type == 4:
+		remList = []
+		for i in bricks:
+			if i.type == 4:
+				remList.append(i)
+		for i in remList:
+			del bricks[bricks.index(i)]
+
+		bricks.append(Entrance(type, [coordx, coordy], (rx*16, ry*16), entranceImg))
+	elif type == 5:
+		remList = []
+		for i in bricks:
+			if i.type == 5:
+				remList.append(i)
+		for i in remList:
+			del bricks[bricks.index(i)]
+
+		bricks.append(Exit(type, [coordx, coordy], (rx * 16, ry * 16), exitImg))
 	else:
 		bricks.append(movingBlock(type, [coordx, coordy], (rx * 16, ry * 16)))
 
@@ -311,8 +345,10 @@ class bomb(object):
 			mob.vel[0] += (xd / td) * pow
 			mob.vel[1] += (yd / td) * pow
 
-def round_int(x):
+def round_int_down(x):
     return x - (x%16)
+def round_int_up(x):
+    return x - (x%16) +16
 
 def Zero(num, rate, goal=0):
 	if num > goal:
@@ -353,24 +389,6 @@ def saveFile():
 		writeContents += str(ys)
 		writeContents += "\n"
 		writeList.append(writeContents)
-	'''
-	for i in movingblocks:
-		x, y = i.coords
-		xs, ys = i.size
-		writeContents = "$"
-		writeContents += "*"
-		writeContents += str(i.type)
-		writeContents += "*"
-		writeContents += str(x)
-		writeContents += "*"
-		writeContents += str(y)
-		writeContents += "*"
-		writeContents += str(xs)
-		writeContents += "*"
-		writeContents += str(ys)
-		writeContents += "\n"
-		writeList.append(writeContents)
-	'''
 	print writeList
 	file.writelines(writeList)
 	file.close()
@@ -405,16 +423,23 @@ while Running:
 	if pressedLMB:
 		mouseX, mouseY = mousepos
 		startX, startY = startLoc
-		mouseX = round_int(mouseX)
-		mouseY = round_int(mouseY)
-		startX = round_int(startX)
-		startY = round_int(startY)
+		if mouseX >= startX:
+			mouseX = round_int_up(mouseX)
+		else:
+			startX += 16
+			mouseX = round_int_up(mouseX-16)
+		if mouseY >= startY:
+			mouseY = round_int_up(mouseY)
+		else:
+			startY += 16
+			mouseY = round_int_up(mouseY - 16)
+
+		startX = round_int_down(startX)
+		startY = round_int_down(startY)
 		placeRect = Rect(startX, startY, mouseX - startX, mouseY - startY)
 		pygame.draw.rect(screen, BLUE, placeRect, 2)
 		drawMeasurement(placeRect, 0)
 		drawMeasurement(placeRect, 1)
-
-
 
 	for event in pygame.event.get():
 		if event.type == pygame.KEYDOWN:
@@ -490,11 +515,9 @@ while Running:
 					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry - rectY) / 16)),
 							int(math.fabs((brx - rectX) / 16)), CMULTI)
 				elif (currImgNum == 6):
-					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry - rectY) / 16)),
-							int(math.fabs((brx - rectX) / 16)), CMULTI)
+					createFloor(min(rectX, brx), min(rectY, bry), 1, 1, CEXIT)
 				elif (currImgNum == 7):
-					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry - rectY) / 16)),
-							int(math.fabs((brx - rectX) / 16)), CMULTI)
+					createFloor(min(rectX, brx), min(rectY, bry), 1, 1, CENTRANCE)
 				elif(currImgNum == 8):
 					delList = []
 					for i in range(len(bricks)):
@@ -518,7 +541,6 @@ while Running:
 						delList.append(bricks[i])
 				for i in delList:
 					del bricks[bricks.index(i)]
-
 
 	drawBricks()
 	screen.blit(drawOverlay, (0,0))
