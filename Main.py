@@ -75,7 +75,68 @@ right = [getImg("Dereks/anim1r"),getImg("Dereks/Derek"),getImg("Dereks/anim2r")]
 
 crouchImg = [getImg("Dereks/DerekCrouch"),getImg("Dereks/derekcrouchl")]
 
-
+class DispObj(object):
+	def refresh(self):
+		if not self.simple:
+			final = pygame.Surface(self.size, pygame.SRCALPHA, 32).convert_alpha()
+			for i in self.all:
+				final.blit(i.img, i.coords)
+			self.img = final
+	#coords, img is blitable object or list of DispObj. simple is wether or not is list. size is needed if not simple.
+	def __init__(self, img, coords = (0, 0), simple = True, size = (0, 0)):
+		self.coords = coords
+		self.baseCoords = coords
+		self.img = img
+		self.all = img
+		self.simple = simple
+		self.size = size
+		self.refresh()
+	
+#takes single string, max width, font used, and color of text. returns list of dispObj
+def wraptext(text, fullline, Font, render = False, color = (0,0,17)):  #need way to force indent in string
+	Denting = True
+	max = fullline
+	size = Font.size(text)
+	outtext = []
+	while Denting:
+		if Font.size(text)[0] > max:
+			#Search for ammount of charachters that can fit in set fullline size
+			thistext = ""
+			for i in range(len(text)):
+				if Font.size(thistext + text[i])[0] > max:
+					count = len(thistext)
+					break
+				else:
+					thistext += text[i]
+			thistext = text[:count]
+			#is it indentable
+			if " " in thistext:
+				for i in range(len(thistext)):
+					#find first space from end
+					if thistext[len(thistext)-(i+1)] == " ":
+						#split text, add indent, update count
+						outtext.append(thistext[:len(thistext)-(i+1)])
+						text = text[len(thistext)-(i):]
+						max = fullline
+						break
+			#unindentable, skip to next
+			else:
+				max += fullline
+		else:
+			#exit denting, add remaining to outtext, return
+			Denting = False
+			outtext.append(text)
+			
+	if render:
+		text = []
+		for i in range(len(outtext)):
+			x = outtext[i]
+			text.append(DispObj(Font.render(x, True, color),  (0, (i*size[1]))))
+		outtext = text
+	return outtext
+	
+TM1 = DispObj(wraptext("", 900, font, True), (10, 10), False, (900, 120)) #main room desc
+TM2 = DispObj(wraptext("", 900, font, True), (10, 130), False, (900, 119)) #room responses
 
 
 #Bombs
