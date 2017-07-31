@@ -56,6 +56,8 @@ multiImg = getImg("Bricks/BrickMulti")
 sens1Img = getImg("Bricks/SensorMoving")
 sens2Img = getImg("Bricks/SensorDest")
 sens3Img = getImg("Bricks/SensorMulti")
+exitImg = getImg("Bricks/Exit")
+entranceImg = getImg("Bricks/Exit2")
 
 switchImages= [getImg("Switch"),getImg("Switch2")]
 switchImg = switchImages[0]
@@ -343,6 +345,7 @@ class Switch(object):
 movingblocks = []
 
 
+
 class Key(object):
 	def __init__(self,coords,size,img):
 		self.coords = coords
@@ -374,7 +377,23 @@ class Grate(object):
 				self.blocked.append(x)
 				
 grates = []
-		
+
+class Exit():
+	def __init__(self, type, coords, size, img):
+		self.type = type
+		self.coords = coords
+		self.size = size
+		self.img = pygame.transform.scale(img, size)
+
+class Entrance():
+	def __init__(self, type, coords, size, img):
+		self.type = type
+		self.coords = coords
+		self.size = size
+		self.img = pygame.transform.scale(img, size)
+
+
+
 		
 class Crate(object):
 	def __init__(self,coords,size,img):
@@ -506,7 +525,11 @@ bricks = []
 
 
 
-def spawnChar():
+def spawnChar(entrance):
+	player.coords = [100,250]
+	player.coords = entrance.coords
+
+	'''
 	if currLvl == 0:
 		player.coords = [50, 250]
 	elif currLvl == 1:
@@ -515,6 +538,7 @@ def spawnChar():
 		player.coords = [112, 544]
 	else:
 		player.coords = [50, 250]
+	'''
 	print currLvl
 	player.vel[1] = 0
 	player.vel[0] = 0
@@ -568,7 +592,11 @@ crates = []
 platforms = []
 
 
+
+
 def openReadFile(filePath):
+	entrances = [Entrance(0, [700, 250], [1, 1], entranceImg)]
+	exits = [Exit(0, [250, 250], [1, 1], exitImg)]
 	file = open(filePath, "r")
 	cont = file.readlines()
 	for i in cont:
@@ -578,17 +606,22 @@ def openReadFile(filePath):
 			if type == "-1":
 				#print "worked"
 				createFloor(int(x), int(y), int(int(ys) / 16), int(int(xs) / 16))
+			elif type == "4":
+				entrances = [Entrance(4, [int(x), int(y)], [int(xs), int(ys)], entranceImg)]
+				screen.blit(entrances[0].img, entrances[0].coords)
+			elif type == "5":
+				exits = [Exit(5, [int(x), int(y)], [int(xs), int(ys)], exitImg)]
+				screen.blit(exits[0].img, exits[0].coords)
 			else:
 				#print "moveBlock"
 				createMovingBlock(int(x), int(y), int(int(xs) / 16), int(int(ys) / 16), int(type))
-
+	spawnChar(entrances[0])
 
 currLvl = 0
 totalLvls = 3	#CHANGE THIS WHEN ADDING LVLS
 
 def createLevel(lvl):	#Almost all refrences of this should be written createLevel(currLvl). Only use an int for bugtesting.
 	wipeFloor()
-	spawnChar()
 	if (lvl == -1):
 		openReadFile("saves/Level Editor Save.txt")
 	elif (lvl == 0):
@@ -604,7 +637,7 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 	elif (lvl == 1):
 		openReadFile("saves/Level0.txt")
 		
-	if lvl == 2:
+	elif lvl == 2:
 		openReadFile("saves/LevelMotion.txt")
 	
 	else:
@@ -852,6 +885,8 @@ while Running:
 	if len(movingblocks) > 0:
 		for i in bricks:
 			player.Collide(i)
+
+
 
 	for i in platforms:
 		player.Collide(i)
