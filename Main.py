@@ -603,8 +603,8 @@ class bomb(object):
 						mob.vel[1] += (netforce[1] * self.pow2) / mob.mass
 						print mob.vel
 					if mob.type in [1, 2]:
-						dmg = abs(netforce[0] * self.dmg) + abs(netforce[1] * self.dmg)
-						print dmg
+						dmg = math.floor(abs(netforce[0] * self.dmg) + abs(netforce[1] * self.dmg))
+						print "Damage: ", dmg
 						mob.hp -= dmg
 						if mob.hp <= 0:
 							movingblocks.remove(mob)
@@ -628,7 +628,7 @@ class detonator(object):
 		return bomb(self.type, coords, vel, (8, 8), self.kbP, self.kbB, self.dmg, self.arm, self.bomb)
 
 DetGod = detonator(0, 16, 16, 5, 0, 99999, getImg("UI/DetGod"), bombImg)
-DetNorm = detonator(1, 2, 8, 5, 30, 4, getImg("UI/DetDefault"), bombImg)
+DetNorm = detonator(1, 2, 8, 3, 30, 4, getImg("UI/DetDefault"), bombImg)
 DetKB = detonator(2, 16, 30, 1, 20, 2, getImg("UI/DetJumper"), getImg("tosser"))
 DetMulti = detonator(3, 1, 10, 5, 80, 10, getImg("UI/DetMulti"), getImg("Multi"))
 DetDest = detonator(4, 1, 1, 20, 30, 4, getImg("UI/DetDestructive"), getImg("Dest"))
@@ -669,6 +669,8 @@ def wipeFloor():
 	global gates
 	global platforms
 	global crates
+	global keys
+	keys = []
 	crates = []
 	global grates
 	global sensors
@@ -688,9 +690,10 @@ def createWall(coordx, coordy, rx, ry, dir):
 	if dir == "up":
 		bricks.append(Brick("type", [coordx, coordy], (ry * 16, rx * 16), brickImg))
 
-def createMovingBlock(coordx, coordy, rx, ry, type):
-	movingblocks.append(movingBlock(type, [coordx, coordy], [rx*16, ry*16]))
-
+def createMovingBlock(coordx, coordy, rx, ry, type, hp = 1):
+	rand = movingBlock(type, [coordx, coordy], [rx*16, ry*16])
+	rand.hp = hp
+	movingblocks.append(rand)
 
 
 def borderedLevel():
@@ -753,20 +756,51 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		gates.append(Gate((896, 626), (64, 64), lockImg, False))
 
 	elif (lvl == 1):
-		openReadFile("saves/Level0.txt")
+		createFloor(0, 0, 45, 2)
+		createFloor(992, 0, 45, 2)
+		createFloor(32, 688, 2, 60)
+		createFloor(32, 0, 2, 60)
+		createFloor(32, 304, 1, 18)
+		createFloor(368, 288, 1, 12)
+		createFloor(464, 272, 1, 3)
+		createFloor(192, 224, 1, 13)
+		createFloor(320, 240, 1, 2)
+		createFloor(560, 224, 1, 15)
+		createFloor(496, 192, 1, 17)
+		createMovingBlock(656, 208, 2, 1, 1)
+		createMovingBlock(240, 192, 3, 2, 0)
+		createFloor(160, 416, 4, 12)
+		createFloor(544, 528, 1, 16)
+		exits = [Exit(4, [int(768), int(672)], [int(16), int(16)], exitImg)]
+		entrances = [Entrance(4, [int(48), int(256)], [int(16), int(16)], entranceImg)]
+		grates.append(Grate([int(896), int(624)], [int(64), int(64)], []))
+
+
 		
 	elif lvl == 2:
 		openReadFile("saves/LevelMotion.txt")
 	elif lvl == 3:
 		openReadFile("saves/LevelDestroy.txt")
 	elif lvl == 4:
-		openReadFile("saves/LevelFast.txt")
+		createFloor(0, 448, 17, 64)
+		createFloor(0, 0, 12, 20)
+		createFloor(0, 384, 4, 7)
+		createMovingBlock(320, 288, 4, 4, 1)
+		createMovingBlock(320, 368, 4, 5, 0)
+		createFloor(160, 336, 3, 10)
+		createFloor(384, 240, 9, 11)
+		createFloor(384, 0, 13, 11)
+		createFloor(624, 0, 24, 25)
+		createMovingBlock(560, 368, 4, 5, 0)
+		createMovingBlock(560, 288, 4, 4, 1)
+		exits = [Exit(4, [int(960), int(384)], [int(16), int(16)], exitImg)]
+		entrances = [Entrance(4, [int(192), int(416)], [int(16), int(16)], entranceImg)]
 	elif lvl == 5:
 		grates.append(Grate([int(208), int(336)], [int(176), int(96)], []))
 		createFloor(384, 336, int(int(96) / 16), int(int(256) / 16))
 		createFloor(192, 480, int(int(128) / 16), int(int(784) / 16))
 		createMovingBlock(int(416), int(240), int(int(48) / 16), int(int(192) / 16), int(0))
-		createMovingBlock(int(432), int(144), int(int(80) / 16), int(int(128) / 16), int(2))
+		createMovingBlock(int(432), int(144), int(int(80) / 16), int(int(128) / 16), int(2), 30)
 		createFloor(208, 80, int(int(240) / 16), int(int(112) / 16))
 		createMovingBlock(int(896), int(256), int(int(208) / 16), int(int(64) / 16), int(1))
 

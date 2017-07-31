@@ -378,10 +378,10 @@ def saveFile():
 		xs, ys = i.size
 		out = ""
 		if i.type == -1:
-			out = "createFloor("+str(x)+", "+str(y)+", int(int("+str(ys)+") / 16), int(int("+str(xs)+") / 16))"
+			out = "createFloor("+str(x)+", "+str(y)+", "+str(int(ys / 16))+", "+str(int(xs / 16))+")"
 		
 		elif i.type in [0, 1, 2]:
-			out = "createMovingBlock(int("+str(x)+"), int("+str(y)+"), int(int("+str(ys)+") / 16), int(int("+str(xs)+") / 16), int("+str(i.type)+"))"
+			out = "createMovingBlock("+str(x)+", "+str(y)+", "+str(int(xs / 16))+", "+str(int(ys / 16))+", "+str(i.type)+")"
 		
 		elif i.type == 3:
 			out = "grates.append(Grate([int("+str(x)+"), int("+str(y)+")], [int("+str(xs)+"), int("+str(ys)+")], []))"
