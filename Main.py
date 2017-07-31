@@ -448,13 +448,14 @@ class Crate(object):
 		self.img = img
 
 class bomb(object):
-	def __init__(self, type, coords, vel, size, pow, pow2, arm, img):
+	def __init__(self, type, coords, vel, size, pow, pow2, dmg, arm, img):
 		self.type = type
 		self.coords = coords
 		self.size = size
 		self.img = img
 		self.pow = pow
 		self.pow2 = pow2
+		self.dmg = dmg
 		self.time = 0
 		self.arm = arm
 		self.armed = False
@@ -542,6 +543,7 @@ class bomb(object):
 					if sight:
 						mob.vel[0] += (xd / td) * pow
 						mob.vel[1] += (yd / td) * pow
+		
 		elif type(mob) == movingBlock:
 			cm = center(mob)
 			cs = center(self)
@@ -571,15 +573,22 @@ class bomb(object):
 									if DualLine(cm, cs, c):
 										sight = False
 										pygame.draw.line(debugOverlay, PURPLE, cm, cs)
-							if sight:
+							if sight or mob == self.stuckOn:
 								pow = ((self.detRange - td) / self.detRange)
 								netforce[0] += (xd / td) * pow
 								netforce[1] += (yd / td) * pow
 				if netforce[0] != 0 and netforce[1] != 0:
 					print "\n", netforce
-					mob.vel[0] += (netforce[0] * self.pow2) / mob.mass
-					mob.vel[1] += (netforce[1] * self.pow2) / mob.mass
-					print mob.vel
+					if mob.type in [0, 2]:
+						mob.vel[0] += (netforce[0] * self.pow2) / mob.mass
+						mob.vel[1] += (netforce[1] * self.pow2) / mob.mass
+						print mob.vel
+					if mob.type in [1, 2]:
+						dmg = (netforce[0] * self.dmg) + (netforce[1] * self.dmg)
+						print dmg
+						mob.hp -= dmg
+						if mob.hp <= 0:
+							movingblocks.remove(mob)
 				
 		else:
 			print "Bomb pushing something unusual!"
@@ -597,12 +606,12 @@ class detonator(object):
 		self.img = img #Detonator image
 		self.bomb = img2 #Bomb image
 	def newBomb(self, coords, vel):
-		return bomb(self.type, coords, vel, (8, 8), self.kbP, self.kbB, self.arm, self.bomb)
+		return bomb(self.type, coords, vel, (8, 8), self.kbP, self.kbB, self.dmg, self.arm, self.bomb)
 
 DetGod = detonator(0, 16, 16, 5, 0, 99999, getImg("UI/DetGod"), bombImg)
 DetNorm = detonator(1, 2, 8, 5, 30, 4, getImg("UI/DetDefault"), bombImg)
 DetKB = detonator(2, 16, 16, 1, 20, 2, getImg("UI/DetJumper"), getImg("tosser"))
-DetMulti = detonator(3, 4, 6, 5, 80, 10, getImg("UI/DetMulti"), getImg("Multi"))
+DetMulti = detonator(3, 1, 10, 5, 80, 10, getImg("UI/DetMulti"), getImg("Multi"))
 DetDest = detonator(4, 1, 1, 20, 30, 4, getImg("UI/DetDestructive"), getImg("Dest"))
 DetCurrent = DetGod
 
@@ -690,7 +699,7 @@ def openReadFile(filePath):
 
 
 currLvl = 0
-totalLvls = 3	#CHANGE THIS WHEN ADDING LVLS
+totalLvls = 5	#CHANGE THIS WHEN ADDING LVLS
 
 def createLevel(lvl):	#Almost all refrences of this should be written createLevel(currLvl). Only use an int for bugtesting.
 	wipeFloor()
@@ -712,6 +721,10 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		
 	if lvl == 2:
 		openReadFile("saves/LevelMotion.txt")
+	if lvl == 3:
+		openReadFile("saves/LevelDestroy.txt")
+	if lvl == 4:
+		openReadFile("saves/LevelFast.txt")
 	
 	else:
 		createFloor(0, 688, 2, 64)
@@ -1085,10 +1098,10 @@ while Running:
 		screen.blit(p.img,p.coords)
 	for p in platforms:
 		player.Collide(p)
-	for mb in movingblocks:
+	'''for mb in movingblocks:
 		if isOnTop(p, mb) and isNear(center(p), center(mb)):
 			print "you won!"
-		mb.Collide(p)
+		mb.Collide(p)'''
 	for i in bricks:
 		screen.blit(i.img, i.coords)
 		player.Collide(i)
@@ -1174,8 +1187,7 @@ while Running:
 					i.img = normalBombImgs[0]
 					i.Detonate(player)
 					for p in movingblocks:
-						if p.type in [0,2]:
-							i.Detonate(p)
+						i.Detonate(p)
 					i.stuck = True
 					i.stuckOn = None
 					i.vel = [0, 0]
