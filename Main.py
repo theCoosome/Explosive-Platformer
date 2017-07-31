@@ -824,6 +824,8 @@ counter = 0
 movingbA = 10
 createLevel(currLvl)
 isCutsecne = True
+if isCutsecne == True:
+	createLevel(100)
 def changeSwitch():
 	for s in switches:
 		s.img = switchImages[0]
@@ -839,8 +841,7 @@ while Running:
 	bombType = 1
 	screen.fill(WHITE)
 	startTimer = False
-	if isCutsecne == True:
-		createLevel(100)
+
 	# user input
 	for event in pygame.event.get():
 
@@ -1029,14 +1030,13 @@ while Running:
 			player.hasKey = True
 			sfxkey = 2
 			soundEffect(sfxkey)
-			print("1")
+
 			keys.remove(k)
 	for g in gates:
 		if isNear(g.coords, player.coords):
 			if player.hasKey == True:
 				sfxkey = 3
 				soundEffect(sfxkey)
-				print("2")
 
 	if len(movingblocks) > 0:
 		for i in bricks:
