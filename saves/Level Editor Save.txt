@@ -1,7 +1,0 @@
-grates.append(Grate([int(208), int(336)], [int(176), int(96)], []))
-createFloor(384, 336, int(int(96) / 16), int(int(256) / 16))
-createFloor(192, 480, int(int(128) / 16), int(int(784) / 16))
-createMovingBlock(int(416), int(240), int(int(48) / 16), int(int(192) / 16), int(0))
-createMovingBlock(int(432), int(144), int(int(80) / 16), int(int(128) / 16), int(2))
-createFloor(208, 80, int(int(240) / 16), int(int(112) / 16))
-createMovingBlock(int(896), int(256), int(int(208) / 16), int(int(64) / 16), int(1))
