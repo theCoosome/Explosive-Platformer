@@ -1,13 +1,3 @@
 createFloor(0, 448, 17, 64)
-createFloor(0, 0, 12, 20)
-createFloor(0, 384, 4, 7)
-createMovingBlock(320, 288, 4, 4, 1)
-createMovingBlock(320, 368, 4, 5, 0)
-createFloor(160, 336, 3, 10)
-createFloor(384, 240, 9, 11)
-createFloor(384, 0, 13, 11)
-createFloor(624, 0, 24, 25)
-createMovingBlock(560, 368, 4, 5, 0)
-createMovingBlock(560, 288, 4, 4, 1)
-exits = [Exit(4, [int(960), int(384)], [int(16), int(16)], exitImg)]
-entrances = [Entrance(4, [int(192), int(416)], [int(16), int(16)], entranceImg)]
+entrances = [Entrance(4, [int(480), int(416)], [int(16), int(16)], entranceImg)]
+createFloor(0, 0, 15, 64)
