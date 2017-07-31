@@ -7,7 +7,9 @@ import time
 pygame.mixer.pre_init(44100, -16, 2, 2048)
 pygame.init()
 fps = 60
-debugon = False
+debugon = True
+sfxkey=0
+muteon=False
 
 WHITE = pygame.Color(255, 255, 255)
 BLACK = pygame.Color(0, 0, 0)
@@ -75,7 +77,67 @@ right = [getImg("Dereks/anim1r"),getImg("Dereks/Derek"),getImg("Dereks/anim2r")]
 
 crouchImg = [getImg("Dereks/DerekCrouch"),getImg("Dereks/derekcrouchl")]
 
-
+class DispObj(object):
+	def refresh(self):
+		if not self.simple:
+			final = pygame.Surface(self.size, pygame.SRCALPHA, 32).convert_alpha()
+			for i in self.all:
+				final.blit(i.img, i.coords)
+			self.img = final
+	#coords, img is blitable object or list of DispObj. simple is wether or not is list. size is needed if not simple.
+	def __init__(self, img, coords = (0, 0), simple = True, size = (0, 0)):
+		self.coords = coords
+		self.img = img #Final image, use this to blit to screen
+		self.all = img #List of display objects, used if not simple
+		self.simple = simple
+		self.size = size
+		self.refresh()
+	
+#takes single string, max width, font used, and color of text. returns list of dispObj
+def wraptext(text, fullline, Font, render = False, color = (0,0,0)):  #need way to force indent in string
+	Denting = True
+	max = fullline
+	size = Font.size(text)
+	outtext = []
+	while Denting:
+		if Font.size(text)[0] > max:
+			#Search for ammount of charachters that can fit in set fullline size
+			thistext = ""
+			for i in range(len(text)):
+				if Font.size(thistext + text[i])[0] > max:
+					count = len(thistext)
+					break
+				else:
+					thistext += text[i]
+			thistext = text[:count]
+			#is it indentable
+			if " " in thistext:
+				for i in range(len(thistext)):
+					#find first space from end
+					if thistext[len(thistext)-(i+1)] == " ":
+						#split text, add indent, update count
+						outtext.append(thistext[:len(thistext)-(i+1)])
+						text = text[len(thistext)-(i):]
+						max = fullline
+						break
+			#unindentable, skip to next
+			else:
+				max += fullline
+		else:
+			#exit denting, add remaining to outtext, return
+			Denting = False
+			outtext.append(text)
+			
+	if render:
+		text = []
+		for i in range(len(outtext)):
+			x = outtext[i]
+			text.append(DispObj(Font.render(x, True, color),  (0, (i*size[1]))))
+		outtext = text
+	return outtext
+	
+TM1 = DispObj(wraptext("", 900, font, True), (10, 10), False, (900, 120)) #main room desc
+TM2 = DispObj(wraptext("", 900, font, True), (10, 130), False, (900, 119)) #room responses
 
 
 #Bombs
@@ -141,11 +203,10 @@ def DualLine(p1, p2, box):
 	#having m and b:
 	def f(x):
 		return m*x+b
-			
-	if (box.coords[0] > f(box.coords[0]) and box.coords[0]+box.size[0] > f(box.coords[0]+box.size[0])) or (box.coords[0] < f(box.coords[0]) and box.coords[0]+box.size[0] < f(box.coords[0]+box.size[0])):
-		return True
-	else:
+	if (box.coords[1] > f(box.coords[0]) and box.coords[1] > f(box.coords[0]+box.size[0])) or (box.coords[1]+box.size[1] < f(box.coords[0]) and box.coords[1]+box.size[1] < f(box.coords[0]+box.size[0])):
 		return False
+	else:
+		return True
 		
 def getLower(p1, p2):
 	if p1 > p2:
@@ -229,10 +290,7 @@ class Person(object):
 				if self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
 					self.coords[0] = i.coords[0] + i.size[0]
 					self.vel[0] = 0
-
 					pygame.draw.line(debugOverlay, RED, p1, center(self))
-					
-
 			p1 = center(self)
 			if self.vel[1] < 0 and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1]: #CEILING
 				self.coords[1] = i.coords[1] + i.size[1]
@@ -261,6 +319,11 @@ class movingBlock(object):
 		self.size = size
 		self.floor = False
 		self.vel = [0, 0]
+		
+		self.mass = (size[0]*size[1])/256
+		self.sixteens = (size[0]/16, size[1]/16)
+		
+		
 		if type == 0: #Movable
 			self.img = pygame.transform.scale(movingImg, size)
 
@@ -335,13 +398,15 @@ class Sensor(object):
 sensors = []
 
 class Switch(object):
-	def __init__(self,type,coords,size,img,toggle):
+	def __init__(self,type,coords,size,img,on):
 		self.type = type
 		self.coords = coords
 		self.size = size
 		self.img = img
-		self.toggle = toggle
+		self.on = on
 		self.trigger = None
+		self.time = 500
+		self.blockamount = 10
 movingblocks = []
 
 
@@ -363,11 +428,11 @@ class Gate(object):
 		self.open = actions
 		
 class Grate(object):
-	def __init__(self,coords,size, blocked): #allowed is list of strings: ["guy", "bomb", "moving", "dest"]
+	def __init__(self,coords,size, blocked):
 		self.coords = coords
 		self.size = size
 		self.img = pygame.transform.scale(grateImg, size)
-		self.blocked = blocked
+		self.blocked = blocked #blocked is list of strings: ["guy", "bomb", "moving", "dest"]
 		
 	def Trigger(self, actions):
 		for x in actions:
@@ -472,31 +537,72 @@ class bomb(object):
 
 	def Detonate(self, mob):
 
-		cm = center(mob)
-		cs = center(self)
-
-		xd = cm[0]-cs[0]
-		yd = cm[1]-cs[1]
-
-		td = math.hypot(xd, yd)
-
 		if type(mob) == Person:
-			pow = self.pow * ((self.detRange - td) / self.detRange)
-		else:
-			pow = self.pow2 * ((self.detRange - td) / self.detRange)
+			cm = center(mob)
+			cs = center(self)
 
-		if pow > 0:
-			if (td != 0):
-				pygame.draw.line(debugOverlay, RED, cm, cs)
-				sight = True
-				square = (getLower(cm[0], cs[0]), getLower(cm[1], cs[1]), abs(xd), abs(yd))
-				for x in bricks:
-					if collide(x.coords, x.size, square[0:2], square[2:4]):
-						if DualLine(square[0:2], square[2:4], x):
-							sight = False
-				if sight:
-					mob.vel[0] += (xd / td) * pow
-					mob.vel[1] += (yd / td) * pow
+			xd = cm[0]-cs[0]
+			yd = cm[1]-cs[1]
+
+			td = math.hypot(xd, yd)
+
+			pow = self.pow * ((self.detRange - td) / self.detRange)
+			
+			if pow > 0:
+				if (td != 0):
+					pygame.draw.line(debugOverlay, RED, cm, cs)
+					sight = True
+					square = (getLower(cm[0], cs[0]), getLower(cm[1], cs[1]), abs(xd), abs(yd))
+					for x in bricks:
+						if collide(x.coords, x.size, square[0:2], square[2:4]):
+							if DualLine(cm, cs, x):
+								sight = False
+								pygame.draw.line(debugOverlay, PURPLE, cm, cs)
+					if sight:
+						mob.vel[0] += (xd / td) * pow
+						mob.vel[1] += (yd / td) * pow
+		elif type(mob) == movingBlock:
+			cm = center(mob)
+			cs = center(self)
+
+			xd = cm[0]-cs[0]
+			yd = cm[1]-cs[1]
+
+			td = math.hypot(xd, yd)
+			netforce = [0, 0]
+			vel = ((xd / td), (yd / td))
+			
+			if collide(mob.coords, mob.size, (cs[0]-self.detRange, cs[1]-self.detRange), (2*self.detRange, 2*self.detRange)):
+				pow = 0
+				for x in xrange(mob.sixteens[0]):
+					for y in xrange(mob.sixteens[1]):
+						cm = (mob.coords[0]+(16*x)+8, mob.coords[1]+(16*y)+8)
+						xd = cm[0]-cs[0]
+						yd = cm[1]-cs[1]
+
+						td = math.hypot(xd, yd)
+						if td < self.detRange:
+							pygame.draw.line(debugOverlay, RED, cm, cs)
+							sight = True
+							square = (getLower(cm[0], cs[0]), getLower(cm[1], cs[1]), abs(xd), abs(yd))
+							for c in bricks:
+								if collide(c.coords, c.size, square[0:2], square[2:4]):
+									if DualLine(cm, cs, c):
+										sight = False
+										pygame.draw.line(debugOverlay, PURPLE, cm, cs)
+							if sight:
+								pow = ((self.detRange - td) / self.detRange)
+								netforce[0] += (xd / td) * pow
+								netforce[1] += (yd / td) * pow
+				if netforce[0] != 0 and netforce[1] != 0:
+					print "\n", netforce
+					mob.vel[0] += (netforce[0] * self.pow2) / mob.mass
+					mob.vel[1] += (netforce[1] * self.pow2) / mob.mass
+					print mob.vel
+				
+		else:
+			print "Bomb pushing something unusual!"
+			
 
 
 class detonator(object):
@@ -512,7 +618,7 @@ class detonator(object):
 	def newBomb(self, coords, vel):
 		return bomb(self.type, coords, vel, (8, 8), self.kbP, self.kbB, self.arm, self.bomb)
 
-DetGod = detonator(0, 16, 16, 5, 0, 99999, getImg("UI/DetDefault"), bombImg)
+DetGod = detonator(0, 16, 16, 5, 0, 99999, getImg("UI/DetGod"), bombImg)
 DetNorm = detonator(1, 2, 8, 5, 30, 4, getImg("UI/DetDefault"), bombImg)
 DetKB = detonator(2, 16, 16, 1, 20, 2, getImg("UI/DetJumper"), getImg("tosser"))
 DetMulti = detonator(3, 4, 6, 5, 80, 10, getImg("UI/DetMulti"), getImg("Multi"))
@@ -642,6 +748,28 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 	
 	else:
 		createFloor(0, 688, 2, 64)
+	if lvl == 100:
+		openReadFile("saves/LevelCutscene1.txt")
+		#switches.append(Switch("Switch",(256,)))
+
+def soundEffect(sfxkey):
+	if not muteon:
+		if sfxkey == 1:
+			effect = pygame.mixer.Sound("assets/Sounds/Jump3.wav")
+			effect.play()
+		if sfxkey == 2:
+			effect = pygame.mixer.Sound("assets/Sounds/Win.wav")
+			effect.play()
+		if sfxkey == 3:
+			effect = pygame.mixer.Sound("assets/Sounds/Open.wav")
+			effect.play()
+		if sfxkey == 4:
+			effect = pygame.mixer.Sound("assets/Sounds/Explosion.wav")
+			effect.play()
+		if sfxkey == 5:
+			effect = pygame.mixer.Sound("assets/Sounds/throw.wav")
+			effect.play()
+
 
 # Current main screen, basic level.
 Running = True
@@ -680,9 +808,13 @@ gR = 0
 gL = 0
 isCrouching = False
 counter = 0
-
+movingbA = 10
 createLevel(currLvl)
-
+isCutsecne = True
+def changeSwitch():
+	for s in switches:
+		s.img = switchImages[0]
+timer = 10
 while Running:
 	mousepos = pygame.mouse.get_pos()
 	if debugon:
@@ -694,16 +826,24 @@ while Running:
 	bombType = 1
 	screen.fill(WHITE)
 	startTimer = False
+	if isCutsecne == True:
+		createLevel(100)
 	# user input
 	for event in pygame.event.get():
+
 		if event.type == pygame.KEYDOWN:
-			#Switches and Interactable Objects
+		#Switches and Interactable Objects
 			if(len(switches) > 0):
 				if (isNear(center(switches[0]), center(player))):
 						if event.key in [K_e]:
-							movingblocks.append(movingBlock(0, [64, 64], (16, 16)))
-							switches[0].img = switchImages[1]
 
+
+								for s in switches:
+									if len(movingblocks) <= s.blockamount and s.on == False:
+
+										s.on = True
+										movingblocks.append(movingBlock(0, [64, 64], (16, 16)))
+										s.img = switchImages[1]
 
 			# movement
 			if event.key in [K_RIGHT, K_d]:  # move ->
@@ -727,8 +867,8 @@ while Running:
 				player.Crouch()
 			if event.key in [K_UP, K_w] and player.floor:  # ^
 				player.vel[1] = -8
-				effect = pygame.mixer.Sound("assets/Sounds/Jump3.wav")
-				effect.play()
+				sfxkey = 1
+				soundEffect(sfxkey)
 				player.floor = False
 			if event.key == K_r:  # slow down
 				fps = 1
@@ -739,6 +879,11 @@ while Running:
 					debugon = False
 				else:
 					debugon = True
+			if event.key == K_m:
+				if muteon:
+					muteon = False
+				else:
+					muteon = True
 			if event.key == K_x:
 				createLevel(currLvl)
 			if event.key == K_z:
@@ -790,7 +935,6 @@ while Running:
 				bombs = []
 				DetCurrent = DetDest
 
-
 		if event.type == pygame.KEYUP:
 			if event.key in [K_LEFT, K_a]:
 				player.motion[0] += 2.0
@@ -813,7 +957,6 @@ while Running:
 					bombs.append(DetCurrent.newBomb([player.coords[0], player.coords[1]], [((xChng / hy) * throwPower), ((yChng / hy) * throwPower)]))
 
 				bombWaitTime = normalBombWait
-
 
 
 	# Player
@@ -871,15 +1014,15 @@ while Running:
 		screen.blit(k.img,k.coords)
 		if isNear(player.coords, k.coords):
 			player.hasKey = True
-			effect = pygame.mixer.Sound("assets/Sounds/Win.wav")
-			effect.play()
+			sfxkey = 2
+			soundEffect(sfxkey)
 			print("1")
 			keys.remove(k)
 	for g in gates:
 		if isNear(g.coords, player.coords):
 			if player.hasKey == True:
-				effect = pygame.mixer.Sound("assets/Sounds/Open.wav")
-				effect.play()
+				sfxkey = 3
+				soundEffect(sfxkey)
 				print("2")
 
 	if len(movingblocks) > 0:
@@ -1003,8 +1146,8 @@ while Running:
 		if i.isExploding:
 			i.explodeTime -= 1
 			i.incrementSprite(1, i.explodeTime)
-			effect = pygame.mixer.Sound("assets/Sounds/Explosion.wav")
-			effect.play()
+			sfxkey = 4
+			soundEffect(sfxkey)
 			if i.explodeTime > 10:
 
 				pygame.draw.circle(screen, BLACK, (int(center(i)[0]), int(center(i)[1])), detRange-player.size[0], 1)
@@ -1040,8 +1183,8 @@ while Running:
 			i.time += 1
 			if i.time >= i.arm:
 				i.armed = True
-				effect = pygame.mixer.Sound("assets/Sounds/throw.wav")
-				effect.play()
+				sfxkey = 5
+				soundEffect(sfxkey)
 
 		if (i.stuckOn != None):
 			if (i.stuckOn in movingblocks): #Follow what it is stuck to
@@ -1081,6 +1224,15 @@ while Running:
 		player.vel[0] = Zero(player.vel[0], friction)
 
 	for s in switches:
+		if s.on == True:
+			s.time -= 1
+
+		if s.time <= 0:
+			s.on = False
+
+		if s.on == False:
+			s.img = switchImages[0]
+			s.time = 500
 		screen.blit(s.img, s.coords)
 	for k in keys:
 		screen.blit(k.img, k.coords)
