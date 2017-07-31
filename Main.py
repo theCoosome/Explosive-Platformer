@@ -7,7 +7,9 @@ import time
 pygame.mixer.pre_init(44100, -16, 2, 2048)
 pygame.init()
 fps = 60
-debugon = False
+debugon = True
+sfxkey=0
+muteon=False
 
 WHITE = pygame.Color(255, 255, 255)
 BLACK = pygame.Color(0, 0, 0)
@@ -612,6 +614,25 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 	else:
 		createFloor(0, 688, 2, 64)
 
+def soundEffect(sfxkey):
+	if not muteon:
+		if sfxkey == 1:
+			effect = pygame.mixer.Sound("assets/Sounds/Jump3.wav")
+			effect.play()
+		if sfxkey == 2:
+			effect = pygame.mixer.Sound("assets/Sounds/Win.wav")
+			effect.play()
+		if sfxkey == 3:
+			effect = pygame.mixer.Sound("assets/Sounds/Open.wav")
+			effect.play()
+		if sfxkey == 4:
+			effect = pygame.mixer.Sound("assets/Sounds/Explosion.wav")
+			effect.play()
+		if sfxkey == 5:
+			effect = pygame.mixer.Sound("assets/Sounds/throw.wav")
+			effect.play()
+
+
 # Current main screen, basic level.
 Running = True
 
@@ -696,8 +717,8 @@ while Running:
 				player.Crouch()
 			if event.key in [K_UP, K_w] and player.floor:  # ^
 				player.vel[1] = -8
-				effect = pygame.mixer.Sound("assets/Sounds/Jump3.wav")
-				effect.play()
+				sfxkey = 1
+				soundEffect(sfxkey)
 				player.floor = False
 			if event.key == K_r:  # slow down
 				fps = 1
@@ -708,6 +729,11 @@ while Running:
 					debugon = False
 				else:
 					debugon = True
+			if event.key == K_m:
+				if muteon:
+					muteon = False
+				else:
+					muteon = True
 			if event.key == K_x:
 				createLevel(currLvl)
 			if event.key == K_z:
@@ -840,15 +866,15 @@ while Running:
 		screen.blit(k.img,k.coords)
 		if isNear(player.coords, k.coords):
 			player.hasKey = True
-			effect = pygame.mixer.Sound("assets/Sounds/Win.wav")
-			effect.play()
+			sfxkey = 2
+			soundEffect(sfxkey)
 			print("1")
 			keys.remove(k)
 	for g in gates:
 		if isNear(g.coords, player.coords):
 			if player.hasKey == True:
-				effect = pygame.mixer.Sound("assets/Sounds/Open.wav")
-				effect.play()
+				sfxkey = 3
+				soundEffect(sfxkey)
 				print("2")
 
 	if len(movingblocks) > 0:
@@ -970,8 +996,8 @@ while Running:
 		if i.isExploding:
 			i.explodeTime -= 1
 			i.incrementSprite(1, i.explodeTime)
-			effect = pygame.mixer.Sound("assets/Sounds/Explosion.wav")
-			effect.play()
+			sfxkey = 4
+			soundEffect(sfxkey)
 			if i.explodeTime > 10:
 
 				pygame.draw.circle(screen, BLACK, (int(center(i)[0]), int(center(i)[1])), detRange-player.size[0], 1)
@@ -1007,8 +1033,8 @@ while Running:
 			i.time += 1
 			if i.time >= i.arm:
 				i.armed = True
-				effect = pygame.mixer.Sound("assets/Sounds/throw.wav")
-				effect.play()
+				sfxkey = 5
+				soundEffect(sfxkey)
 
 		if (i.stuckOn != None):
 			if (i.stuckOn in movingblocks): #Follow what it is stuck to

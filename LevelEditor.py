@@ -53,13 +53,14 @@ bricks = []
 #Mouse Images
 AimImg = getImg("Mouse/Aim")
 BrickPlaceImg = getImg("Mouse/Brick")
+GratePlaceImg = getImg("Mouse/Grate")
 DPlaceImg = getImg("Mouse/Destructable")
 MovablePlaceImg = getImg("Mouse/Movable")
 MultiPlaceImg = getImg("Mouse/Multi")
 ExitPlaceImg = getImg("Mouse/Exit")
 EntrancePlaceImg = getImg("Mouse/Entrance")
 RemoveImg = getImg("Mouse/Remove")
-mouseImgs = [AimImg, BrickPlaceImg, BrickPlaceImg, DPlaceImg, MovablePlaceImg, MultiPlaceImg, ExitPlaceImg, EntrancePlaceImg, RemoveImg]
+mouseImgs = [AimImg, BrickPlaceImg, GratePlaceImg, DPlaceImg, MovablePlaceImg, MultiPlaceImg, ExitPlaceImg, EntrancePlaceImg, RemoveImg]
 mouseImg = mouseImgs[0]
 
 
@@ -311,7 +312,7 @@ class bomb(object):
 			mob.vel[1] += (yd / td) * pow
 
 def round_int(x):
-    return 16 * ((x + 8) // 16)
+    return x - (x%16)
 
 def Zero(num, rate, goal=0):
 	if num > goal:
@@ -458,11 +459,13 @@ while Running:
 				startLoc = mousepos
 			if event.button == 4:
 				newImgNum = mouseImgs.index(mouseImg) + 1
+				print "up 1 ", newImgNum
 				if newImgNum >= len(mouseImgs):
 					newImgNum = 0
 				mouseImg = mouseImgs[newImgNum]
 			if event.button == 5:
 				newImgNum = mouseImgs.index(mouseImg) - 1
+				print "down 1 ", newImgNum
 				if newImgNum < 0:
 					newImgNum = len(mouseImgs)-1
 				mouseImg = mouseImgs[newImgNum]
