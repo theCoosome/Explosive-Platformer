@@ -474,9 +474,7 @@ class bomb(object):
 				square = (getLower(cm[0], cs[0]), getLower(cm[1], cs[1]), abs(xd), abs(yd))
 				for x in bricks:
 					if collide(x.coords, x.size, square[0:2], square[2:4]):
-						print "===\nbig hit"
 						if DualLine(cm, cs, x):
-							print "line hit"
 							sight = False
 							pygame.draw.line(debugOverlay, PURPLE, cm, cs)
 				if sight:
