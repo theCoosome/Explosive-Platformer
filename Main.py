@@ -9,7 +9,7 @@ pygame.init()
 fps = 60
 debugon = True
 sfxkey=0
-muteon=False
+muteon=True
 
 WHITE = pygame.Color(255, 255, 255)
 BLACK = pygame.Color(0, 0, 0)
@@ -736,7 +736,7 @@ def openReadFile(filePath):
 	spawnChar(entrances[0])
 
 currLvl = 0
-totalLvls = 5	#CHANGE THIS WHEN ADDING LVLS
+totalLvls = 10	#CHANGE THIS WHEN ADDING LVLS
 
 def createLevel(lvl):	#Almost all refrences of this should be written createLevel(currLvl). Only use an int for bugtesting.
 	wipeFloor()
@@ -761,6 +761,15 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		openReadFile("saves/LevelDestroy.txt")
 	elif lvl == 4:
 		openReadFile("saves/LevelFast.txt")
+	elif lvl == 5:
+		grates.append(Grate([int(208), int(336)], [int(176), int(96)], []))
+		createFloor(384, 336, int(int(96) / 16), int(int(256) / 16))
+		createFloor(192, 480, int(int(128) / 16), int(int(784) / 16))
+		createMovingBlock(int(416), int(240), int(int(48) / 16), int(int(192) / 16), int(0))
+		createMovingBlock(int(432), int(144), int(int(80) / 16), int(int(128) / 16), int(2))
+		createFloor(208, 80, int(int(240) / 16), int(int(112) / 16))
+		createMovingBlock(int(896), int(256), int(int(208) / 16), int(int(64) / 16), int(1))
+
 	
 	else:
 		createFloor(0, 688, 2, 64)
