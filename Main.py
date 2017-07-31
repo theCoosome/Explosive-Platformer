@@ -288,10 +288,7 @@ class Person(object):
 				if self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
 					self.coords[0] = i.coords[0] + i.size[0]
 					self.vel[0] = 0
-
 					pygame.draw.line(debugOverlay, RED, p1, center(self))
-					
-
 			p1 = center(self)
 			if self.vel[1] < 0 and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1]: #CEILING
 				self.coords[1] = i.coords[1] + i.size[1]
@@ -320,6 +317,11 @@ class movingBlock(object):
 		self.size = size
 		self.floor = False
 		self.vel = [0, 0]
+		
+		self.mass = (size[0]*size[1])/256
+		self.sixteens = (size[0]/16, size[1]/16)
+		
+		
 		if type == 0: #Movable
 			self.img = pygame.transform.scale(movingImg, size)
 
@@ -423,11 +425,11 @@ class Gate(object):
 		self.open = actions
 		
 class Grate(object):
-	def __init__(self,coords,size, blocked): #allowed is list of strings: ["guy", "bomb", "moving", "dest"]
+	def __init__(self,coords,size, blocked):
 		self.coords = coords
 		self.size = size
 		self.img = pygame.transform.scale(grateImg, size)
-		self.blocked = blocked
+		self.blocked = blocked #blocked is list of strings: ["guy", "bomb", "moving", "dest"]
 		
 	def Trigger(self, actions):
 		for x in actions:
@@ -516,32 +518,72 @@ class bomb(object):
 
 	def Detonate(self, mob):
 
-		cm = center(mob)
-		cs = center(self)
-
-		xd = cm[0]-cs[0]
-		yd = cm[1]-cs[1]
-
-		td = math.hypot(xd, yd)
-
 		if type(mob) == Person:
-			pow = self.pow * ((self.detRange - td) / self.detRange)
-		else:
-			pow = self.pow2 * ((self.detRange - td) / self.detRange)
+			cm = center(mob)
+			cs = center(self)
 
-		if pow > 0:
-			if (td != 0):
-				pygame.draw.line(debugOverlay, RED, cm, cs)
-				sight = True
-				square = (getLower(cm[0], cs[0]), getLower(cm[1], cs[1]), abs(xd), abs(yd))
-				for x in bricks:
-					if collide(x.coords, x.size, square[0:2], square[2:4]):
-						if DualLine(cm, cs, x):
-							sight = False
-							pygame.draw.line(debugOverlay, PURPLE, cm, cs)
-				if sight:
-					mob.vel[0] += (xd / td) * pow
-					mob.vel[1] += (yd / td) * pow
+			xd = cm[0]-cs[0]
+			yd = cm[1]-cs[1]
+
+			td = math.hypot(xd, yd)
+
+			pow = self.pow * ((self.detRange - td) / self.detRange)
+			
+			if pow > 0:
+				if (td != 0):
+					pygame.draw.line(debugOverlay, RED, cm, cs)
+					sight = True
+					square = (getLower(cm[0], cs[0]), getLower(cm[1], cs[1]), abs(xd), abs(yd))
+					for x in bricks:
+						if collide(x.coords, x.size, square[0:2], square[2:4]):
+							if DualLine(cm, cs, x):
+								sight = False
+								pygame.draw.line(debugOverlay, PURPLE, cm, cs)
+					if sight:
+						mob.vel[0] += (xd / td) * pow
+						mob.vel[1] += (yd / td) * pow
+		elif type(mob) == movingBlock:
+			cm = center(mob)
+			cs = center(self)
+
+			xd = cm[0]-cs[0]
+			yd = cm[1]-cs[1]
+
+			td = math.hypot(xd, yd)
+			netforce = [0, 0]
+			vel = ((xd / td), (yd / td))
+			
+			if collide(mob.coords, mob.size, (cs[0]-self.detRange, cs[1]-self.detRange), (2*self.detRange, 2*self.detRange)):
+				pow = 0
+				for x in xrange(mob.sixteens[0]):
+					for y in xrange(mob.sixteens[1]):
+						cm = (mob.coords[0]+(16*x)+8, mob.coords[1]+(16*y)+8)
+						xd = cm[0]-cs[0]
+						yd = cm[1]-cs[1]
+
+						td = math.hypot(xd, yd)
+						if td < self.detRange:
+							pygame.draw.line(debugOverlay, RED, cm, cs)
+							sight = True
+							square = (getLower(cm[0], cs[0]), getLower(cm[1], cs[1]), abs(xd), abs(yd))
+							for c in bricks:
+								if collide(c.coords, c.size, square[0:2], square[2:4]):
+									if DualLine(cm, cs, c):
+										sight = False
+										pygame.draw.line(debugOverlay, PURPLE, cm, cs)
+							if sight:
+								pow = ((self.detRange - td) / self.detRange)
+								netforce[0] += (xd / td) * pow
+								netforce[1] += (yd / td) * pow
+				if netforce[0] != 0 and netforce[1] != 0:
+					print "\n", netforce
+					mob.vel[0] += (netforce[0] * self.pow2) / mob.mass
+					mob.vel[1] += (netforce[1] * self.pow2) / mob.mass
+					print mob.vel
+				
+		else:
+			print "Bomb pushing something unusual!"
+			
 
 
 class detonator(object):
@@ -557,7 +599,7 @@ class detonator(object):
 	def newBomb(self, coords, vel):
 		return bomb(self.type, coords, vel, (8, 8), self.kbP, self.kbB, self.arm, self.bomb)
 
-DetGod = detonator(0, 16, 16, 5, 0, 99999, getImg("UI/DetDefault"), bombImg)
+DetGod = detonator(0, 16, 16, 5, 0, 99999, getImg("UI/DetGod"), bombImg)
 DetNorm = detonator(1, 2, 8, 5, 30, 4, getImg("UI/DetDefault"), bombImg)
 DetKB = detonator(2, 16, 16, 1, 20, 2, getImg("UI/DetJumper"), getImg("tosser"))
 DetMulti = detonator(3, 4, 6, 5, 80, 10, getImg("UI/DetMulti"), getImg("Multi"))
