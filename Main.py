@@ -1204,8 +1204,6 @@ while Running:
 				mb.Collide(p)
 			screen.blit(p.img,p.coords)
 
-
-		screen.blit(p.img,p.coords)
 	for p in platforms:
 		player.Collide(p)
 	'''for mb in movingblocks:
