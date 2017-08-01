@@ -376,19 +376,31 @@ def saveFile():
 	for i in bricks:
 		x,y = i.coords
 		xs, ys = i.size
-		writeContents = "$"
-		writeContents += "*"
-		writeContents += str(i.type)
-		writeContents += "*"
-		writeContents += str(x)
-		writeContents += "*"
-		writeContents += str(y)
-		writeContents += "*"
-		writeContents += str(xs)
-		writeContents += "*"
-		writeContents += str(ys)
-		writeContents += "\n"
-		writeList.append(writeContents)
+		out = ""
+		if i.type == -1:
+			out = "createFloor("+str(x)+", "+str(y)+", "+str(int(ys / 16))+", "+str(int(xs / 16))+")"
+		
+		elif i.type in [0, 1, 2]:
+			out = "createMovingBlock("+str(x)+", "+str(y)+", "+str(int(xs / 16))+", "+str(int(ys / 16))+", "+str(i.type)+")"
+		
+		elif i.type == 3:
+			out = "grates.append(Grate([int("+str(x)+"), int("+str(y)+")], [int("+str(xs)+"), int("+str(ys)+")], []))"
+		
+		elif i.type == 4:
+			print "Enterances"
+			out = "entrances = [Entrance(4, [int("+str(x)+"), int("+str(y)+")], [int("+str(xs)+"), int("+str(ys)+")], entranceImg)]"
+		
+		elif i.type == 5:
+			print "Exits"
+			out = "exits = [Exit(4, [int("+str(x)+"), int("+str(y)+")], [int("+str(xs)+"), int("+str(ys)+")], exitImg)]"
+		
+		else:
+			print "invalid type:", i.type
+			out = "#something odd"
+		out += "\n"
+		writeList.append(out)
+			
+			
 	print writeList
 	file.writelines(writeList)
 	file.close()
