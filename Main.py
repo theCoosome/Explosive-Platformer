@@ -991,11 +991,20 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		entrances = [Entrance(4, [int(480), int(448)], [int(16), int(16)], entranceImg)]
 
 	elif lvl == 7:
-		createFloor(0, 592, 8, 64)
-		createFloor(0, 0, 7, 64)
-		createFloor(0, 144, 5, 64)
-		createFloor(0, 480, 5, 64)
-		entrances = [Entrance(4, [int(496), int(448)], [int(16), int(16)], entranceImg)]
+		createFloor(0, 560, 10, 64)
+		createFloor(0, 0, 12, 64)
+		createFloor(624, 192, 18, 12)
+		grates.append(Grate([int(640), int(480)], [int(160), int(80)], ["guy"]))
+		createFloor(0, 192, 23, 4)
+		createFloor(960, 192, 23, 4)
+		exits = [Exit(4, [int(896), int(528)], [int(16), int(16)], exitImg)]
+		createFloor(480, 400, 3, 7)
+		createFloor(480, 384, 1, 2)
+		grates.append(Grate([int(432), int(192)], [int(48), int(256)], ["guy", "bomb"]))
+		createMovingBlock(560, 352, 4, 3, 0)
+		grates.append(Grate([int(592), int(400)], [int(32), int(48)], ["guy"]))
+
+		DetCurrent = DetKB
 	
 	elif lvl == 8:
 		createFloor(0, 448, 17, 64)
