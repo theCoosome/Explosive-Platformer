@@ -1,0 +1,12 @@
+createFloor(0, 560, 10, 64)
+createFloor(0, 0, 12, 64)
+createFloor(624, 192, 18, 12)
+grates.append(Grate([int(640), int(480)], [int(160), int(80)], []))
+createFloor(0, 192, 23, 4)
+createFloor(960, 192, 23, 4)
+exits = [Exit(4, [int(896), int(528)], [int(16), int(16)], exitImg)]
+createFloor(480, 400, 3, 7)
+createFloor(480, 384, 1, 2)
+grates.append(Grate([int(432), int(192)], [int(48), int(256)], []))
+createMovingBlock(560, 352, 4, 3, 0)
+grates.append(Grate([int(592), int(400)], [int(32), int(48)], []))
