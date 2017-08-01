@@ -307,6 +307,9 @@ class Person(object):
 
 player = Person([50, 250], (standardSize),False)
 
+#input object, output list of tuples: [top left, top right, bottom left, bottom right]
+def getCorners(it):
+	return [it.coords, (it.coords[0]+it.size[0], it.coords[1]), (it.coords[0], it.coords[1]+it.size[1]), (it.coords[0]+it.size[0], it.coords[1]+it.size[1])]
 
 class movingBlock(object):
 	def __init__(self, type, coords, size):
@@ -314,12 +317,16 @@ class movingBlock(object):
 		self.type = type
 		self.coords = coords
 		self.size = size
-		self.floor = False
+		self.floor = True
 		self.vel = [0, 0]
 		
 		self.mass = (size[0]*size[1])/256
 		self.sixteens = (size[0]/16, size[1]/16)
 		
+		if self.sixteens != (0, 0):
+			self.big = True
+		else:
+			self.big = False
 		
 		if type == 0: #Movable
 			self.img = pygame.transform.scale(movingImg, size)
@@ -330,36 +337,108 @@ class movingBlock(object):
 		if type == 2: #Movable and Destructable
 			self.img = pygame.transform.scale(multiImg, size)
 
+			
 	def Collide(self, i):
 		if hit(i.coords, i.size, self.coords, self.size):  # UP
-			p1 = center(self)
-			if self.vel[1] > 0 and self.coords[1] <= i.coords[1]: #FLOOR
-				self.coords[1] = i.coords[1] - self.size[1]
-				if self.vel[1] > 0:
-					self.vel[1] = 0
-				self.floor = True
-				pygame.draw.line(debugOverlay, BLUE, p1, center(self))
-				
-			if hit(self.coords, self.size, i.coords, i.size):  # LEFT / RIGHT
+			if self.big:
 				p1 = center(self)
-				if self.coords[0] <= i.coords[0]:
-					self.coords[0] = i.coords[0] - self.size[0]
-					self.vel[0] = 0
-					pygame.draw.line(debugOverlay, YELLOW, p1, center(self))
+				p2 = center(i)
+				if p1[0] > p2[0]: #To the right of center
+					xdiff = (i.coords[0]+i.size[0])-self.coords[0]
+					if p1[1] > p2[1]: #Below
+						ydiff = (i.coords[1]+i.size[1])-self.coords[1]
+						p1 = center(self) 
+						if ydiff < xdiff:
+							self.coords[1] = i.coords[1] + i.size[1] #CIELING
+							self.vel[1] = 0
+							p2 = center(self)
+							pygame.draw.line(debugOverlay, GREEN, (p1[0]-1, p1[1]), (p2[0]-1, p2[1]))
+						
+						else:
+							self.coords[0] = i.coords[0] + i.size[0] #RIGHT WALL
+							self.vel[0] = 0
+							p2 = center(self)
+							pygame.draw.line(debugOverlay, RED, (p1[0], p1[1]-1), (p2[0], p2[1]-1))
+							
+						
+					else: #Above
+						ydiff = (self.coords[1]+self.size[1])-i.coords[1]
+						p1 = center(self) 
+						if ydiff < xdiff:
+							self.coords[1] = i.coords[1] - self.size[1] #FLOOR
+							if self.vel[1] > 0:
+								self.vel[1] = 0
+							self.floor = True
+							pygame.draw.line(debugOverlay, BLUE, p1, center(self))
+						
+						else:
+							self.coords[0] = i.coords[0] + i.size[0] #RIGHT WALL
+							self.vel[0] = 0
+							p2 = center(self)
+							pygame.draw.line(debugOverlay, RED, (p1[0], p1[1]-1), (p2[0], p2[1]-1))
+				
+				else: #To the left of center
+					xdiff = (self.coords[0]+self.size[0])-i.coords[0]
+					if p1[1] > p2[1]: #Below
+						ydiff = (i.coords[1]+i.size[1])-self.coords[1]
+						p1 = center(self) 
+						if ydiff < xdiff:
+							self.coords[1] = i.coords[1] + i.size[1] #CIELING
+							self.vel[1] = 0
+							p2 = center(self)
+							pygame.draw.line(debugOverlay, GREEN, (p1[0]-1, p1[1]), (p2[0]-1, p2[1]))
+						
+						else:
+							self.coords[0] = i.coords[0] - self.size[0] #LEFT WALL
+							self.vel[0] = 0
+							pygame.draw.line(debugOverlay, YELLOW, p1, center(self))
+						
+					else: #Above
+						ydiff = (self.coords[1]+self.size[1])-i.coords[1]
+						p1 = center(self) 
+						if ydiff < xdiff:
+							self.coords[1] = i.coords[1] - self.size[1] #FLOOR
+							if self.vel[1] > 0:
+								self.vel[1] = 0
+							self.floor = True
+							pygame.draw.line(debugOverlay, BLUE, p1, center(self))
+						
+						else:
+							self.coords[0] = i.coords[0] - self.size[0] #LEFT WALL
+							self.vel[0] = 0
+							pygame.draw.line(debugOverlay, YELLOW, p1, center(self))
 					
-				if self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
-					self.coords[0] = i.coords[0] + i.size[0]
-					self.vel[0] = 0
-					p2 = center(self)
-					pygame.draw.line(debugOverlay, RED, (p1[0], p1[1]-1), (p2[0], p2[1]-1))
+			print xdiff, ydiff
+			
+			if not self.big:
+				p1 = center(self)
+				if self.vel[1] > 0 and self.coords[1] <= i.coords[1]: #FLOOR   and not self.floor
+					self.coords[1] = i.coords[1] - self.size[1]
+					if self.vel[1] > 0:
+						self.vel[1] = 0
+					self.floor = True
+					pygame.draw.line(debugOverlay, BLUE, p1, center(self))
 					
-			#if hit(i.coords, i.size, self.coords, self.size):  # UP
-				if self.vel[1] < 0 and self.coords[1] + 16 >= i.coords[1] + i.size[1]: #CEILING
+				if hit(self.coords, self.size, i.coords, i.size):  # LEFT / RIGHT
 					p1 = center(self)
-					self.coords[1] = i.coords[1] + i.size[1]
-					self.vel[1] = 0
-					p2 = center(self)
-					pygame.draw.line(debugOverlay, GREEN, (p1[0]-1, p1[1]), (p2[0]-1, p2[1]))
+					if self.coords[0] <= i.coords[0]:
+						self.coords[0] = i.coords[0] - self.size[0]
+						self.vel[0] = 0
+						pygame.draw.line(debugOverlay, YELLOW, p1, center(self))
+						
+					if self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
+						self.coords[0] = i.coords[0] + i.size[0]
+						self.vel[0] = 0
+						p2 = center(self)
+						pygame.draw.line(debugOverlay, RED, (p1[0], p1[1]-1), (p2[0], p2[1]-1))
+						
+				#if hit(i.coords, i.size, self.coords, self.size):  # UP
+					if self.vel[1] < 0 and self.coords[1] + 16 >= i.coords[1] + i.size[1]: #CEILING
+						p1 = center(self)
+						self.coords[1] = i.coords[1] + i.size[1]
+						self.vel[1] = 0
+						p2 = center(self)
+						pygame.draw.line(debugOverlay, GREEN, (p1[0]-1, p1[1]), (p2[0]-1, p2[1]))
 
 		if hit(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
 			self.floor = True
@@ -740,6 +819,7 @@ totalLvls = 10	#CHANGE THIS WHEN ADDING LVLS
 
 def createLevel(lvl):	#Almost all refrences of this should be written createLevel(currLvl). Only use an int for bugtesting.
 	entrances = [Entrance(0, [700, 250], [1, 1], entranceImg)]
+	global DetCurrent
 	wipeFloor()
 	if (lvl == -1):
 		pass
@@ -772,14 +852,17 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		exits = [Exit(4, [int(768), int(672)], [int(16), int(16)], exitImg)]
 		entrances = [Entrance(4, [int(48), int(256)], [int(16), int(16)], entranceImg)]
 		grates.append(Grate([int(896), int(624)], [int(64), int(64)], []))
-
+		
+		DetCurrent = DetGod
 
 		
 	elif lvl == 2:
 		openReadFile("saves/LevelMotion.txt")
+		DetCurrent = DetMulti
 		
 	elif lvl == 3:
 		openReadFile("saves/LevelDestroy.txt")
+		DetCurrent = DetDest
 		
 	elif lvl == 4:
 		createFloor(0, 448, 17, 64)
@@ -795,6 +878,7 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		createMovingBlock(560, 288, 4, 4, 1)
 		exits = [Exit(4, [int(960), int(384)], [int(16), int(16)], exitImg)]
 		entrances = [Entrance(4, [int(192), int(416)], [int(16), int(16)], entranceImg)]
+		DetCurrent = DetKB
 		
 	elif lvl == 5:
 		grates.append(Grate([int(208), int(336)], [int(176), int(96)], []))
@@ -804,6 +888,7 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		createMovingBlock(int(432), int(144), int(int(80) / 16), int(int(128) / 16), int(2), 30)
 		createFloor(208, 80, int(int(240) / 16), int(int(112) / 16))
 		createMovingBlock(int(896), int(256), int(int(208) / 16), int(int(64) / 16), int(1))
+		DetCurrent = DetNorm
 
 	elif lvl == 6:
 		createFloor(0, 0, 45, 10)
@@ -831,6 +916,7 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		openReadFile("saves/LevelCutscene1.txt")
 		#switches.append(Switch("Switch",(256,)))
 		
+	print "Loaded level: ", lvl
 	DB.refresh()
 	for i in bricks:
 		DB.img.blit(i.img, i.coords)
@@ -1004,19 +1090,19 @@ while Running:
 				print "Absolute: ", x, y
 				print "16 base:", x/16, y/16, "("+str((x/16)*16), str((y/16)*16)+")"
 
-			if event.key == K_1:
+			if event.key == K_1 and debugon:
 				bombs = []
 				DetCurrent = DetGod
-			if event.key == K_2:
+			if event.key == K_2 and debugon:
 				bombs = []
 				DetCurrent = DetNorm
-			if event.key == K_3:
+			if event.key == K_3 and debugon:
 				bombs = []
 				DetCurrent = DetKB
-			if event.key == K_4:
+			if event.key == K_4 and debugon:
 				bombs = []
 				DetCurrent = DetMulti
-			if event.key == K_5:
+			if event.key == K_5 and debugon:
 				bombs = []
 				DetCurrent = DetDest
 
@@ -1166,10 +1252,10 @@ while Running:
 	for i in movingblocks: #Player hit with moving blocks
 		player.Collide(i)
 		if i.type in [0, 2]:
-			i.floor = False
-			if i.vel[1] < maxFallSpeed:  # Gravity
+			if i.vel[1] < maxFallSpeed and not i.floor:  # Gravity
 				i.vel[1] += gravity
 
+			i.floor = False
 			if i.vel[0] <= -16:
 				i.vel[0] = -16
 
