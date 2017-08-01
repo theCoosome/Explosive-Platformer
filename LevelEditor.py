@@ -38,6 +38,10 @@ def getImg(name):  # gets images and prints their retrieval
 		print "--File not found. Substituting"
 		return pygame.image.load("assets/wip.png")
 
+
+sensorMovingImg = getImg("Bricks/SensorMoving")
+sensorMultiImg = getImg("Bricks/SensorMulti")
+sensorDestImg = getImg("Bricks/SensorDest")
 brickImg = getImg("Bricks/Brick")
 grateImg = getImg("Bricks/Grate")
 personimg = getImg("Dereks/Derek")
@@ -64,7 +68,7 @@ MultiPlaceImg = getImg("Mouse/Multi")
 ExitPlaceImg = getImg("Mouse/Exit")
 EntrancePlaceImg = getImg("Mouse/Entrance")
 RemoveImg = getImg("Mouse/Remove")
-mouseImgs = [AimImg, BrickPlaceImg, GratePlaceImg, DPlaceImg, MovablePlaceImg, MultiPlaceImg, ExitPlaceImg, EntrancePlaceImg, RemoveImg, switchImg]
+mouseImgs = [AimImg, BrickPlaceImg, GratePlaceImg, DPlaceImg, MovablePlaceImg, MultiPlaceImg, ExitPlaceImg, EntrancePlaceImg, RemoveImg, switchImg, sensorMovingImg, sensorDestImg, sensorMultiImg]
 mouseImg = mouseImgs[0]
 
 
@@ -136,6 +140,9 @@ CGRATE = 3
 CENTRANCE = 4
 CEXIT = 5
 CSWITCH = 6
+CSENSORMOVING = 7
+CSENSORDEST = 8
+CSENSORMULTI = 9
 
 
 class movingBlock(object):
@@ -296,6 +303,8 @@ def drawAll():
 	drawBricks()
 	for i in switches:
 		screen.blit(i.img, i.coords)
+	for i in sensors:
+		screen.blit(i.img, i.coords)
 
 def deleteAll():
 	delList = []
@@ -343,6 +352,12 @@ def createFloor(coordx, coordy, ry, rx, type):
 		bricks.append(Exit(type, [coordx, coordy], (rx * 16, ry * 16), exitImg))
 	elif type == 6:
 		switches.append(Switch(0, [coordx, coordy], (16,16), switchImg, True))
+	elif type == 7:
+		sensors.append(Sensor(0, [coordx, coordy], (rx * 16, ry * 16)))
+	elif type == 8:
+		sensors.append(Sensor(1, [coordx, coordy], (rx * 16, ry * 16)))
+	elif type == 9:
+		sensors.append(Sensor(2, [coordx, coordy], (rx * 16, ry * 16)))
 	else:
 		bricks.append(movingBlock(type, [coordx, coordy], (rx * 16, ry * 16)))
 
@@ -350,9 +365,32 @@ def createFloor(coordx, coordy, ry, rx, type):
 placeMode = "brick"
 
 movingblocks = []
+sensors = []
+
+class Sensor(object):
+	def __init__(self, type, coords, size):
+		self.type = type
+		self.coords = coords
+		self.size = size
+		self.trigger = None
+		self.On = False
+		self.actions = []
+
+		if self.type == 0:
+			self.img = pygame.transform.scale(sensorMovingImg, size)
+		if self.type == 1:
+			self.img = pygame.transform.scale(sensorDestImg, size)
+		if self.type == 2:
+			self.img = pygame.transform.scale(sensorMultiImg, size)
+
+	def collide(self, i):
+		if i.type == self.type:
+			if hit(i.coords, i.size, self.coords, self.size):
+				self.On = True
+				self.trigger.Trigger(self.actions)
 
 class bomb(object):
-	def __init__(self, type, coords, size, img):
+	def __init__(self, coords, size, type, img):
 		self.explodeTime = 16
 		self.isExploding = False
 		self.floor = False
@@ -463,7 +501,11 @@ def saveFile():
 
 		elif i.type == 6:
 			print "Switches"
-			out = "switches = [Switch('Switch', [int("+str(x)+"), int("+str(y)+")], [int("+str(xs)+"), int("+str(ys)+")], switchImg, False)]"
+			out = "switches.append(Switch('Switch', [int("+str(x)+"), int("+str(y)+")], [int("+str(xs)+"), int("+str(ys)+")], switchImg, False))"
+
+		elif i.type == 7:
+			print "Sensors"
+			out = "createSensor("+str(x)+", "+str(y)+", "+str(int(xs / 16))+", "+str(int(ys / 16))+", "+str(i.type)+", [])"
 
 		else:
 			print "invalid type:", i.type
@@ -616,6 +658,15 @@ while Running:
 						del bricks[bricks.index(i)]
 				elif(currImgNum == 9):
 					createFloor(min(rectX, brx), min(rectY, bry), 1, 1, CSWITCH)
+				elif(currImgNum == 10):
+					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry - rectY) / 16)),
+								int(math.fabs((brx - rectX) / 16)), CSENSORMOVING)
+				elif (currImgNum == 11):
+					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry - rectY) / 16)),
+								int(math.fabs((brx - rectX) / 16)), CSENSORDEST)
+				elif (currImgNum == 12):
+					createFloor(min(rectX, brx), min(rectY, bry), int(math.fabs((bry - rectY) / 16)),
+								int(math.fabs((brx - rectX) / 16)), CSENSORMULTI)
 			if event.button == 3:
 				pressedLMB = False
 				rectX, rectY = placeRect.topleft
