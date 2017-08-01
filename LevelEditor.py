@@ -325,6 +325,14 @@ def deleteAll():
 			delList.append(switches[i])
 	for i in delList:
 		del switches[switches.index(i)]
+	for i in range(len(sensors)):
+		coords = (min(rectX, brx), min(rectY, bry))
+		pSize = (int(math.fabs(brx - rectX)), int(math.fabs(bry - rectY)))
+		if collide(coords, pSize, sensors[i].coords, sensors[i].size):
+			print "Touching"
+			delList.append(sensors[i])
+	for i in delList:
+		del sensors[sensors.index(i)]
 
 
 def createFloor(coordx, coordy, ry, rx, type):
@@ -497,12 +505,7 @@ def saveFile():
 		
 		elif i.type == 5:
 			print "Exits"
-			out = "exits = [Exit(4, [int("+str(x)+"), int("+str(y)+")], [int("+str(xs)+"), int("+str(ys)+")], exitImg)]"
-
-		elif i.type == 6:
-			print "Switches"
-			out = "switches.append(Switch('Switch', [int("+str(x)+"), int("+str(y)+")], [int("+str(xs)+"), int("+str(ys)+")], switchImg, False))"
-
+			out = "createExit(4, [int("+str(x)+"), int("+str(y)+")], [int("+str(xs)+"), int("+str(ys)+")], exitImg)"
 		else:
 			print "invalid type:", i.type
 			out = "#something odd"
@@ -517,6 +520,15 @@ def saveFile():
 		print "Sensors"
 		out = "createSensor(" + str(x) + ", " + str(y) + ", " + str(int(xs / 16)) + ", " + str(
 			int(ys / 16)) + ", " + str(i.type) + ", [])"
+		out += "\n"
+		writeList.append(out)
+	for i in switches:
+		x, y = i.coords
+		xs, ys = i.size
+		out = ""
+		print "Switches"
+		out = "switches.append(Switch('Switch', [int(" + str(x) + "), int(" + str(y) + ")], [int(" + str(
+			xs) + "), int(" + str(ys) + ")], switchImg, False))"
 		out += "\n"
 		writeList.append(out)
 			
