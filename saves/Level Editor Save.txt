@@ -1,3 +1,0 @@
-createFloor(0, 448, 17, 64)
-entrances = [Entrance(4, [int(480), int(416)], [int(16), int(16)], entranceImg)]
-createFloor(0, 0, 15, 64)
