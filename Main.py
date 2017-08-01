@@ -66,7 +66,8 @@ switchImg = switchImages[0]
 lockImg = getImg("bars")
 keyImg = getImg("key")
 crateImg = getImg("crate")
-grateImg = getImg("grate")no_thing = getImg("no_thing")
+grateImg = getImg("grate")
+no_thing = getImg("no_thing")
 
 
 #Anim
