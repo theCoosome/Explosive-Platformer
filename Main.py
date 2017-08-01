@@ -21,7 +21,7 @@ PURPLE = pygame.Color(255, 0, 255)
 
 pygame.mouse.set_visible(False)
 font = pygame.font.SysFont('couriernew', 13)
-fontComp = pygame.font.SysFont('couriernew', 16, True)
+fontComp = pygame.font.SysFont('couriernew', 26, True)
 smallfont = pygame.font.SysFont('couriernew', 12)
 massive = pygame.font.SysFont('couriernew', 200, True)
 
@@ -1516,9 +1516,12 @@ while Running:
 	#UI display
 	
 	screen.blit(personimg, player.coords)
-	screen.blit(DetCurrent.img, (4, 4))
 	if DetCurrent.type == 3:
 		pygame.draw.circle(screen, RED, mousepos, 32, 1)
+		pygame.draw.rect(screen, WHITE, (0, 0, 123, 38))
+	pygame.draw.rect(screen, WHITE, (0, 0, 100, 38))
+	screen.blit(fontComp.render(str(len(bombs))+"/"+str(DetCurrent.max), False, BLACK), (41, 3))
+	screen.blit(DetCurrent.img, (4, 4))
 
 	screen.blit(mouseImg, (mousepos[0]-3, mousepos[1]-3))
 	if debugon:
