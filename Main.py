@@ -68,6 +68,7 @@ keyImg = getImg("key")
 crateImg = getImg("crate")
 no_thing = getImg("no_thing")
 
+
 #Anim
 derek = getImg("Dereks/Derek")
 left = [getImg("Dereks/anim1l"),getImg("Dereks/anim3l")]
