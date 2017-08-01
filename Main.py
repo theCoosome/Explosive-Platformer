@@ -9,7 +9,7 @@ pygame.init()
 fps = 60
 debugon = True
 sfxkey=0
-muteon=False
+muteon=True
 
 WHITE = pygame.Color(255, 255, 255)
 BLACK = pygame.Color(0, 0, 0)
