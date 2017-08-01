@@ -32,6 +32,7 @@ bombSize = ((standardSize[0] / 2), (standardSize[1] / 2))
 
 screen = pygame.display.set_mode(size)
 
+
 clock = pygame.time.Clock()
 pygame.display.set_caption("Explosive Platformer")
 
@@ -188,6 +189,13 @@ def toggle(bool):  # is used to make bomb and players stop when in contact with 
 def center(obj):  # finds center of object sent to function
 	return (obj.coords[0] + (obj.size[0] / 2), obj.coords[1] + (obj.size[1] / 2))
 
+def collide(p1, p2, p3, p4):
+	# if right side is right of left side, and left side left of right side
+	if p1[1] + p2[1] > p3[1] and p1[1] < p3[1] + p4[1]:
+		# if bottom is below top and top is above bottom
+		if p1[0] + p2[0] > p3[0] and p1[0] < p3[0] + p4[0]:
+			return True
+
 
 # object one coord par, size, object two coord pair and size
 def hit(p1, p2, p3, p4):
@@ -299,7 +307,7 @@ class Person(object):
 					self.collided[1] = -1
 			if hit(self.coords, self.size, (i.coords[0], i.coords[1] + 3), (i.size[0], i.size[1] - 3)):  # LEFT / RIGHT
 				p1 = center(self)
-				if self.coords[0] <= i.coords[0]:
+				if self.vel[0] > 0 and self.coords[0] <= i.coords[0]:
 					self.coords[0] = i.coords[0] - self.size[0]
 					self.vel[0] = 0
 					pygame.draw.line(debugOverlay, YELLOW, p1, center(self))
@@ -308,7 +316,7 @@ class Person(object):
 						self.Kill()
 					else:
 						self.collided[0] = -1
-				if self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
+				if self.vel[0] < 0 and self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
 					self.coords[0] = i.coords[0] + i.size[0]
 					self.vel[0] = 0
 					pygame.draw.line(debugOverlay, RED, p1, center(self))
@@ -606,6 +614,8 @@ class Entrance():
 		self.size = size
 		self.img = pygame.transform.scale(img, size)
 
+exits = [Exit(0, [250, 250], [1, 1], exitImg)]
+
 
 
 		
@@ -775,12 +785,12 @@ class detonator(object):
 		self.img = img #Detonator image
 		self.bomb = img2 #Bomb image
 	def newBomb(self, coords, vel):
-		return bomb(self.type, coords, vel, (8, 8), self.kbP, self.kbB, self.dmg, self.arm, self.bomb)
+		return bomb(self.type, [coords[0]+4, coords[1]+4], vel, (8, 8), self.kbP, self.kbB, self.dmg, self.arm, self.bomb)
 
 DetGod = detonator(0, 16, 16, 5, 0, 99999, getImg("UI/DetGod"), bombImg)
 DetNorm = detonator(1, 2, 8, 3, 30, 4, getImg("UI/DetDefault"), bombImg)
 DetKB = detonator(2, 16, 30, 1, 20, 2, getImg("UI/DetJumper"), getImg("tosser"))
-DetMulti = detonator(3, 1, 10, 5, 80, 10, getImg("UI/DetMulti"), getImg("Multi"))
+DetMulti = detonator(3, 1, 10, 2, 80, 10, getImg("UI/DetMulti"), getImg("Multi"))
 DetDest = detonator(4, 1, 1, 20, 30, 4, getImg("UI/DetDestructive"), getImg("Dest"))
 DetCurrent = DetGod
 
@@ -835,6 +845,9 @@ def wipeFloor():
 	platforms = []
 
 
+def createExit(type, coords, size, img):
+	exits.append(Exit(type, coords, size, img))
+
 def createWall(coordx, coordy, rx, ry, dir):
 	if dir == "down":
 		bricks.append(Brick("type", [coordx, coordy], (ry * 16, rx * 16), brickImg))
@@ -868,8 +881,6 @@ keys = []
 gates = []
 crates = []
 platforms = []
-
-
 
 
 def openReadFile(filePath):
@@ -932,14 +943,14 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		createMovingBlock(240, 192, 3, 2, 0)
 		createFloor(160, 416, 4, 12)
 		createFloor(544, 528, 1, 16)
-		exits = [Exit(4, [int(768), int(672)], [int(16), int(16)], exitImg)]
+		createExit(4, [int(768), int(672)], [int(16), int(16)], exitImg)
 		entrances = [Entrance(4, [int(48), int(256)], [int(16), int(16)], entranceImg)]
 		grates.append(Grate([int(896), int(624)], [int(64), int(64)], []))
 		
 		DetCurrent = DetGod
 
 		
-	elif lvl == 2:
+	elif lvl == 2: #5
 		createFloor(0, 0, 45, 5)
 		createFloor(80, 608, 7, 59)
 		createFloor(80, 448, 3, 21)
@@ -950,7 +961,6 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		createFloor(480, 336, 10, 20)
 		createFloor(192, 272, 4, 34)
 		entrances = [Entrance(4, [int(128), int(576)], [int(16), int(16)], entranceImg)]
-		exits = [Exit(4, [int(944), int(576)], [int(16), int(16)], exitImg)]
 		createMovingBlock(416, 480, 4, 4, 0)
 		rand = Grate([int(736), int(496)], [int(64), int(112)], ["guy", "moving"])
 		createSensor(736, 272, 4, 4, 0, ["guy"], rand)
@@ -958,9 +968,35 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		
 		DetCurrent = DetMulti
 		
-	#elif lvl == 3:
+	elif lvl == 3:
+		createFloor(0, 0, 45, 2)
+		createFloor(992, 0, 45, 2)
+		createFloor(32, 0, 2, 60)
+		createFloor(32, 576, 1, 60)
+		createFloor(96, 512, 4, 1)
+		createFloor(144, 496, 5, 1)
+		createFloor(192, 480, 6, 1)
+		createFloor(240, 464, 7, 1)
+		createFloor(288, 448, 8, 1)
+		createFloor(336, 432, 9, 1)
+		createFloor(384, 416, 10, 1)
+		createFloor(432, 400, 11, 1)
+		createFloor(480, 384, 12, 1)
+		createFloor(528, 368, 13, 1)
+		createFloor(576, 352, 14, 1)
+		createFloor(624, 336, 15, 1)
+		createFloor(672, 320, 16, 1)
+		createFloor(720, 304, 17, 1)
+		createFloor(768, 288, 18, 1)
+		createFloor(816, 272, 19, 1)
+		createFloor(864, 256, 20, 1)
+		createFloor(912, 240, 21, 1)
+		createFloor(960, 224, 22, 1)
+		entrances = [Entrance(4, [int(40), int(560)], [int(16), int(16)], entranceImg)]
+		exits = [Exit(4, [int(944), int(576)], [int(16), int(16)], exitImg)]
+
 		
-	elif lvl == 4:
+	elif lvl == 4: #4
 		createFloor(0, 448, 17, 64)
 		createFloor(0, 0, 12, 20)
 		createFloor(0, 384, 4, 7)
@@ -972,15 +1008,35 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		createFloor(624, 0, 24, 25)
 		createMovingBlock(560, 368, 4, 5, 0)
 		createMovingBlock(560, 288, 4, 4, 1)
-		exits = [Exit(4, [int(960), int(384)], [int(16), int(16)], exitImg)]
 		entrances = [Entrance(4, [int(192), int(416)], [int(16), int(16)], entranceImg)]
 		DetCurrent = DetKB
 		
 	#elif lvl == 5:
 
-	#elif lvl == 6:
-	
-	elif lvl == 7:
+	elif lvl == 6: #3
+		createFloor(0, 0, 9, 64)
+		createFloor(960, 144, 36, 4)
+		rand1 = Grate([int(80), int(480)], [int(304), int(32)], ["guy"])
+		rand2 = Grate([int(352), int(384)], [int(32), int(96)], ["guy"])
+		createSensor(384, 304, 3, 4, 0, ["guy"], rand1)
+		createSensor(384, 304, 3, 4, 0, ["guy"], rand2)
+		grates.append(rand1)
+		grates.append(rand2)
+		
+		grates.append(Grate([int(224), int(448)], [int(32), int(32)], ["bomb"]))
+		grates.append(Grate([int(0), int(144)], [int(80), int(576)], ["guy"]))
+		
+		createFloor(288, 352, 2, 21)
+		createFloor(544, 656, 4, 26)
+		createFloor(592, 144, 13, 2)
+		createMovingBlock(288, 304, 6, 3, 0)
+		grates.append(Grate([int(256), int(144)], [int(32), int(240)], ["guy", "moving"]))
+		entrances = [Entrance(4, [int(112), int(448)], [int(16), int(16)], entranceImg)]
+		exits = [Exit(4, [int(864), int(624)], [int(16), int(16)], exitImg)]
+		
+		DetCurrent = DetKB
+
+	elif lvl == 7: #2
 		createFloor(0, 560, 10, 64)
 		createFloor(0, 0, 12, 64)
 		createFloor(624, 192, 18, 12)
@@ -995,7 +1051,6 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		createMovingBlock(560, 352, 4, 3, 0)
 		grates.append(Grate([int(592), int(400)], [int(32), int(48)], ["guy"]))
 		entrances = [Entrance(4, [int(110), int(540)], [int(16), int(16)], entranceImg)]
-		exits = [Exit(4, [int(896), int(528)], [int(16), int(16)], exitImg)]
 
 		DetCurrent = DetKB
 	
@@ -1134,6 +1189,9 @@ while Running:
 				sfxkey = 1
 				soundEffect(sfxkey)
 				player.floor = False
+			if event.key in [K_LALT, K_e]:
+				bombs = []
+				
 			if event.key == K_r:  # slow down
 				fps = 1
 			if event.key == K_f:  # speed up
@@ -1300,6 +1358,10 @@ while Running:
 		player.Collide(i)
 	for g in gates:
 		player.Collide(g)
+	for i in exits:
+		if collide([player.coords[0]-8, player.coords[1]-8], [16,16], [i.coords[0]-8, i.coords[1]-8], [16,16]):
+			currLvl += 1
+			createLevel(currLvl)
 
 	for i in movingblocks: #Moving blocks hit with each other
 		for p in movingblocks:
@@ -1386,8 +1448,9 @@ while Running:
 			screen.blit(p.img,p.coords)
 
 	for i in sensors:
-		for p in movingblocks:
-			i.collide(p)
+		if i.trigger != None:
+			for p in movingblocks:
+				i.collide(p)
 			
 	for p in platforms:
 		player.Collide(p)
@@ -1522,6 +1585,8 @@ while Running:
 	pygame.draw.rect(screen, WHITE, (0, 0, 100, 38))
 	screen.blit(fontComp.render(str(len(bombs))+"/"+str(DetCurrent.max), False, BLACK), (41, 3))
 	screen.blit(DetCurrent.img, (4, 4))
+	for i in exits:
+		screen.blit(i.img, i.coords)
 
 	screen.blit(mouseImg, (mousepos[0]-3, mousepos[1]-3))
 	if debugon:
