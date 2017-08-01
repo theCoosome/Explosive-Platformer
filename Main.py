@@ -66,7 +66,6 @@ switchImg = switchImages[0]
 lockImg = getImg("bars")
 keyImg = getImg("key")
 crateImg = getImg("crate")
-grateImg = getImg("grate")
 no_thing = getImg("no_thing")
 
 #Anim
@@ -145,6 +144,11 @@ TM2 = DispObj(wraptext("", 900, font, True), (10, 130), False, (900, 119)) #room
 
 
 DB = DispObj(no_thing, (0, 0), True, size)
+
+grateImg = getImg("Bricks/Grate")
+Gplayer = getImg("Bricks/Gplayer")
+Gbomb = getImg("Bricks/Gbomb")
+Gmoving = getImg("Bricks/Gmoving")
 
 #Bombs
 bombImg = getImg("Bomb")
@@ -258,6 +262,7 @@ class Person(object):
 		self.hasKey = hasKey
 
 		self.dualColliding = False
+		self.collided = [0, 0] #x, y pushed
 
 	def Crouch(self):
 		self.crouch = True
@@ -273,13 +278,6 @@ class Person(object):
 	def Collide(self, i):
 		if hit(i.coords, i.size, self.coords, self.size):  # UP
 
-			if self.dualColliding:
-				self.Kill()
-			if type(i) == movingBlock:
-				if i.vel[1] > 5 and center(player)[1] > center(i)[1]:
-					self.Kill()
-				self.dualColliding = True
-
 			p1 = center(self)
 			if self.vel[1] > 0 and self.coords[1] <= i.coords[1]: #FLOOR
 				self.coords[1] = i.coords[1] - self.size[1]
@@ -287,21 +285,45 @@ class Person(object):
 					self.vel[1] = 0
 				self.floor = True
 				pygame.draw.line(debugOverlay, BLUE, p1, center(self))
+				if self.dualColliding and self.collided[1] == 1:
+					print "Floor crush"
+					self.Kill()
+				else:
+					self.collided[1] = -1
 			if hit(self.coords, self.size, (i.coords[0], i.coords[1] + 3), (i.size[0], i.size[1] - 3)):  # LEFT / RIGHT
 				p1 = center(self)
 				if self.coords[0] <= i.coords[0]:
 					self.coords[0] = i.coords[0] - self.size[0]
 					self.vel[0] = 0
 					pygame.draw.line(debugOverlay, YELLOW, p1, center(self))
+					if self.dualColliding and self.collided[0] == 1:
+						print "Left shark"
+						self.Kill()
+					else:
+						self.collided[0] = -1
 				if self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
 					self.coords[0] = i.coords[0] + i.size[0]
 					self.vel[0] = 0
 					pygame.draw.line(debugOverlay, RED, p1, center(self))
+					if self.dualColliding and self.collided[0] == -1:
+						print "Right wall"
+						self.Kill()
+					else:
+						self.collided[0] = 1
 			p1 = center(self)
 			if self.vel[1] < 0 and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1]: #CEILING
 				self.coords[1] = i.coords[1] + i.size[1]
 				self.vel[1] = 0
 				pygame.draw.line(debugOverlay, GREEN, p1, center(self))
+				if self.dualColliding and self.collided[1] == -1:
+					print "Cieling crush"
+					self.Kill()
+				else:
+					self.collided[1] = 1
+			if type(i) == movingBlock:
+				if i.vel[1] > 5 and center(player)[1] > center(i)[1]:
+					self.Kill()
+				self.dualColliding = True
 		if hit(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
 			self.floor = True
 
@@ -505,11 +527,39 @@ class Gate(object):
 		self.open = actions
 		
 class Grate(object):
+	def refresh(self):
+		self.img.all = []
+		if "guy" in self.blocked:
+			self.img.all.append(self.overlays[0])
+		if "bomb" in self.blocked:
+			self.img.all.append(self.overlays[1])
+		if "moving" in self.blocked:
+			self.img.all.append(self.overlays[2])
+		if "dest" in self.blocked:
+			self.img.all.append(self.overlays[3])
+		self.img.all.append(self.base)
+		self.img.refresh()
+			
+	
 	def __init__(self,coords,size, blocked):
 		self.coords = coords
 		self.size = size
-		self.img = pygame.transform.scale(grateImg, size)
+		self.base = DispObj(pygame.transform.scale(grateImg, size), (0, 0), True, size)
 		self.blocked = blocked #blocked is list of strings: ["guy", "bomb", "moving", "dest"]
+		self.img = DispObj([self.base], self.coords, False, self.size)
+		
+		self.sixteens = (size[0]/16, size[1]/16)
+		
+		self.overlays = [DispObj(no_thing, (0, 0), True, size), DispObj(no_thing, (0, 0), True, size), DispObj(no_thing, (0, 0), True, size), DispObj(no_thing, (0, 0), True, size)]
+		
+		for x in range(self.sixteens[0]):
+			for y in range(self.sixteens[1]):
+				self.overlays[0].img.blit(Gplayer, (x*16, y*16))
+				self.overlays[1].img.blit(Gbomb, (x*16, y*16))
+				self.overlays[2].img.blit(Gmoving, (x*16, y*16))
+				self.overlays[3].img.blit(Gmoving, (x*16, y*16))
+		
+		self.refresh()
 		
 	def Trigger(self, actions):
 		for x in actions:
@@ -517,6 +567,8 @@ class Grate(object):
 				self.blocked.remove(x)
 			else:
 				self.blocked.append(x)
+		self.refresh()
+		
 				
 grates = []
 
@@ -771,6 +823,15 @@ def createMovingBlock(coordx, coordy, rx, ry, type, hp = 1):
 	rand = movingBlock(type, [coordx, coordy], [rx*16, ry*16])
 	rand.hp = hp
 	movingblocks.append(rand)
+	
+def createSensor(coordx, coordy, rx, ry, type, actions, link = None):
+	rand = Sensor(type, (coordx, coordy), (ry * 16, rx * 16))
+	rand.actions = actions
+	rand.trigger = link
+	sensors.append(rand)
+	
+def createGrate(coordx, coordy, rx, ry, blocked):
+	grates.append(Grate((coordx, coordy), (rx*16, ry*16), blocked))
 
 
 def borderedLevel():
@@ -881,7 +942,7 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		DetCurrent = DetKB
 		
 	elif lvl == 5:
-		grates.append(Grate([int(208), int(336)], [int(176), int(96)], []))
+		grates.append(Grate([int(208), int(336)], [int(176), int(96)], ["guy"]))
 		createFloor(384, 336, int(int(96) / 16), int(int(256) / 16))
 		createFloor(192, 480, int(int(128) / 16), int(int(784) / 16))
 		createMovingBlock(int(416), int(240), int(int(48) / 16), int(int(192) / 16), int(0))
@@ -891,11 +952,20 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		DetCurrent = DetNorm
 
 	elif lvl == 6:
-		createFloor(0, 0, 45, 10)
-		createFloor(864, 0, 45, 10)
-		createFloor(432, 480, 1, 8)
-		createFloor(208, 0, 45, 9)
-		createFloor(688, 0, 45, 8)
+		createFloor(0, 0, 45, 4)
+		createFloor(944, 0, 45, 5)
+		createFloor(64, 656, 4, 55)
+		grates.append(Grate([int(192), int(592)], [int(64), int(64)], ["guy"]))
+		grates.append(Grate([int(256), int(592)], [int(64), int(64)], ["bomb"]))
+		grates.append(Grate([int(320), int(592)], [int(64), int(64)], ["moving"]))
+		grates.append(Grate([int(496), int(464)], [int(48), int(192)], ["bomb", "moving"]))
+		grates.append(Grate([int(576), int(464)], [int(48), int(208)], ["guy", "moving"]))
+		grates.append(Grate([int(208), int(80)], [int(160), int(144)], ["guy", "bomb"]))
+		grates.append(Grate([int(416), int(80)], [int(160), int(160)], ["bomb", "moving"]))
+		grates.append(Grate([int(656), int(80)], [int(144), int(176)], ["guy", "moving"]))
+		grates.append(Grate([int(272), int(288)], [int(144), int(160)], ["moving", "dest"]))
+		grates.append(Grate([int(496), int(272)], [int(208), int(160)], ["guy", "bomb", "moving"]))
+
 		entrances = [Entrance(4, [int(480), int(448)], [int(16), int(16)], entranceImg)]
 
 	elif lvl == 7:
@@ -995,6 +1065,7 @@ while Running:
 		bombWaitTime -= 1
 	bombsExplode = False
 	player.dualColliding = False
+	player.collided = [0, 0]
 	bombType = 1
 	screen.fill(WHITE)
 	startTimer = False
@@ -1409,7 +1480,7 @@ while Running:
 	for g in gates:
 		screen.blit(g.img, g.coords)
 	for i in grates:
-		screen.blit(i.img, i.coords)
+		screen.blit(i.img.img, i.coords)
 	for c in crates:
 		screen.blit(c.img, c.coords)
 	#UI display
