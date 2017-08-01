@@ -511,6 +511,9 @@ def saveFile():
 		out += "\n"
 		writeList.append(out)
 	for i in sensors:
+		x, y = i.coords
+		xs, ys = i.size
+		out = ""
 		print "Sensors"
 		out = "createSensor(" + str(x) + ", " + str(y) + ", " + str(int(xs / 16)) + ", " + str(
 			int(ys / 16)) + ", " + str(i.type) + ", [])"
