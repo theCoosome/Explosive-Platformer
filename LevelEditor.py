@@ -503,16 +503,19 @@ def saveFile():
 			print "Switches"
 			out = "switches.append(Switch('Switch', [int("+str(x)+"), int("+str(y)+")], [int("+str(xs)+"), int("+str(ys)+")], switchImg, False))"
 
-		elif i.type == 7:
-			print "Sensors"
-			out = "createSensor("+str(x)+", "+str(y)+", "+str(int(xs / 16))+", "+str(int(ys / 16))+", "+str(i.type)+", [])"
-
 		else:
 			print "invalid type:", i.type
 			out = "#something odd"
+
+
 		out += "\n"
 		writeList.append(out)
-			
+	for i in sensors:
+		print "Sensors"
+		out = "createSensor(" + str(x) + ", " + str(y) + ", " + str(int(xs / 16)) + ", " + str(
+			int(ys / 16)) + ", " + str(i.type) + ", [])"
+		out += "\n"
+		writeList.append(out)
 			
 	print writeList
 	file.writelines(writeList)

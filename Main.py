@@ -154,6 +154,11 @@ platformImg = getImg("platform")
 
 
 normalBombImgs = []
+squareExplodeImgs = []
+i = 0
+while i < 6:
+	squareExplodeImgs.append(getImg("Square Explosion/square_explosion_" + str(i)))
+	i += 1
 i = 0
 while i < 10:
 	normalBombImgs.append(getImg("Explosion_Normal/sprite_0" + str(i)))
@@ -162,6 +167,7 @@ while i < 17:
 	normalBombImgs.append(getImg("Explosion_Normal/sprite_" + str(i)))
 	i+=1
 normalExplode = [getImg("")]
+
 
 #Mice
 AimImg = getImg("Mouse/Aim")
@@ -320,6 +326,8 @@ class movingBlock(object):
 		self.size = size
 		self.floor = True
 		self.vel = [0, 0]
+		self.isExploding = False
+		self.imgNum = 0
 		
 		self.mass = (size[0]*size[1])/256
 		self.sixteens = (size[0]/16, size[1]/16)
@@ -337,6 +345,17 @@ class movingBlock(object):
 
 		if type == 2: #Movable and Destructable
 			self.img = pygame.transform.scale(multiImg, size)
+
+	def incrementSprite(self, amount):
+		newNum = self.imgNum+amount
+		if newNum < 5:
+			newImg = squareExplodeImgs[newNum]
+			self.imgNum = newNum
+			self.img = pygame.transform.scale(newImg, self.size)
+		else:
+			self.isExploding = False
+			movingblocks.remove(self)
+
 
 			
 	def Collide(self, i):
@@ -685,7 +704,8 @@ class bomb(object):
 						print "Damage: ", dmg
 						mob.hp -= dmg
 						if mob.hp <= 0:
-							movingblocks.remove(mob)
+							mob.img = squareExplodeImgs[0]
+							mob.isExploding = True
 				
 		else:
 			print "Bomb pushing something unusual!"
@@ -761,6 +781,7 @@ def wipeFloor():
 	switches = []
 	gates = []
 	platforms = []
+
 
 def createWall(coordx, coordy, rx, ry, dir):
 	if dir == "down":
@@ -1251,6 +1272,8 @@ while Running:
 
 	# Moving Blocks
 	for i in movingblocks: #Player hit with moving blocks
+		if i.isExploding:
+			i.incrementSprite(1)
 		player.Collide(i)
 		if i.type in [0, 2]:
 			if i.vel[1] < maxFallSpeed and not i.floor:  # Gravity
