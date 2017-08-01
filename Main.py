@@ -509,7 +509,7 @@ class Sensor(object):
 			self.img = pygame.transform.scale(sens3Img, size)
 	
 	def collide(self, i):
-		if i.type == self.type:
+		if i.type == self.type and not self.On:
 			if hit(i.coords, i.size, self.coords, self.size):
 				self.On = True
 				self.trigger.Trigger(self.actions)
@@ -940,12 +940,25 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 
 		
 	elif lvl == 2:
-		openReadFile("saves/LevelMotion.txt")
+		createFloor(0, 0, 45, 5)
+		createFloor(80, 608, 7, 59)
+		createFloor(80, 448, 3, 21)
+		createFloor(416, 544, 1, 1)
+		createFloor(464, 544, 1, 1)
+		createFloor(80, 0, 8, 45)
+		createFloor(800, 0, 31, 14)
+		createFloor(480, 336, 10, 20)
+		createFloor(192, 272, 4, 34)
+		entrances = [Entrance(4, [int(128), int(576)], [int(16), int(16)], entranceImg)]
+		exits = [Exit(4, [int(944), int(576)], [int(16), int(16)], exitImg)]
+		createMovingBlock(416, 480, 4, 4, 0)
+		rand = Grate([int(736), int(496)], [int(64), int(112)], ["guy", "moving"])
+		createSensor(736, 272, 4, 4, 0, ["guy"], rand)
+		grates.append(rand)
+		
 		DetCurrent = DetMulti
 		
-	elif lvl == 3:
-		openReadFile("saves/LevelDestroy.txt")
-		DetCurrent = DetDest
+	#elif lvl == 3:
 		
 	elif lvl == 4:
 		createFloor(0, 448, 17, 64)
@@ -963,56 +976,34 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		entrances = [Entrance(4, [int(192), int(416)], [int(16), int(16)], entranceImg)]
 		DetCurrent = DetKB
 		
-	elif lvl == 5:
-		grates.append(Grate([int(208), int(336)], [int(176), int(96)], ["guy"]))
-		createFloor(384, 336, int(int(96) / 16), int(int(256) / 16))
-		createFloor(192, 480, int(int(128) / 16), int(int(784) / 16))
-		createMovingBlock(int(416), int(240), int(int(48) / 16), int(int(192) / 16), int(0))
-		createMovingBlock(int(432), int(144), int(int(80) / 16), int(int(128) / 16), int(2), 30)
-		createFloor(208, 80, int(int(240) / 16), int(int(112) / 16))
-		createMovingBlock(int(896), int(256), int(int(208) / 16), int(int(64) / 16), int(1))
-		DetCurrent = DetNorm
+	#elif lvl == 5:
 
-	elif lvl == 6:
-		createFloor(0, 0, 45, 4)
-		createFloor(944, 0, 45, 5)
-		createFloor(64, 656, 4, 55)
-		grates.append(Grate([int(192), int(592)], [int(64), int(64)], ["guy"]))
-		grates.append(Grate([int(256), int(592)], [int(64), int(64)], ["bomb"]))
-		grates.append(Grate([int(320), int(592)], [int(64), int(64)], ["moving"]))
-		grates.append(Grate([int(496), int(464)], [int(48), int(192)], ["bomb", "moving"]))
-		grates.append(Grate([int(576), int(464)], [int(48), int(208)], ["guy", "moving"]))
-		grates.append(Grate([int(208), int(80)], [int(160), int(144)], ["guy", "bomb"]))
-		grates.append(Grate([int(416), int(80)], [int(160), int(160)], ["bomb", "moving"]))
-		grates.append(Grate([int(656), int(80)], [int(144), int(176)], ["guy", "moving"]))
-		grates.append(Grate([int(272), int(288)], [int(144), int(160)], ["moving", "dest"]))
-		grates.append(Grate([int(496), int(272)], [int(208), int(160)], ["guy", "bomb", "moving"]))
-
-		entrances = [Entrance(4, [int(480), int(448)], [int(16), int(16)], entranceImg)]
-
+	#elif lvl == 6:
+	
 	elif lvl == 7:
 		createFloor(0, 560, 10, 64)
 		createFloor(0, 0, 12, 64)
 		createFloor(624, 192, 18, 12)
-		grates.append(Grate([int(640), int(480)], [int(160), int(80)], ["guy"]))
+		rand = Grate([int(640), int(480)], [int(160), int(80)], ["guy"])
+		createSensor(160, 512, 3, 4, 0, ["guy"], rand)
+		grates.append(rand)
 		createFloor(0, 192, 23, 4)
 		createFloor(960, 192, 23, 4)
-		exits = [Exit(4, [int(896), int(528)], [int(16), int(16)], exitImg)]
 		createFloor(480, 400, 3, 7)
 		createFloor(480, 384, 1, 2)
 		grates.append(Grate([int(432), int(192)], [int(48), int(256)], ["guy", "bomb"]))
 		createMovingBlock(560, 352, 4, 3, 0)
 		grates.append(Grate([int(592), int(400)], [int(32), int(48)], ["guy"]))
+		entrances = [Entrance(4, [int(110), int(540)], [int(16), int(16)], entranceImg)]
+		exits = [Exit(4, [int(896), int(528)], [int(16), int(16)], exitImg)]
 
 		DetCurrent = DetKB
 	
-	elif lvl == 8:
-		createFloor(0, 448, 17, 64)
-		entrances = [Entrance(4, [int(480), int(416)], [int(16), int(16)], entranceImg)]
-		createFloor(0, 0, 15, 64)
+	#elif lvl == 8:
 
 	else:
 		createFloor(0, 688, 2, 64)
+		
 	if lvl == 100:
 		openReadFile("saves/LevelCutscene1.txt")
 		#switches.append(Switch("Switch",(256,)))
@@ -1394,6 +1385,10 @@ while Running:
 				mb.Collide(p)
 			screen.blit(p.img,p.coords)
 
+	for i in sensors:
+		for p in movingblocks:
+			i.collide(p)
+			
 	for p in platforms:
 		player.Collide(p)
 	'''for mb in movingblocks:
@@ -1495,6 +1490,8 @@ while Running:
 
 	screen.blit(DB.img, (0, 0))
 	
+	for i in sensors:
+		screen.blit(i.img, i.coords)
 	for i in bombs:
 		screen.blit(i.img, i.coords)
 	for s in switches:
