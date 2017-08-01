@@ -21,7 +21,7 @@ LGRAY = pygame.Color(214, 214, 194)
 
 clock = pygame.time.Clock()
 
-drawOverlay = pygame.display.set_mode(size)
+
 
 pygame.mouse.set_visible(False)
 font = pygame.font.SysFont('couriernew', 13)
@@ -47,8 +47,12 @@ exitImg = getImg("Bricks/Exit")
 entranceImg = getImg("Bricks/Exit2")
 multiImg = getImg("Bricks/BrickMulti")
 bombImg = getImg("Bomb")
+no_thing = getImg("no_thing")
+switchImages= [getImg("Switch"),getImg("Switch2")]
+switchImg = switchImages[0]
 
 bricks = []
+switches = []
 
 #Mouse Images
 AimImg = getImg("Mouse/Aim")
@@ -60,7 +64,7 @@ MultiPlaceImg = getImg("Mouse/Multi")
 ExitPlaceImg = getImg("Mouse/Exit")
 EntrancePlaceImg = getImg("Mouse/Entrance")
 RemoveImg = getImg("Mouse/Remove")
-mouseImgs = [AimImg, BrickPlaceImg, GratePlaceImg, DPlaceImg, MovablePlaceImg, MultiPlaceImg, ExitPlaceImg, EntrancePlaceImg, RemoveImg]
+mouseImgs = [AimImg, BrickPlaceImg, GratePlaceImg, DPlaceImg, MovablePlaceImg, MultiPlaceImg, ExitPlaceImg, EntrancePlaceImg, RemoveImg, switchImg]
 mouseImg = mouseImgs[0]
 
 
@@ -131,6 +135,7 @@ CMULTI = 2
 CGRATE = 3
 CENTRANCE = 4
 CEXIT = 5
+CSWITCH = 6
 
 
 class movingBlock(object):
@@ -171,6 +176,26 @@ class movingBlock(object):
 		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
 			self.floor = True
 
+class DispObj(object):
+	def refresh(self):
+		if not self.simple:
+			final = pygame.Surface(self.size, pygame.SRCALPHA, 32).convert_alpha()
+			for i in self.all:
+				final.blit(i.img, i.coords)
+			self.img = final
+		else:
+			self.img = pygame.Surface(self.size, pygame.SRCALPHA, 32).convert_alpha()
+			self.img.blit(self.all, (0, 0))
+	#coords, img is blitable object or list of DispObj. simple is wether or not is list. size is needed if not simple.
+	def __init__(self, img, coords = (0, 0), simple = True, size = (0, 0)):
+		self.coords = coords
+		self.img = img #Final image, use this to blit to screen
+		self.all = img #List of display objects, used if not simple
+		self.simple = simple
+		self.size = size
+		self.refresh()
+
+drawOverlay = pygame.Surface(size, pygame.SRCALPHA, 32).convert_alpha()
 
 class Brick(object):
 	def __init__(self, type, coords, size, img):
@@ -178,6 +203,17 @@ class Brick(object):
 		self.coords = coords
 		self.size = size
 		self.img = pygame.transform.scale(img, size)
+
+class Switch(object):
+	def __init__(self,type,coords,size,img,on):
+		self.type = type
+		self.coords = coords
+		self.size = size
+		self.img = img
+		self.on = on
+		self.trigger = None
+		self.time = 500
+		self.blockamount = 10
 
 class Exit():
 	def __init__(self, type, coords, size, img):
@@ -219,11 +255,12 @@ def drawMeasurement(rect, axis):
 			endy += 8
 		start = startx, starty
 		end = endx, endy
+
 		pygame.draw.line(drawOverlay, RED, start, ((startx + (endx - startx) / 2) - 8, starty))
 		pygame.draw.line(drawOverlay, RED, ((startx + (endx - startx) / 2) + 8, starty), end)
 
-		hText = smallfont.render(str(int(math.fabs(rect.width/16))), False, (0, 0, 0))
-		screen.blit(hText, (startx + ((endx - startx) / 2) - 8, starty - 8))
+		hText = smallfont.render(str(int(math.fabs(rect.width/16))), False, BLACK)
+		drawOverlay.blit(hText, (startx + ((endx - startx) / 2) - 8, starty - 8))
 
 		pygame.draw.line(drawOverlay, RED, (startx, starty - 4), (startx, starty + 4))
 		pygame.draw.line(drawOverlay, RED, (endx, endy - 4), (endx, endy + 4))
@@ -244,7 +281,8 @@ def drawMeasurement(rect, axis):
 		pygame.draw.line(drawOverlay, RED, start, (startx,  (starty + (endy - starty) / 2) - 8))
 		pygame.draw.line(drawOverlay, RED, (startx, (starty + (endy - starty) / 2) + 8), end)
 
-		wText = smallfont.render(str(int(math.fabs(rect.height/16))), False, (0, 0, 0))
+		wText = smallfont.render(str(int(math.fabs(rect.height/16))), False, BLACK)
+
 		drawOverlay.blit(wText, (startx - 8, starty + ((endy-starty)/2) - 8))
 
 		pygame.draw.line(drawOverlay, RED, (startx - 4, starty), (startx + 4, starty))
@@ -253,6 +291,32 @@ def drawMeasurement(rect, axis):
 def drawBricks():
 	for i in bricks:
 		screen.blit(i.img, i.coords)
+
+def drawAll():
+	drawBricks()
+	for i in switches:
+		screen.blit(i.img, i.coords)
+
+def deleteAll():
+	delList = []
+	for i in range(len(bricks)):
+		coords = (min(rectX, brx), min(rectY, bry))
+		pSize = (int(math.fabs(brx - rectX)), int(math.fabs(bry - rectY)))
+		if collide(coords, pSize, bricks[i].coords, bricks[i].size):
+			print "Touching"
+			delList.append(bricks[i])
+	for i in delList:
+		del bricks[bricks.index(i)]
+	delList = []
+	for i in range(len(switches)):
+		coords = (min(rectX, brx), min(rectY, bry))
+		pSize = (int(math.fabs(brx - rectX)), int(math.fabs(bry - rectY)))
+		if collide(coords, pSize, switches[i].coords, switches[i].size):
+			print "Touching"
+			delList.append(switches[i])
+	for i in delList:
+		del switches[switches.index(i)]
+
 
 def createFloor(coordx, coordy, ry, rx, type):
 	if type == -1:
@@ -277,6 +341,8 @@ def createFloor(coordx, coordy, ry, rx, type):
 			del bricks[bricks.index(i)]
 
 		bricks.append(Exit(type, [coordx, coordy], (rx * 16, ry * 16), exitImg))
+	elif type == 6:
+		switches.append(Switch(0, [coordx, coordy], (16,16), switchImg, True))
 	else:
 		bricks.append(movingBlock(type, [coordx, coordy], (rx * 16, ry * 16)))
 
@@ -370,6 +436,7 @@ pressedLMB = False
 all = []
 
 def saveFile():
+
 	file = open("saves/Level Editor Save.txt", "w")
 	file.truncate
 	writeList = []
@@ -393,7 +460,11 @@ def saveFile():
 		elif i.type == 5:
 			print "Exits"
 			out = "exits = [Exit(4, [int("+str(x)+"), int("+str(y)+")], [int("+str(xs)+"), int("+str(ys)+")], exitImg)]"
-		
+
+		elif i.type == 6:
+			print "Switches"
+			out = "switches = [Switch('Switch', [int("+str(x)+"), int("+str(y)+")], [int("+str(xs)+"), int("+str(ys)+")], switchImg, False)]"
+
 		else:
 			print "invalid type:", i.type
 			out = "#something odd"
@@ -408,6 +479,7 @@ def saveFile():
 oldImg = mouseImgs[0]
 
 while Running:
+	drawOverlay = pygame.Surface(size, pygame.SRCALPHA, 32).convert_alpha()
 	delList = []
 	for i in bricks:
 		if i.size[0] == 0 or i.size[1] == 0:
@@ -449,7 +521,7 @@ while Running:
 		startX = round_int_down(startX)
 		startY = round_int_down(startY)
 		placeRect = Rect(startX, startY, mouseX - startX, mouseY - startY)
-		pygame.draw.rect(screen, BLUE, placeRect, 2)
+		pygame.draw.rect(drawOverlay, BLUE, placeRect, 2)
 		drawMeasurement(placeRect, 0)
 		drawMeasurement(placeRect, 1)
 
@@ -485,6 +557,8 @@ while Running:
 				mouseImg = mouseImgs[7]
 			if event.key == pygame.K_9:
 				mouseImg = mouseImgs[8]
+			if event.key == pygame.K_0:
+				mouseImg = mouseImgs[9]
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			print event.button
@@ -540,21 +614,17 @@ while Running:
 							delList.append(bricks[i])
 					for i in delList:
 						del bricks[bricks.index(i)]
+				elif(currImgNum == 9):
+					createFloor(min(rectX, brx), min(rectY, bry), 1, 1, CSWITCH)
 			if event.button == 3:
 				pressedLMB = False
 				rectX, rectY = placeRect.topleft
 				brx, bry = placeRect.bottomright
 				delList = []
-				for i in range(len(bricks)):
-					coords = (min(rectX, brx), min(rectY, bry))
-					pSize = (int(math.fabs(brx - rectX)), int(math.fabs(bry - rectY)))
-					if collide(coords, pSize, bricks[i].coords, bricks[i].size):
-						print "Touching"
-						delList.append(bricks[i])
-				for i in delList:
-					del bricks[bricks.index(i)]
+				deleteAll()
 
-	drawBricks()
+
+	drawAll()
 	screen.blit(drawOverlay, (0,0))
 	screen.blit(mouseImg, (mousepos[0] - 3, mousepos[1] - 3))
 	pygame.display.update()
