@@ -1086,6 +1086,8 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		createMovingBlock(480, 240, 4, 13, 1)
 		switches.append(Switch('Switch', [int(992), int(352)], [int(16), int(16)], switchImg, False))
 
+		DetCurrent = DetMulti
+
 	else:
 		createFloor(0, 688, 2, 64)
 		
