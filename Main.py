@@ -153,7 +153,7 @@ Gbomb = getImg("Bricks/Gbomb")
 Gmoving = getImg("Bricks/Gmoving")
 
 #Bombs
-bombImg = getImg("Bomb")
+bombImg = getImg("Bombs/Bomb")
 platformImg = getImg("platform")
 
 
@@ -789,15 +789,9 @@ class detonator(object):
 
 DetGod = detonator(0, 16, 16, 5, 0, 99999, getImg("UI/DetGod"), bombImg)
 DetNorm = detonator(1, 2, 8, 3, 30, 4, getImg("UI/DetDefault"), bombImg)
-<<<<<<< HEAD
 DetKB = detonator(2, 16, 30, 1, 20, 2, getImg("UI/DetJumper"), getImg("Bombs/tosser"))
-DetMulti = detonator(3, 1, 10, 5, 80, 10, getImg("UI/DetMulti"), getImg("Bombs/Multi"))
+DetMulti = detonator(3, 1, 10, 2, 80, 10, getImg("UI/DetMulti"), getImg("Bombs/Multi"))
 DetDest = detonator(4, 1, 1, 20, 30, 4, getImg("UI/DetDestructive"), getImg("Bombs/Dest"))
-=======
-DetKB = detonator(2, 16, 30, 1, 20, 2, getImg("UI/DetJumper"), getImg("tosser"))
-DetMulti = detonator(3, 1, 10, 2, 80, 10, getImg("UI/DetMulti"), getImg("Multi"))
-DetDest = detonator(4, 1, 1, 20, 30, 4, getImg("UI/DetDestructive"), getImg("Dest"))
->>>>>>> b847db5d5493edb161221e135923696e1c1ea88f
 DetCurrent = DetGod
 
 bombs = []
@@ -915,7 +909,7 @@ def openReadFile(filePath):
 	spawnChar(entrances[0])
 
 currLvl = 0
-totalLvls = 10	#CHANGE THIS WHEN ADDING LVLS
+totalLvls = 101	#CHANGE THIS WHEN ADDING LVLS
 
 def createLevel(lvl):	#Almost all refrences of this should be written createLevel(currLvl). Only use an int for bugtesting.
 	entrances = [Entrance(0, [700, 250], [1, 1], entranceImg)]
@@ -1057,11 +1051,16 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		createMovingBlock(560, 352, 4, 3, 0)
 		grates.append(Grate([int(592), int(400)], [int(32), int(48)], ["guy"]))
 		entrances = [Entrance(4, [int(110), int(540)], [int(16), int(16)], entranceImg)]
-
+		createExit(4, [int(864), int(544)], [int(16), int(16)], exitImg)
 		DetCurrent = DetKB
 	
 	#elif lvl == 8:
 
+	
+	#SEPERATION
+	
+	
+	
 	else:
 		createFloor(0, 688, 2, 64)
 		
