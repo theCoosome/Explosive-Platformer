@@ -860,7 +860,7 @@ def createMovingBlock(coordx, coordy, rx, ry, type, hp = 1):
 	movingblocks.append(rand)
 	
 def createSensor(coordx, coordy, rx, ry, type, actions, link = None):
-	rand = Sensor(type, (coordx, coordy), (ry * 16, rx * 16))
+	rand = Sensor(type, (coordx, coordy), (rx * 16, ry * 16))
 	rand.actions = actions
 	rand.trigger = link
 	sensors.append(rand)
@@ -968,31 +968,18 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		DetCurrent = DetMulti
 		
 	elif lvl == 3:
-		createFloor(0, 0, 45, 2)
-		createFloor(992, 0, 45, 2)
-		createFloor(32, 0, 2, 60)
-		createFloor(32, 576, 1, 60)
-		createFloor(96, 512, 4, 1)
-		createFloor(144, 496, 5, 1)
-		createFloor(192, 480, 6, 1)
-		createFloor(240, 464, 7, 1)
-		createFloor(288, 448, 8, 1)
-		createFloor(336, 432, 9, 1)
-		createFloor(384, 416, 10, 1)
-		createFloor(432, 400, 11, 1)
-		createFloor(480, 384, 12, 1)
-		createFloor(528, 368, 13, 1)
-		createFloor(576, 352, 14, 1)
-		createFloor(624, 336, 15, 1)
-		createFloor(672, 320, 16, 1)
-		createFloor(720, 304, 17, 1)
-		createFloor(768, 288, 18, 1)
-		createFloor(816, 272, 19, 1)
-		createFloor(864, 256, 20, 1)
-		createFloor(912, 240, 21, 1)
-		createFloor(960, 224, 22, 1)
-		entrances = [Entrance(4, [int(40), int(560)], [int(16), int(16)], entranceImg)]
-		exits = [Exit(4, [int(944), int(576)], [int(16), int(16)], exitImg)]
+		createFloor(0, 560, 10, 46)
+		createMovingBlock(224, 512, 6, 3, 2, 800)
+		createFloor(736, 592, 8, 7)
+		createFloor(848, 496, 14, 11)
+		rand = Grate([int(848), int(432)], [int(128), int(64)], ["guy"])
+		createSensor(736, 560, 7, 2, 2, ["guy"], rand)
+		createExit(4, [int(912), int(480)], [int(16), int(16)], exitImg)
+		entrances = [Entrance(4, [int(96), int(544)], [int(16), int(16)], entranceImg)]
+		createFloor(0, 0, 3, 64)
+		createFloor(0, 48, 32, 3)
+		createFloor(976, 48, 28, 3)
+		DetCurrent = DetNorm
 
 		
 	elif lvl == 4: #4
@@ -1010,15 +997,39 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		entrances = [Entrance(4, [int(192), int(416)], [int(16), int(16)], entranceImg)]
 		DetCurrent = DetKB
 		
-	#elif lvl == 5:
+	elif lvl == 5:
+		createFloor(0, 624, 6, 64)
+		createFloor(0, 0, 6, 64)
+		createFloor(0, 96, 33, 3)
+		createFloor(976, 560, 4, 3)
+		createFloor(48, 560, 4, 2)
+		createFloor(112, 512, 3, 4)
+		createFloor(144, 448, 4, 2)
+		createMovingBlock(144, 192, 2, 2, 0)
+		createMovingBlock(624, 464, 2, 10, 2, 1000)
+		createMovingBlock(176, 384, 45, 5, 0)
+		grates.append(Grate([int(176), int(384)], [int(720), int(176)], ["guy", "bomb"]))
+		createFloor(896, 320, 15, 8)
+		createFloor(928, 256, 4, 2)
+		createFloor(960, 96, 14, 4)
+		createFloor(48, 224, 2, 52)
+		rand = Grate([int(880), int(224)], [int(80), int(32)], ["guy"])
+		createSensor(864, 560, 2, 4, 2, ["guy"], rand)
+		grates.append(rand)
+		
+		entrances = [Entrance(4, [int(384), int(368)], [int(16), int(16)], entranceImg)]
+		createExit(4, [int(928), int(608)], [int(16), int(16)], exitImg)
+
+		DetCurrent = DetNorm
+
 
 	elif lvl == 6: #3
 		createFloor(0, 0, 9, 64)
 		createFloor(960, 144, 36, 4)
 		rand1 = Grate([int(80), int(480)], [int(304), int(32)], ["guy"])
 		rand2 = Grate([int(352), int(384)], [int(32), int(96)], ["guy"])
-		createSensor(384, 304, 3, 4, 0, ["guy"], rand1)
-		createSensor(384, 304, 3, 4, 0, ["guy"], rand2)
+		createSensor(384, 304, 4, 3, 0, ["guy"], rand1)
+		createSensor(384, 304, 4, 3, 0, ["guy"], rand2)
 		grates.append(rand1)
 		grates.append(rand2)
 		
@@ -1040,7 +1051,7 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		createFloor(0, 0, 12, 64)
 		createFloor(624, 192, 18, 12)
 		rand = Grate([int(640), int(480)], [int(160), int(80)], ["guy"])
-		createSensor(160, 512, 3, 4, 0, ["guy"], rand)
+		createSensor(160, 512, 4, 3, 0, ["guy"], rand)
 		grates.append(rand)
 		createFloor(0, 192, 23, 4)
 		createFloor(960, 192, 23, 4)
@@ -1064,19 +1075,9 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		createFloor(0, 64, 30, 4)
 		createFloor(960, 64, 30, 4)
 		
-	elif lvl == 9:
-		createFloor(0, 560, 10, 46)
-		createMovingBlock(224, 512, 6, 3, 2)
-		createFloor(736, 592, 8, 7)
-		createFloor(848, 496, 14, 11)
-		rand = Grate([int(848), int(432)], [int(128), int(64)], ["guy"])
-		createSensor(736, 560, 7, 2, 2, ["guy"], rand)
-		createExit(4, [int(912), int(480)], [int(16), int(16)], exitImg)
-		entrances = [Entrance(4, [int(96), int(544)], [int(16), int(16)], entranceImg)]
-		createFloor(0, 0, 3, 64)
-		createFloor(0, 48, 32, 3)
-		createFloor(976, 48, 28, 3)
+	#elif lvl == 9:
 
+	#elif lvl == 10:
 
 	
 	#SEPERATION
