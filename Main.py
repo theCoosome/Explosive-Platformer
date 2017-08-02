@@ -7,7 +7,7 @@ import time
 pygame.mixer.pre_init(44100, -16, 2, 2048)
 pygame.init()
 fps = 60
-debugon = True
+debugon = False
 sfxkey=0
 muteon=True
 
@@ -359,6 +359,9 @@ class movingBlock(object):
 		self.vel = [0, 0]
 		self.isExploding = False
 		self.imgNum = 0
+		self.explodeImg = squareExplodeImgs
+		for i in range(len(self.explodeImg)):
+			self.explodeImg[i] = pygame.transform.scale(self.explodeImg[i], self.size)
 		
 		self.mass = (size[0]*size[1])/256
 		self.sixteens = (size[0]/16, size[1]/16)
@@ -380,9 +383,8 @@ class movingBlock(object):
 	def incrementSprite(self, amount):
 		newNum = self.imgNum+amount
 		if newNum < 5:
-			newImg = squareExplodeImgs[newNum]
 			self.imgNum = newNum
-			self.img = pygame.transform.scale(newImg, self.size)
+			self.img = self.explodeImg[newNum]
 		else:
 			self.isExploding = False
 			movingblocks.remove(self)
@@ -761,7 +763,7 @@ class bomb(object):
 						print "Damage: ", dmg
 						mob.hp -= dmg
 						if mob.hp <= 0:
-							mob.img = squareExplodeImgs[0]
+							mob.img = mob.explodeImg[0]
 							mob.isExploding = True
 				
 		else:
