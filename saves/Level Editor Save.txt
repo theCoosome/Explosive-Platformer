@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 createFloor(0, 688, 2, 64)
 createFloor(960, 368, 20, 4)
 createMovingBlock(240, 0, 2, 15, 0)
@@ -19,3 +20,13 @@ createFloor(448, 0, 15, 2)
 createMovingBlock(480, 0, 2, 15, 0)
 createMovingBlock(480, 240, 4, 13, 1)
 switches.append(Switch('Switch', [int(992), int(352)], [int(16), int(16)], switchImg, False))
+=======
+createFloor(0, 544, 11, 64)
+createFloor(64, 256, 18, 5)
+createFloor(720, 352, 12, 15)
+entrances = [Entrance(4, [int(320), int(528)], [int(16), int(16)], entranceImg)]
+createExit(4, [int(912), int(336)], [int(16), int(16)], exitImg)
+createFloor(0, 0, 4, 64)
+createFloor(0, 64, 30, 4)
+createFloor(960, 64, 30, 4)
+>>>>>>> b179f6182976666e94f5ac33cf028e31e6a84749
