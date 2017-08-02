@@ -1054,7 +1054,16 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		createExit(4, [int(864), int(544)], [int(16), int(16)], exitImg)
 		DetCurrent = DetKB
 	
-	#elif lvl == 8:
+	elif lvl == 8:
+		createFloor(0, 544, 11, 64)
+		createFloor(64, 256, 18, 5)
+		createFloor(720, 352, 12, 15)
+		entrances = [Entrance(4, [int(320), int(528)], [int(16), int(16)], entranceImg)]
+		createExit(4, [int(912), int(336)], [int(16), int(16)], exitImg)
+		createExit(4, [int(96), int(240)], [int(16), int(16)], exitImg)
+		createFloor(0, 0, 4, 64)
+		createFloor(0, 64, 30, 4)
+		createFloor(960, 64, 30, 4)
 
 	
 	#SEPERATION
@@ -1368,11 +1377,6 @@ while Running:
 			currLvl += 1
 			createLevel(currLvl)
 
-	for i in movingblocks: #Moving blocks hit with each other
-		for p in movingblocks:
-			if not (p == i) and p.type != 1:
-				p.Collide(i)
-
 
 
 
@@ -1437,12 +1441,13 @@ while Running:
 				pygame.draw.line(debugOverlay, PURPLE, p1, center(i))
 				pygame.draw.rect(debugOverlay, PURPLE, (i.coords[0], i.coords[1], i.size[0], i.size[1]), 1)
 
-			for p in bricks:
-				i.Collide(p)
 			if i.floor:
 				i.vel[0] = Zero(i.vel[0], friction)
-		screen.blit(i.img,i.coords)
-
+		for p in movingblocks:
+			if not (p == i) and p.type != 1:
+				p.Collide(i)
+		for p in bricks:
+			i.Collide(p)
 
 		for p in platforms:
 			player.Collide(p)
@@ -1451,6 +1456,9 @@ while Running:
 					print "you won!"
 				mb.Collide(p)
 			screen.blit(p.img,p.coords)
+
+			
+		screen.blit(i.img,i.coords)
 
 	for i in sensors:
 		if i.trigger != None:
