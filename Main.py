@@ -614,7 +614,7 @@ class Entrance():
 		self.size = size
 		self.img = pygame.transform.scale(img, size)
 
-exits = [Exit(0, [250, 250], [1, 1], exitImg)]
+exits = []
 
 
 
@@ -841,6 +841,11 @@ def wipeFloor():
 def createExit(type, coords, size, img):
 	exits.append(Exit(type, coords, size, img))
 
+def clearExits():
+	exits.append(Exit(1, [0,0], [1,1], exitImg))
+	for i in range(0,len(exits)):
+		del exits[len(exits)-1-i]
+
 def createWall(coordx, coordy, rx, ry, dir):
 	if dir == "down":
 		bricks.append(Brick("type", [coordx, coordy], (ry * 16, rx * 16), brickImg))
@@ -878,7 +883,6 @@ platforms = []
 
 def openReadFile(filePath):
 	entrances = [Entrance(0, [700, 250], [1, 1], entranceImg)]
-	exits = [Exit(0, [250, 250], [1, 1], exitImg)]
 	file = open(filePath, "r")
 	cont = file.readlines()
 	print "----"
@@ -908,6 +912,7 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 	entrances = [Entrance(0, [700, 250], [1, 1], entranceImg)]
 	global DetCurrent
 	wipeFloor()
+	clearExits()
 	if (lvl == -1):
 		pass
 	elif (lvl == 0):
@@ -1060,9 +1065,30 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 
 	
 	#SEPERATION
-	
-	
-	
+
+	elif lvl == 99:
+		createFloor(0, 688, 2, 64)
+		createFloor(960, 368, 20, 4)
+		createMovingBlock(240, 0, 2, 15, 0)
+		createMovingBlock(352, 0, 3, 2, 0)
+		createMovingBlock(352, 32, 3, 2, 0)
+		createMovingBlock(400, 0, 2, 4, 0)
+		createFloor(272, 0, 15, 4)
+		createMovingBlock(336, 64, 7, 24, 1)
+		createMovingBlock(240, 240, 2, 13, 1)
+		createFloor(544, 0, 15, 4)
+		createMovingBlock(512, 0, 2, 15, 0)
+		createFloor(176, 0, 14, 4)
+		createExit(4, [int(624), int(16)], [int(16), int(16)], exitImg)
+		entrances = [Entrance(4, [int(64), int(640)], [int(16), int(16)], entranceImg)]
+		grates.append(Grate([int(608), int(208)], [int(128), int(32)], []))
+		grates.append(Grate([int(704), int(0)], [int(32), int(208)], []))
+		createFloor(608, 240, 2, 2)
+		createFloor(448, 0, 15, 2)
+		createMovingBlock(480, 0, 2, 15, 0)
+		createMovingBlock(480, 240, 4, 13, 1)
+		switches.append(Switch('Switch', [int(992), int(352)], [int(16), int(16)], switchImg, False))
+
 	else:
 		createFloor(0, 688, 2, 64)
 		
