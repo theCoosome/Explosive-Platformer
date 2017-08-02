@@ -708,30 +708,23 @@ class bomb(object):
 
 			pow = self.pow * ((self.detRange - td) / self.detRange)
 			
-			if pow > 0:
-				if (td != 0):
-					pygame.draw.line(debugOverlay, RED, cm, cs)
-					sight = True
-					square = (getLower(cm[0], cs[0]), getLower(cm[1], cs[1]), abs(xd), abs(yd))
-					for x in bricks:
-						if hit(x.coords, x.size, square[0:2], square[2:4]):
-							if DualLine(cm, cs, x):
-								sight = False
-								pygame.draw.line(debugOverlay, PURPLE, cm, cs)
-					if sight:
-						mob.vel[0] += (xd / td) * pow
-						mob.vel[1] += (yd / td) * pow
+			if (td != 0) and td < self.detRange:
+				pygame.draw.line(debugOverlay, RED, cm, cs)
+				sight = True
+				square = (getLower(cm[0], cs[0]), getLower(cm[1], cs[1]), abs(xd), abs(yd))
+				for x in bricks:
+					if hit(x.coords, x.size, square[0:2], square[2:4]):
+						if DualLine(cm, cs, x):
+							sight = False
+							pygame.draw.line(debugOverlay, PURPLE, cm, cs)
+				if sight:
+					mob.vel[0] += (xd / td) * pow
+					mob.vel[1] += (yd / td) * pow
 		
 		elif type(mob) == movingBlock:
-			cm = center(mob)
 			cs = center(self)
 
-			xd = cm[0]-cs[0]
-			yd = cm[1]-cs[1]
-
-			td = math.hypot(xd, yd)
 			netforce = [0, 0]
-			vel = ((xd / td), (yd / td))
 			
 			if hit(mob.coords, mob.size, (cs[0]-self.detRange, cs[1]-self.detRange), (2*self.detRange, 2*self.detRange)):
 				pow = 0
@@ -742,7 +735,7 @@ class bomb(object):
 						yd = cm[1]-cs[1]
 
 						td = math.hypot(xd, yd)
-						if td < self.detRange:
+						if td < self.detRange and td != 0:
 							pygame.draw.line(debugOverlay, RED, cm, cs)
 							sight = True
 							square = (getLower(cm[0], cs[0]), getLower(cm[1], cs[1]), abs(xd), abs(yd))
@@ -762,7 +755,7 @@ class bomb(object):
 						mob.vel[1] += (netforce[1] * self.pow2) / mob.mass
 						print mob.vel
 					if mob.type in [1, 2]:
-						dmg = math.floor(abs(netforce[0] * self.dmg) + abs(netforce[1] * self.dmg))
+						dmg = (((self.detRange - td) / self.detRange) ** 2) * self.dmg
 						print "Damage: ", dmg
 						mob.hp -= dmg
 						if mob.hp <= 0:
@@ -1441,8 +1434,6 @@ while Running:
 				pygame.draw.line(debugOverlay, PURPLE, p1, center(i))
 				pygame.draw.rect(debugOverlay, PURPLE, (i.coords[0], i.coords[1], i.size[0], i.size[1]), 1)
 
-			if i.floor:
-				i.vel[0] = Zero(i.vel[0], friction)
 		for p in movingblocks:
 			if not (p == i) and p.type != 1:
 				p.Collide(i)
@@ -1456,6 +1447,8 @@ while Running:
 					print "you won!"
 				mb.Collide(p)
 			screen.blit(p.img,p.coords)
+		if i.floor:
+			i.vel[0] = Zero(i.vel[0], friction)
 
 			
 		screen.blit(i.img,i.coords)
