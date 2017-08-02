@@ -307,7 +307,7 @@ class Person(object):
 					self.collided[1] = -1
 			if hit(self.coords, self.size, (i.coords[0], i.coords[1] + 3), (i.size[0], i.size[1] - 3)):  # LEFT / RIGHT
 				p1 = center(self)
-				if self.vel[0] > 0 and self.coords[0] <= i.coords[0]:
+				if (self.vel[0] > 0 or type(i) == movingBlock) and self.coords[0] <= i.coords[0]:
 					self.coords[0] = i.coords[0] - self.size[0]
 					self.vel[0] = 0
 					pygame.draw.line(debugOverlay, YELLOW, p1, center(self))
@@ -316,7 +316,8 @@ class Person(object):
 						self.Kill()
 					else:
 						self.collided[0] = -1
-				if self.vel[0] < 0 and self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
+						print "hit wall -1"
+				if (self.vel[0] < 0 or type(i) == movingBlock) and self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
 					self.coords[0] = i.coords[0] + i.size[0]
 					self.vel[0] = 0
 					pygame.draw.line(debugOverlay, RED, p1, center(self))
@@ -325,6 +326,7 @@ class Person(object):
 						self.Kill()
 					else:
 						self.collided[0] = 1
+						print "hit wall 1"
 			p1 = center(self)
 			if self.vel[1] < 0 and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1]: #CEILING
 				self.coords[1] = i.coords[1] + i.size[1]
@@ -337,6 +339,7 @@ class Person(object):
 					self.collided[1] = 1
 			if type(i) == movingBlock:
 				if i.vel[1] > 5 and center(player)[1] > center(i)[1]:
+					print "CRUSHED"
 					self.Kill()
 				self.dualColliding = True
 		if hit(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
@@ -457,8 +460,6 @@ class movingBlock(object):
 							self.coords[0] = i.coords[0] - self.size[0] #LEFT WALL
 							self.vel[0] = 0
 							pygame.draw.line(debugOverlay, YELLOW, p1, center(self))
-					
-			print xdiff, ydiff
 			
 			if not self.big:
 				p1 = center(self)
@@ -725,6 +726,7 @@ class bomb(object):
 			cs = center(self)
 
 			netforce = [0, 0]
+			netpow = 0
 			
 			if hit(mob.coords, mob.size, (cs[0]-self.detRange, cs[1]-self.detRange), (2*self.detRange, 2*self.detRange)):
 				pow = 0
@@ -748,14 +750,16 @@ class bomb(object):
 								pow = ((self.detRange - td) / self.detRange)
 								netforce[0] += (xd / td) * pow
 								netforce[1] += (yd / td) * pow
+								netpow += pow
 				if netforce[0] != 0 and netforce[1] != 0:
-					print "\n", netforce
+					#print "\n", netforce
 					if mob.type in [0, 2]:
 						mob.vel[0] += (netforce[0] * self.pow2) / mob.mass
 						mob.vel[1] += (netforce[1] * self.pow2) / mob.mass
-						print mob.vel
+						#print mob.vel
 					if mob.type in [1, 2]:
-						dmg = (((self.detRange - td) / self.detRange) ** 2) * self.dmg
+						print netpow
+						dmg = (netpow ** 2) * self.dmg
 						print "Damage: ", dmg
 						mob.hp -= dmg
 						if mob.hp <= 0:
@@ -1062,6 +1066,20 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		createFloor(0, 0, 4, 64)
 		createFloor(0, 64, 30, 4)
 		createFloor(960, 64, 30, 4)
+		
+	elif lvl == 9:
+		createFloor(0, 560, 10, 46)
+		createMovingBlock(224, 512, 6, 3, 2)
+		createFloor(736, 592, 8, 7)
+		createFloor(848, 496, 14, 11)
+		rand = Grate([int(848), int(432)], [int(128), int(64)], ["guy"])
+		createSensor(736, 560, 7, 2, 2, ["guy"], rand)
+		createExit(4, [int(912), int(480)], [int(16), int(16)], exitImg)
+		entrances = [Entrance(4, [int(96), int(544)], [int(16), int(16)], entranceImg)]
+		createFloor(0, 0, 3, 64)
+		createFloor(0, 48, 32, 3)
+		createFloor(976, 48, 28, 3)
+
 
 	
 	#SEPERATION
@@ -1240,7 +1258,7 @@ while Running:
 				else:
 					muteon = True
 			if event.key == K_x:
-				createLevel(currLvl)
+				player.Kill()
 			if event.key == K_z:
 				print "Coords: ", player.coords[0], player.coords[1]
 				print "Velocity: ", player.vel[0], player.vel[1]
@@ -1435,7 +1453,6 @@ while Running:
 	for i in movingblocks: #Player hit with moving blocks
 		if i.isExploding:
 			i.incrementSprite(1)
-		player.Collide(i)
 		if i.type in [0, 2]:
 			if i.vel[1] < maxFallSpeed and not i.floor:  # Gravity
 				i.vel[1] += gravity
@@ -1461,8 +1478,12 @@ while Running:
 				pygame.draw.rect(debugOverlay, PURPLE, (i.coords[0], i.coords[1], i.size[0], i.size[1]), 1)
 
 		for p in movingblocks:
-			if not (p == i) and p.type != 1:
+			if (p != i) and p.type != 1:
 				p.Collide(i)
+				for x in bricks:
+					p.Collide(x)
+				if hit(i.coords, (i.size[0], i.size[1] + 1), p.coords, p.size):
+					i.floor = True
 		for p in bricks:
 			i.Collide(p)
 
@@ -1476,9 +1497,11 @@ while Running:
 		if i.floor:
 			i.vel[0] = Zero(i.vel[0], friction)
 
-			
 		screen.blit(i.img,i.coords)
 
+	for i in movingblocks:
+		player.Collide(i)
+		
 	for i in sensors:
 		if i.trigger != None:
 			for p in movingblocks:
