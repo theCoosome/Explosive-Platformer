@@ -827,6 +827,7 @@ def wipeFloor():
 	global platforms
 	global crates
 	global keys
+	global exits
 	keys = []
 	crates = []
 	global grates
@@ -840,15 +841,12 @@ def wipeFloor():
 	switches = []
 	gates = []
 	platforms = []
+	exits = []
 
 
 def createExit(type, coords, size, img):
 	exits.append(Exit(type, coords, size, img))
 
-def clearExits():
-	exits.append(Exit(1, [0,0], [1,1], exitImg))
-	for i in range(0,len(exits)):
-		del exits[len(exits)-1-i]
 
 def createWall(coordx, coordy, rx, ry, dir):
 	if dir == "down":
@@ -916,7 +914,6 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 	entrances = [Entrance(0, [700, 250], [1, 1], entranceImg)]
 	global DetCurrent
 	wipeFloor()
-	clearExits()
 	if (lvl == -1):
 		pass
 	elif (lvl == 0):
@@ -1106,6 +1103,8 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		createMovingBlock(480, 0, 2, 15, 0)
 		createMovingBlock(480, 240, 4, 13, 1)
 		switches.append(Switch('Switch', [int(992), int(352)], [int(16), int(16)], switchImg, False))
+
+		DetCurrent = DetMulti
 
 	else:
 		createFloor(0, 688, 2, 64)
