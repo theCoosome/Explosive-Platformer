@@ -788,10 +788,7 @@ class detonator(object):
 		return bomb(self.type, [coords[0]+4, coords[1]+4], vel, (8, 8), self.kbP, self.kbB, self.dmg, self.arm, self.bomb)
 
 DetGod = detonator(0, 16, 16, 5, 0, 99999, getImg("UI/DetGod"), bombImg)
-<<<<<<< HEAD
-=======
 DetNorm = detonator(1, 2, 8, 3, 30, 4, getImg("UI/DetDefault"), bombImg)
->>>>>>> 9b3be4b642862f7ecf4308a81e67570bd02c054b
 DetKB = detonator(2, 16, 30, 1, 20, 2, getImg("UI/DetJumper"), getImg("Bombs/tosser"))
 DetMulti = detonator(3, 1, 10, 2, 80, 10, getImg("UI/DetMulti"), getImg("Bombs/Multi"))
 DetDest = detonator(4, 1, 1, 20, 30, 4, getImg("UI/DetDestructive"), getImg("Bombs/Dest"))
@@ -851,6 +848,11 @@ def wipeFloor():
 def createExit(type, coords, size, img):
 	exits.append(Exit(type, coords, size, img))
 
+def clearExits():
+	exits.append(Exit(1, [0,0], [1,1], exitImg))
+	for i in range(0,len(exits)):
+		del exits[len(exits)-1-i]
+
 def createWall(coordx, coordy, rx, ry, dir):
 	if dir == "down":
 		bricks.append(Brick("type", [coordx, coordy], (ry * 16, rx * 16), brickImg))
@@ -888,7 +890,6 @@ platforms = []
 
 def openReadFile(filePath):
 	entrances = [Entrance(0, [700, 250], [1, 1], entranceImg)]
-	exits = [Exit(0, [250, 250], [1, 1], exitImg)]
 	file = open(filePath, "r")
 	cont = file.readlines()
 	print "----"
@@ -918,6 +919,7 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 	entrances = [Entrance(0, [700, 250], [1, 1], entranceImg)]
 	global DetCurrent
 	wipeFloor()
+	clearExits()
 	if (lvl == -1):
 		pass
 	elif (lvl == 0):
@@ -1061,9 +1063,32 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 
 	
 	#SEPERATION
-	
-	
-	
+
+	elif lvl == 99:
+		createFloor(0, 688, 2, 64)
+		createFloor(960, 368, 20, 4)
+		createMovingBlock(240, 0, 2, 15, 0)
+		createMovingBlock(352, 0, 3, 2, 0)
+		createMovingBlock(352, 32, 3, 2, 0)
+		createMovingBlock(400, 0, 2, 4, 0)
+		createFloor(272, 0, 15, 4)
+		createMovingBlock(336, 64, 7, 24, 1)
+		createMovingBlock(240, 240, 2, 13, 1)
+		createFloor(544, 0, 15, 4)
+		createMovingBlock(512, 0, 2, 15, 0)
+		createFloor(176, 0, 14, 4)
+		createExit(4, [int(624), int(16)], [int(16), int(16)], exitImg)
+		entrances = [Entrance(4, [int(64), int(640)], [int(16), int(16)], entranceImg)]
+		grates.append(Grate([int(608), int(208)], [int(128), int(32)], []))
+		grates.append(Grate([int(704), int(0)], [int(32), int(208)], []))
+		createFloor(608, 240, 2, 2)
+		createFloor(448, 0, 15, 2)
+		createMovingBlock(480, 0, 2, 15, 0)
+		createMovingBlock(480, 240, 4, 13, 1)
+		switches.append(Switch('Switch', [int(992), int(352)], [int(16), int(16)], switchImg, False))
+
+
+
 	else:
 		createFloor(0, 688, 2, 64)
 		
