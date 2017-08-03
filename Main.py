@@ -289,7 +289,7 @@ class Person(object):
 
 	def Kill(self):
 		print "Ded"
-		createLevel(currLvl)
+		Reset()
 	def Collide(self, i):
 		if hit(i.coords, i.size, self.coords, self.size):  # UP
 
@@ -818,6 +818,8 @@ def spawnChar(entrance):
 def createFloor(coordx, coordy, ry, rx, type=0):
 	bricks.append(Brick(type, [coordx, coordy], (rx * 16, ry * 16), brickImg))
 
+
+	
 def wipeFloor():
 	global bricks
 	global bombs
@@ -882,6 +884,58 @@ gates = []
 crates = []
 platforms = []
 
+levels = []
+entrances = []
+
+def saveLevel():
+	global bricks
+	global movingblocks
+	global switches
+	global exits
+	global grates
+	global sensors
+	global entrances
+	
+	global DetCurrent
+	levels.append({"bricks":bricks, "movingblocks":movingblocks, "sensors":sensors, "switches":switches, "grates":grates, "exits":exits, "spawn":entrances[0].coords, "Det":DetCurrent})
+	
+def loadSaved(lvl):
+	global bricks
+	global movingblocks
+	global switches
+	global exits
+	global grates
+	global sensors
+	global DetCurrent
+	wipeFloor()
+	this = levels[lvl]
+	bricks = this["bricks"]
+	movingblocks = this["movingblocks"]
+	sensors = this["sensors"]
+	switches = this["switches"]
+	grates = this["grates"]
+	exits = this["exits"]
+	DetCurrent = this["Det"]
+	
+	print "Loaded level: ", lvl
+	DB.refresh()
+	for i in bricks:
+		DB.img.blit(i.img, i.coords)
+	player.coords = this["spawn"]
+	
+def Reset():
+	global movingblocks
+	global switches
+	global grates
+	global sensors
+	this = levels[currLvl]
+	
+	movingblocks = this["movingblocks"]
+	sensors = this["sensors"]
+	switches = this["switches"]
+	grates = this["grates"]
+	player.coords = this["spawn"]
+	
 
 def openReadFile(filePath):
 	entrances = [Entrance(0, [700, 250], [1, 1], entranceImg)]
@@ -913,6 +967,7 @@ totalLvls = 101	#CHANGE THIS WHEN ADDING LVLS
 def createLevel(lvl):	#Almost all refrences of this should be written createLevel(currLvl). Only use an int for bugtesting.
 	entrances = [Entrance(0, [700, 250], [1, 1], entranceImg)]
 	global DetCurrent
+	global entrances
 	wipeFloor()
 	if (lvl == -1):
 		createFloor(0, 576, 3, 64)
@@ -1096,7 +1151,22 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		
 		DetCurrent = DetMulti
 		
-
+	elif lvl == 8:
+		createFloor(0, 256, 29, 22)
+		createFloor(352, 592, 8, 42)
+		createFloor(448, 0, 31, 15)
+		createFloor(0, 0, 16, 3)
+		createFloor(800, 528, 4, 4)
+		createFloor(864, 464, 8, 10)
+		createFloor(688, 0, 18, 21)
+		createFloor(960, 288, 11, 4)
+		createMovingBlock(512, 496, 7, 6, 1, 6000)
+		createMovingBlock(352, 256, 6, 8, 1, 4000)
+		createMovingBlock(800, 464, 4, 4, 1, 8000)
+		createExit(4, [int(912), int(448)], [int(16), int(16)], exitImg)
+		entrances = [Entrance(4, [int(128), int(240)], [int(16), int(16)], entranceImg)]
+		
+		DetCurrent = DetDest
 		
 	#elif lvl == 9:
 
@@ -1250,6 +1320,9 @@ def soundEffect(sfxkey):
 Running = True
 
 
+createLevel(4)
+saveLevel()
+
 bombWaitTime = 0
 normalBombWait = 1
 detRange = 72
@@ -1288,6 +1361,8 @@ createLevel(currLvl)
 isCutsecne = True
 if isCutsecne == True:
 	createLevel(100)
+
+	
 def changeSwitch():
 	for s in switches:
 		s.img = switchImages[0]
@@ -1383,12 +1458,13 @@ while Running:
 				currLvl += 1
 				if currLvl >= totalLvls:
 					currLvl = 0
-				createLevel(currLvl)
+				
+				loadSaved(0)
 			if event.key == K_o:
 				currLvl -= 1
 				if currLvl < 0:
 					currLvl = totalLvls - 1
-				createLevel(currLvl)
+				loadSaved(0)
 			if event.key == K_l:  # slow down
 				currLvl = -1
 				createLevel(-1)

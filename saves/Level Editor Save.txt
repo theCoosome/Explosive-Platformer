@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 createFloor(0, 688, 2, 64)
 createFloor(992, 32, 41, 2)
 createFloor(0, 0, 2, 64)
@@ -78,3 +79,5 @@ createMovingBlock(32, 32, 3, 1, 1)
 createMovingBlock(944, 656, 3, 1, 1)
 createMovingBlock(976, 672, 1, 1, 1)
 createMovingBlock(944, 672, 1, 1, 1)
+=======
+>>>>>>> 828fa036861c993b64230b0e36d16c059c65720e
