@@ -295,7 +295,7 @@ class Person(object):
 		if hit(i.coords, i.size, self.coords, self.size):  # UP
 
 			p1 = center(self)
-			if self.vel[1] > 0 and self.coords[1] <= i.coords[1]: #FLOOR
+			if self.vel[1] > i.vel[1] and self.coords[1] <= i.coords[1]: #FLOOR
 				self.coords[1] = i.coords[1] - self.size[1]
 				if self.vel[1] > 0:
 					self.vel[1] = 0
@@ -308,7 +308,7 @@ class Person(object):
 					self.collided[1] = -1
 			if hit(self.coords, self.size, (i.coords[0], i.coords[1] + 3), (i.size[0], i.size[1] - 3)):  # LEFT / RIGHT
 				p1 = center(self)
-				if (self.vel[0] > 0 or type(i) == movingBlock or self.collided[0] > 0) and self.coords[0] <= i.coords[0]:
+				if (self.vel[0] > i.vel[0] or type(i) == movingBlock or self.collided[0] > 0) and self.coords[0] <= i.coords[0]:
 					self.coords[0] = i.coords[0] - self.size[0]
 					self.vel[0] = 0
 					pygame.draw.line(debugOverlay, YELLOW, p1, center(self))
@@ -317,7 +317,7 @@ class Person(object):
 						self.Kill()
 					else:
 						self.collided[0] = -1
-				if (self.vel[0] < 0 or type(i) == movingBlock or self.collided[0] < 0) and self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
+				if (self.vel[0] < i.vel[0] or type(i) == movingBlock or self.collided[0] < 0) and self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
 					self.coords[0] = i.coords[0] + i.size[0]
 					self.vel[0] = 0
 					pygame.draw.line(debugOverlay, RED, p1, center(self))
@@ -327,7 +327,7 @@ class Person(object):
 					else:
 						self.collided[0] = 1
 			p1 = center(self)
-			if self.vel[1] < 0 and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1]: #CEILING
+			if self.vel[1] < i.vel[1] and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1]: #CEILING
 				self.coords[1] = i.coords[1] + i.size[1]
 				self.vel[1] = 0
 				pygame.draw.line(debugOverlay, GREEN, p1, center(self))
@@ -500,6 +500,7 @@ class Brick(object):
 	def __init__(self, type, coords, size, img):
 		self.type = type
 		self.coords = coords
+		self.vel = (0, 0)
 		self.size = size
 		rand = pygame.transform.scale(brickImg, size)
 		self.img = rand
@@ -574,6 +575,7 @@ class Grate(object):
 	
 	def __init__(self,coords,size, blocked):
 		self.coords = coords
+		self.vel = (0, 0)
 		self.size = size
 		self.base = DispObj(pygame.transform.scale(grateImg, size), (0, 0), True, size)
 		self.blocked = blocked #blocked is list of strings: ["guy", "bomb", "moving", "dest"]
@@ -658,7 +660,7 @@ class bomb(object):
 	def Collide(self, i):
 		if hit(i.coords, i.size, self.coords, self.size):
 			p1 = center(self)
-			if self.vel[0] > 0 and self.coords[0] <= i.coords[0]:
+			if self.vel[0] > i.vel[0] and self.coords[0] <= i.coords[0]:
 				self.coords[0] = i.coords[0] - self.size[0]
 				self.vel[0] = 0
 				self.stuck = True
@@ -666,7 +668,7 @@ class bomb(object):
 				if type(i) == movingBlock:
 					self.stuckOn = i
 					self.relative = (self.coords[0]-i.coords[0], self.coords[1]-i.coords[1])
-			elif self.vel[0] < 0 and self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
+			elif self.vel[0] < i.vel[0] and self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
 				self.coords[0] = i.coords[0] + i.size[0]
 				self.vel[0] = 0
 				self.stuck = True
@@ -674,7 +676,7 @@ class bomb(object):
 				if type(i) == movingBlock:
 					self.stuckOn = i
 					self.relative = (self.coords[0]-i.coords[0], self.coords[1]-i.coords[1])
-			elif self.vel[1] > 0 and self.coords[1] <= i.coords[1]: #FLOOR
+			elif self.vel[1] > i.vel[1] and self.coords[1] <= i.coords[1]: #FLOOR
 				p1 = center(self)
 				self.coords[1] = i.coords[1] - self.size[1]
 				self.vel[1] = 0
@@ -684,7 +686,7 @@ class bomb(object):
 				if type(i) == movingBlock:
 					self.stuckOn = i
 					self.relative = (self.coords[0]-i.coords[0], self.coords[1]-i.coords[1])
-			elif self.vel[1] < 0 and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1]: #CEILING
+			elif self.vel[1] < i.vel[1] and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1]: #CEILING
 				p1 = center(self)
 				self.coords[1] = i.coords[1] + i.size[1]
 				self.vel[1] = 0
@@ -1163,7 +1165,7 @@ grates.append(rand)
 entrances = [Entrance(4, [int(384), int(368)], [int(16), int(16)], entranceImg)]
 createExit(4, [int(928), int(608)], [int(16), int(16)], exitImg)
 DetCurrent = DetNorm
-saveLevel([("sensor", 0)])
+saveLevel([("sensor", 1)])
 
 #Running under launched
 createFloor(0, 448, 17, 64)
