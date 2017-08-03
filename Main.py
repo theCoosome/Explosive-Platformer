@@ -769,6 +769,7 @@ class bomb(object):
 						if mob.hp <= 0:
 							mob.img = mob.explodeImg[0]
 							mob.isExploding = True
+
 				
 		else:
 			print "Bomb pushing something unusual!"
@@ -1121,6 +1122,23 @@ createExit(4, [int(864), int(544)], [int(16), int(16)], exitImg)
 DetCurrent = DetKB
 saveLevel([("sensor", 0)])
 
+#it's just nice and blue
+createFloor(0, 480, 15, 44)
+createFloor(704, 688, 2, 19)
+createFloor(1008, 0, 45, 1)
+createExit(4, [int(816), int(128)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(32), int(464)], [int(16), int(16)], entranceImg)]
+createFloor(0, 0, 30, 1)
+createFloor(16, 0, 1, 62)
+createMovingBlock(96, 336, 19, 9, 0)
+createMovingBlock(96, 192, 19, 9, 0)
+createMovingBlock(96, 48, 19, 9, 0)
+grates.append(Grate([int(784), int(176)], [int(112), int(80)], ["guy"]))
+grates.append(Grate([int(640), int(320)], [int(64), int(160)], ["guy"]))
+grates.append(Grate([int(592), int(368)], [int(48), int(112)], ["guy"]))
+grates.append(Grate([int(544), int(416)], [int(48), int(64)], ["guy"]))
+grates.append(Grate([int(512), int(448)], [int(32), int(32)], ["guy"]))
+saveLevel()
 #grate over a pit
 createFloor(0, 0, 9, 64)
 createFloor(960, 144, 36, 4)
