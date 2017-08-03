@@ -31,7 +31,7 @@ size = (1024, 720)
 standardSize = (16, 16)
 bombSize = ((standardSize[0] / 2), (standardSize[1] / 2))
 
-screen = pygame.display.set_mode(size)
+screen = pygame.display.set_mode(size, FULLSCREEN)
 
 
 clock = pygame.time.Clock()
@@ -1013,7 +1013,7 @@ def ResetLevel():
 	spawnChar(entrances[0])'''
 
 currLvl = 0
-
+'''
 #covered destructables
 createFloor(0, 576, 3, 64)
 createMovingBlock(352, 512, 1, 4, 0)
@@ -1036,42 +1036,24 @@ createFloor(112, 512, 4, 1)
 createMovingBlock(64, 528, 3, 3, 1)
 
 saveLevel()
-
 '''
-#Test level
-borderedLevel()
-openReadFile("saves/Level0.txt")
 
-#platforms.append(Platform((896, 626), (64, 64), platformImg))
-switches.append(Switch("Switch", (256, 288), (32, 32), switchImg, False))
-crates.append(Crate((432, 160), (16, 16), crateImg))
-keys.append(Key((432, 160), (8, 8), keyImg))
-gates.append(Gate((896, 626), (64, 64), lockImg, False))
-saveLevel()'''
-
-'''
-elif (lvl == 1):
-createFloor(0, 0, 45, 2)
-createFloor(992, 0, 45, 2)
-createFloor(32, 688, 2, 60)
-createFloor(32, 0, 2, 60)
-createFloor(32, 304, 1, 18)
-createFloor(368, 288, 1, 12)
-createFloor(464, 272, 1, 3)
-createFloor(192, 224, 1, 13)
-createFloor(320, 240, 1, 2)
-createFloor(560, 224, 1, 15)
-createFloor(496, 192, 1, 17)
-createMovingBlock(656, 208, 2, 1, 1)
-createMovingBlock(240, 192, 3, 2, 0)
-createFloor(160, 416, 4, 12)
-createFloor(544, 528, 1, 16)
-createExit(4, [int(768), int(672)], [int(16), int(16)], exitImg)
-entrances = [Entrance(4, [int(48), int(256)], [int(16), int(16)], entranceImg)]
-grates.append(Grate([int(896), int(624)], [int(64), int(64)], []))
-
-DetCurrent = DetGod
-'''
+#Dest intro
+createFloor(0, 256, 29, 22)
+createFloor(352, 592, 8, 42)
+createFloor(448, 0, 31, 15)
+createFloor(0, 0, 16, 3)
+createFloor(800, 528, 4, 4)
+createFloor(864, 464, 8, 10)
+createFloor(688, 0, 18, 21)
+createFloor(960, 288, 11, 4)
+createMovingBlock(512, 496, 7, 6, 1, 6000)
+createMovingBlock(352, 256, 6, 8, 1, 4000)
+createMovingBlock(800, 464, 4, 4, 1, 8000)
+createExit(4, [int(912), int(448)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(128), int(240)], [int(16), int(16)], entranceImg)]
+DetCurrent = DetDest
+saveLevel()
 
 #jump intro
 createFloor(0, 544, 11, 64)
@@ -1086,9 +1068,65 @@ createFloor(960, 64, 30, 4)
 DetCurrent = DetKB
 saveLevel()
 
+#Dest intro
+createFloor(0, 256, 29, 22)
+createFloor(352, 592, 8, 42)
+createFloor(448, 0, 31, 15)
+createFloor(0, 0, 16, 3)
+createFloor(800, 528, 4, 4)
+createFloor(864, 464, 8, 10)
+createFloor(688, 0, 18, 21)
+createFloor(960, 288, 11, 4)
+createMovingBlock(512, 496, 7, 6, 1, 6000)
+createMovingBlock(352, 256, 6, 8, 1, 4000)
+createMovingBlock(800, 464, 4, 4, 1, 8000)
+createExit(4, [int(912), int(448)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(128), int(240)], [int(16), int(16)], entranceImg)]
+
+DetCurrent = DetDest
+saveLevel()
+
+#Moving block intro
+createFloor(0, 560, 10, 64)
+createFloor(0, 0, 7, 64)
+createFloor(0, 112, 28, 3)
+createFloor(752, 336, 14, 17)
+createFloor(976, 112, 14, 3)
+createExit(4, [int(912), int(320)], [int(16), int(16)], exitImg)
+createMovingBlock(320, 448, 5, 7, 0)
+entrances = [Entrance(4, [int(96), int(528)], [int(16), int(16)], entranceImg)]
+DetCurrent = DetNorm
+saveLevel()
+
+#Sensors and player grate
+createFloor(0, 528, 12, 64)
+createFloor(0, 0, 29, 18)
+entrances = [Entrance(4, [int(416), int(512)], [int(16), int(16)], entranceImg)]
+createExit(4, [int(96), int(512)], [int(16), int(16)], exitImg)
+grates.append(Grate([int(224), int(464)], [int(64), int(64)], ["guy"]))
+createFloor(288, 0, 10, 46)
+createFloor(976, 160, 23, 3)
+createMovingBlock(544, 464, 4, 4, 0)
+createFloor(0, 464, 4, 3)
+createSensor(896, 496, 5, 2, 0, ["guy"])
+DetCurrent = DetNorm
+saveLevel([("sensor", 0)])
+
+#Moving block grates
+createFloor(0, 512, 13, 28)
+grates.append(Grate([int(448), int(512)], [int(320), int(64)], ["moving"]))
+createFloor(768, 384, 21, 16)
+createMovingBlock(288, 448, 8, 4, 0)
+createFloor(0, 0, 6, 64)
+createFloor(0, 96, 26, 3)
+entrances = [Entrance(4, [int(96), int(496)], [int(16), int(16)], entranceImg)]
+createExit(4, [int(912), int(368)], [int(16), int(16)], exitImg)
+createFloor(976, 96, 18, 3)
+saveLevel()
+
 #Multi intro
 createFloor(0, 560, 10, 46)
-createMovingBlock(224, 512, 6, 3, 2, 800)
+createMovingBlock(224, 512, 6, 3, 2, 1000)
 createFloor(736, 592, 8, 7)
 createFloor(848, 496, 14, 11)
 rand = Grate([int(848), int(432)], [int(128), int(64)], ["guy"])
@@ -1203,24 +1241,6 @@ createExit(4, [int(912), int(592)], [int(16), int(16)], exitImg)
 
 DetCurrent = DetMulti
 saveLevel([("sensor", 0)])
-
-#Dest intro
-createFloor(0, 256, 29, 22)
-createFloor(352, 592, 8, 42)
-createFloor(448, 0, 31, 15)
-createFloor(0, 0, 16, 3)
-createFloor(800, 528, 4, 4)
-createFloor(864, 464, 8, 10)
-createFloor(688, 0, 18, 21)
-createFloor(960, 288, 11, 4)
-createMovingBlock(512, 496, 7, 6, 1, 6000)
-createMovingBlock(352, 256, 6, 8, 1, 4000)
-createMovingBlock(800, 464, 4, 4, 1, 8000)
-createExit(4, [int(912), int(448)], [int(16), int(16)], exitImg)
-entrances = [Entrance(4, [int(128), int(240)], [int(16), int(16)], entranceImg)]
-
-DetCurrent = DetDest
-saveLevel()
 		
 #stairs and platforms
 createFloor(0, 224, 5, 40)
@@ -1519,7 +1539,7 @@ while Running:
 					muteon = False
 				else:
 					muteon = True
-			if event.key == K_x:
+			if event.key == K_k:
 				player.Kill()
 			if event.key == K_z:
 				print "Coords: ", player.coords[0], player.coords[1]
@@ -1671,6 +1691,8 @@ while Running:
 	for i in exits:
 		if collide([player.coords[0]-8, player.coords[1]-8], [16,16], [i.coords[0]-8, i.coords[1]-8], [16,16]):
 			currLvl += 1
+			if currLvl > len(levels)-1:
+				currLvl = 0
 			loadSaved(currLvl)
 
 
@@ -1753,8 +1775,6 @@ while Running:
 					print "you won!"
 				mb.Collide(p)
 			screen.blit(p.img,p.coords)
-		if i.floor:
-			i.vel[0] = Zero(i.vel[0], friction)
 
 		screen.blit(i.img,i.coords)
 
@@ -1866,6 +1886,9 @@ while Running:
 		player.vel[0] = Zero(player.vel[0], friction)
 
 	screen.blit(DB.img, (0, 0))
+	for i in movingblocks:
+		if i.floor:
+			i.vel[0] = Zero(i.vel[0], friction)
 	
 	for i in sensors:
 		screen.blit(i.img, i.coords)

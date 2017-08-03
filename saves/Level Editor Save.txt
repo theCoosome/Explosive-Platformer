@@ -1,47 +1,9 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-createMovingBlock(16, 400, 10, 2, 1)
-createMovingBlock(96, 256, 6, 2, 1)
-createMovingBlock(320, 176, 11, 2, 1)
-createMovingBlock(480, 320, 7, 2, 1)
-createMovingBlock(656, 160, 2, 12, 1)
-createMovingBlock(688, 320, 8, 2, 1)
-createMovingBlock(784, 624, 13, 3, 1)
-createExit(4, [int(960), int(608)], [int(16), int(16)], exitImg)
-entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
-=======
-=======
->>>>>>> c65d3dc61f7988a596a8e853616b6e2053fc5281
-createFloor(0, 224, 5, 40)
-createFloor(976, 0, 20, 3)
-createFloor(736, 320, 3, 18)
-createFloor(576, 416, 1, 10)
-createFloor(480, 464, 1, 7)
-createFloor(0, 608, 1, 19)
-createFloor(336, 608, 1, 2)
-createFloor(400, 608, 1, 3)
-createFloor(480, 608, 1, 3)
-createFloor(560, 608, 1, 4)
-createFloor(656, 608, 1, 3)
-createFloor(736, 608, 1, 3)
-createFloor(816, 608, 1, 3)
-createFloor(896, 608, 1, 8)
-createMovingBlock(64, 192, 6, 2, 0)
-entrances = [Entrance(4, [int(16), int(208)], [int(16), int(16)], entranceImg)]
-createExit(4, [int(960), int(592)], [int(16), int(16)], exitImg)
-grates.append(Grate([int(944), int(560)], [int(48), int(48)], []))
-createFloor(0, 368, 15, 1)
-createFloor(0, 32, 12, 1)
-createFloor(736, 368, 4, 1)
-createFloor(576, 432, 2, 1)
-createFloor(480, 480, 1, 1)
-createMovingBlock(0, 704, 64, 1, 1)
-createFloor(352, 496, 1, 9)
-createFloor(144, 528, 1, 14)
-createFloor(352, 512, 1, 1)
-createFloor(672, 240, 1, 2)
-createSensor(672, 576, 6, 2, 0, [])
-<<<<<<< HEAD
->>>>>>> c65d3dc61f7988a596a8e853616b6e2053fc5281
-=======
->>>>>>> c65d3dc61f7988a596a8e853616b6e2053fc5281
+createFloor(0, 512, 13, 28)
+grates.append(Grate([int(448), int(512)], [int(320), int(64)], []))
+createFloor(768, 384, 21, 16)
+createMovingBlock(288, 448, 8, 4, 0)
+createFloor(0, 0, 6, 64)
+createFloor(0, 96, 26, 3)
+entrances = [Entrance(4, [int(96), int(496)], [int(16), int(16)], entranceImg)]
+createExit(4, [int(912), int(368)], [int(16), int(16)], exitImg)
+createFloor(976, 96, 18, 3)
