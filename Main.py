@@ -1077,11 +1077,6 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		
 
 		
-		
-
-
-	
-		
 	#elif lvl == 9:
 
 	#elif lvl == 10:
