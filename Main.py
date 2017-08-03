@@ -308,7 +308,7 @@ class Person(object):
 					self.collided[1] = -1
 			if hit(self.coords, self.size, (i.coords[0], i.coords[1] + 3), (i.size[0], i.size[1] - 3)):  # LEFT / RIGHT
 				p1 = center(self)
-				if (self.vel[0] > 0 or type(i) == movingBlock) and self.coords[0] <= i.coords[0]:
+				if (self.vel[0] > 0 or type(i) == movingBlock or self.collided[0] > 0) and self.coords[0] <= i.coords[0]:
 					self.coords[0] = i.coords[0] - self.size[0]
 					self.vel[0] = 0
 					pygame.draw.line(debugOverlay, YELLOW, p1, center(self))
@@ -317,7 +317,7 @@ class Person(object):
 						self.Kill()
 					else:
 						self.collided[0] = -1
-				if (self.vel[0] < 0 or type(i) == movingBlock) and self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
+				if (self.vel[0] < 0 or type(i) == movingBlock or self.collided[0] < 0) and self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
 					self.coords[0] = i.coords[0] + i.size[0]
 					self.vel[0] = 0
 					pygame.draw.line(debugOverlay, RED, p1, center(self))
