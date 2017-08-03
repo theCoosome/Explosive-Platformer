@@ -325,6 +325,7 @@ def deleteAll():
 			delList.append(switches[i])
 	for i in delList:
 		del switches[switches.index(i)]
+	delList = []
 	for i in range(len(sensors)):
 		coords = (min(rectX, brx), min(rectY, bry))
 		pSize = (int(math.fabs(brx - rectX)), int(math.fabs(bry - rectY)))
