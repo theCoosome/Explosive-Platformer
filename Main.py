@@ -30,7 +30,7 @@ size = (1024, 720)
 standardSize = (16, 16)
 bombSize = ((standardSize[0] / 2), (standardSize[1] / 2))
 
-screen = pygame.display.set_mode(size)
+screen = pygame.display.set_mode(size, FULLSCREEN)
 
 clock = pygame.time.Clock()
 pygame.display.set_caption("Explosive Platformer")
