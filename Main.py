@@ -898,6 +898,7 @@ def saveLevel():
 	
 	global DetCurrent
 	levels.append({"bricks":bricks, "movingblocks":movingblocks, "sensors":sensors, "switches":switches, "grates":grates, "exits":exits, "spawn":entrances[0].coords, "Det":DetCurrent})
+	wipeFloor()
 	
 def loadSaved(lvl):
 	global bricks
@@ -962,368 +963,355 @@ def openReadFile(filePath):
 	spawnChar(entrances[0])
 
 currLvl = 0
-totalLvls = 101	#CHANGE THIS WHEN ADDING LVLS
-
-def createLevel(lvl):	#Almost all refrences of this should be written createLevel(currLvl). Only use an int for bugtesting.
-	entrances = [Entrance(0, [700, 250], [1, 1], entranceImg)]
-	global DetCurrent
-	global entrances
-	wipeFloor()
-	if (lvl == -1):
-		createFloor(0, 576, 3, 64)
-		createMovingBlock(352, 512, 1, 4, 0)
-		createMovingBlock(368, 512, 3, 1, 0)
-		createMovingBlock(416, 512, 1, 4, 0)
-		createMovingBlock(464, 496, 2, 5, 0)
-		createMovingBlock(496, 496, 3, 2, 0)
-		createMovingBlock(544, 496, 2, 5, 0)
-		createMovingBlock(608, 480, 3, 6, 0)
-		createMovingBlock(656, 480, 3, 3, 0)
-		createMovingBlock(704, 480, 3, 6, 0)
-		createMovingBlock(656, 528, 3, 3, 1)
-		createMovingBlock(496, 528, 3, 3, 1)
-		createMovingBlock(368, 528, 3, 3, 1)
-		entrances = [Entrance(4, [int(240), int(560)], [int(16), int(16)], entranceImg)]
-		createExit(4, [int(928), int(560)], [int(16), int(16)], exitImg)
-		createFloor(48, 512, 4, 1)
-		createFloor(64, 512, 1, 3)
-		createFloor(112, 512, 4, 1)
-		createMovingBlock(64, 528, 3, 3, 1)
 
 
-	elif (lvl == 0):
-		pass
-		borderedLevel()
-		openReadFile("saves/Level0.txt")
+createFloor(0, 576, 3, 64)
+createMovingBlock(352, 512, 1, 4, 0)
+createMovingBlock(368, 512, 3, 1, 0)
+createMovingBlock(416, 512, 1, 4, 0)
+createMovingBlock(464, 496, 2, 5, 0)
+createMovingBlock(496, 496, 3, 2, 0)
+createMovingBlock(544, 496, 2, 5, 0)
+createMovingBlock(608, 480, 3, 6, 0)
+createMovingBlock(656, 480, 3, 3, 0)
+createMovingBlock(704, 480, 3, 6, 0)
+createMovingBlock(656, 528, 3, 3, 1)
+createMovingBlock(496, 528, 3, 3, 1)
+createMovingBlock(368, 528, 3, 3, 1)
+entrances = [Entrance(4, [int(240), int(560)], [int(16), int(16)], entranceImg)]
+createExit(4, [int(928), int(560)], [int(16), int(16)], exitImg)
+createFloor(48, 512, 4, 1)
+createFloor(64, 512, 1, 3)
+createFloor(112, 512, 4, 1)
+createMovingBlock(64, 528, 3, 3, 1)
 
-		#platforms.append(Platform((896, 626), (64, 64), platformImg))
-		switches.append(Switch("Switch", (256, 288), (32, 32), switchImg, False))
-		crates.append(Crate((432, 160), (16, 16), crateImg))
-		keys.append(Key((432, 160), (8, 8), keyImg))
-		gates.append(Gate((896, 626), (64, 64), lockImg, False))
-		'''
-		elif (lvl == 1):
-		createFloor(0, 0, 45, 2)
-		createFloor(992, 0, 45, 2)
-		createFloor(32, 688, 2, 60)
-		createFloor(32, 0, 2, 60)
-		createFloor(32, 304, 1, 18)
-		createFloor(368, 288, 1, 12)
-		createFloor(464, 272, 1, 3)
-		createFloor(192, 224, 1, 13)
-		createFloor(320, 240, 1, 2)
-		createFloor(560, 224, 1, 15)
-		createFloor(496, 192, 1, 17)
-		createMovingBlock(656, 208, 2, 1, 1)
-		createMovingBlock(240, 192, 3, 2, 0)
-		createFloor(160, 416, 4, 12)
-		createFloor(544, 528, 1, 16)
-		createExit(4, [int(768), int(672)], [int(16), int(16)], exitImg)
-		entrances = [Entrance(4, [int(48), int(256)], [int(16), int(16)], entranceImg)]
-		grates.append(Grate([int(896), int(624)], [int(64), int(64)], []))
+saveLevel()
 
-		DetCurrent = DetGod
-		'''
-	elif lvl == 1: #1
-		createFloor(0, 544, 11, 64)
-		createFloor(64, 256, 18, 5)
-		createFloor(720, 352, 12, 15)
-		entrances = [Entrance(4, [int(320), int(528)], [int(16), int(16)], entranceImg)]
-		createExit(4, [int(912), int(336)], [int(16), int(16)], exitImg)
-		createExit(4, [int(96), int(240)], [int(16), int(16)], exitImg)
-		createFloor(0, 0, 4, 64)
-		createFloor(0, 64, 30, 4)
-		createFloor(960, 64, 30, 4)
-		DetCurrent = DetKB
 
-	elif lvl == 2: #1
-		createFloor(0, 560, 10, 46)
-		createMovingBlock(224, 512, 6, 3, 2, 800)
-		createFloor(736, 592, 8, 7)
-		createFloor(848, 496, 14, 11)
-		rand = Grate([int(848), int(432)], [int(128), int(64)], ["guy"])
-		createSensor(736, 560, 7, 2, 2, ["guy"], rand)
-		createExit(4, [int(912), int(480)], [int(16), int(16)], exitImg)
-		entrances = [Entrance(4, [int(96), int(544)], [int(16), int(16)], entranceImg)]
-		createFloor(0, 0, 3, 64)
-		createFloor(0, 48, 32, 3)
-		createFloor(976, 48, 28, 3)
-		DetCurrent = DetNorm
+borderedLevel()
+openReadFile("saves/Level0.txt")
 
-	elif lvl == 3: #2
-		createFloor(0, 560, 10, 64)
-		createFloor(0, 0, 12, 64)
-		createFloor(624, 192, 18, 12)
-		rand = Grate([int(640), int(480)], [int(160), int(80)], ["guy"])
-		createSensor(160, 512, 4, 3, 0, ["guy"], rand)
-		grates.append(rand)
-		createFloor(0, 192, 23, 4)
-		createFloor(960, 192, 23, 4)
-		createFloor(480, 400, 3, 7)
-		createFloor(480, 384, 1, 2)
-		grates.append(Grate([int(432), int(192)], [int(48), int(256)], ["guy", "bomb"]))
-		createMovingBlock(560, 352, 4, 3, 0)
-		grates.append(Grate([int(592), int(400)], [int(32), int(48)], ["guy"]))
-		entrances = [Entrance(4, [int(110), int(540)], [int(16), int(16)], entranceImg)]
-		createExit(4, [int(864), int(544)], [int(16), int(16)], exitImg)
-		DetCurrent = DetKB
+#platforms.append(Platform((896, 626), (64, 64), platformImg))
+switches.append(Switch("Switch", (256, 288), (32, 32), switchImg, False))
+crates.append(Crate((432, 160), (16, 16), crateImg))
+keys.append(Key((432, 160), (8, 8), keyImg))
+gates.append(Gate((896, 626), (64, 64), lockImg, False))
+saveLevel()
 
-	elif lvl == 4: #2
-		createFloor(0, 0, 9, 64)
-		createFloor(960, 144, 36, 4)
-		rand1 = Grate([int(80), int(480)], [int(304), int(32)], ["guy"])
-		rand2 = Grate([int(352), int(384)], [int(32), int(96)], ["guy"])
-		createSensor(384, 304, 4, 3, 0, ["guy"], rand1)
-		createSensor(384, 304, 4, 3, 0, ["guy"], rand2)
-		grates.append(rand1)
-		grates.append(rand2)
+'''
+elif (lvl == 1):
+createFloor(0, 0, 45, 2)
+createFloor(992, 0, 45, 2)
+createFloor(32, 688, 2, 60)
+createFloor(32, 0, 2, 60)
+createFloor(32, 304, 1, 18)
+createFloor(368, 288, 1, 12)
+createFloor(464, 272, 1, 3)
+createFloor(192, 224, 1, 13)
+createFloor(320, 240, 1, 2)
+createFloor(560, 224, 1, 15)
+createFloor(496, 192, 1, 17)
+createMovingBlock(656, 208, 2, 1, 1)
+createMovingBlock(240, 192, 3, 2, 0)
+createFloor(160, 416, 4, 12)
+createFloor(544, 528, 1, 16)
+createExit(4, [int(768), int(672)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(48), int(256)], [int(16), int(16)], entranceImg)]
+grates.append(Grate([int(896), int(624)], [int(64), int(64)], []))
 
-		grates.append(Grate([int(224), int(448)], [int(32), int(32)], ["bomb"]))
-		grates.append(Grate([int(0), int(144)], [int(80), int(576)], ["guy"]))
+DetCurrent = DetGod
+'''
 
-		createFloor(288, 352, 2, 21)
-		createFloor(544, 656, 4, 26)
-		createFloor(592, 144, 13, 2)
-		createMovingBlock(288, 304, 6, 3, 0)
-		grates.append(Grate([int(256), int(144)], [int(32), int(240)], ["guy", "moving"]))
-		entrances = [Entrance(4, [int(112), int(448)], [int(16), int(16)], entranceImg)]
-		exits = [Exit(4, [int(864), int(624)], [int(16), int(16)], exitImg)]
-		createExit(4, [int(864), int(640)], [int(16), int(16)], exitImg)
-		DetCurrent = DetKB
 
-	elif lvl == 5: #3
-		createFloor(0, 624, 6, 64)
-		createFloor(0, 0, 6, 64)
-		createFloor(0, 96, 33, 3)
-		createFloor(976, 560, 4, 3)
-		createFloor(48, 560, 4, 2)
-		createFloor(112, 512, 3, 4)
-		createFloor(144, 448, 4, 2)
-		createMovingBlock(144, 192, 2, 2, 0)
-		createMovingBlock(624, 464, 2, 10, 2, 1000)
-		createMovingBlock(176, 384, 45, 5, 0)
-		grates.append(Grate([int(176), int(384)], [int(720), int(176)], ["guy", "bomb"]))
-		createFloor(896, 320, 15, 8)
-		createFloor(928, 256, 4, 2)
-		createFloor(960, 96, 14, 4)
-		createFloor(48, 224, 2, 52)
-		rand = Grate([int(880), int(224)], [int(80), int(32)], ["guy"])
-		createSensor(864, 560, 2, 4, 2, ["guy"], rand)
-		grates.append(rand)
+createFloor(0, 544, 11, 64)
+createFloor(64, 256, 18, 5)
+createFloor(720, 352, 12, 15)
+entrances = [Entrance(4, [int(320), int(528)], [int(16), int(16)], entranceImg)]
+createExit(4, [int(912), int(336)], [int(16), int(16)], exitImg)
+createExit(4, [int(96), int(240)], [int(16), int(16)], exitImg)
+createFloor(0, 0, 4, 64)
+createFloor(0, 64, 30, 4)
+createFloor(960, 64, 30, 4)
+DetCurrent = DetKB
+saveLevel()
 
-		entrances = [Entrance(4, [int(384), int(368)], [int(16), int(16)], entranceImg)]
-		createExit(4, [int(928), int(608)], [int(16), int(16)], exitImg)
 
-		DetCurrent = DetNorm
+createFloor(0, 560, 10, 46)
+createMovingBlock(224, 512, 6, 3, 2, 800)
+createFloor(736, 592, 8, 7)
+createFloor(848, 496, 14, 11)
+rand = Grate([int(848), int(432)], [int(128), int(64)], ["guy"])
+createSensor(736, 560, 7, 2, 2, ["guy"], rand)
+createExit(4, [int(912), int(480)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(96), int(544)], [int(16), int(16)], entranceImg)]
+createFloor(0, 0, 3, 64)
+createFloor(0, 48, 32, 3)
+createFloor(976, 48, 28, 3)
+DetCurrent = DetNorm
+saveLevel()
+
+
+createFloor(0, 560, 10, 64)
+createFloor(0, 0, 12, 64)
+createFloor(624, 192, 18, 12)
+rand = Grate([int(640), int(480)], [int(160), int(80)], ["guy"])
+createSensor(160, 512, 4, 3, 0, ["guy"], rand)
+grates.append(rand)
+createFloor(0, 192, 23, 4)
+createFloor(960, 192, 23, 4)
+createFloor(480, 400, 3, 7)
+createFloor(480, 384, 1, 2)
+grates.append(Grate([int(432), int(192)], [int(48), int(256)], ["guy", "bomb"]))
+createMovingBlock(560, 352, 4, 3, 0)
+grates.append(Grate([int(592), int(400)], [int(32), int(48)], ["guy"]))
+entrances = [Entrance(4, [int(110), int(540)], [int(16), int(16)], entranceImg)]
+createExit(4, [int(864), int(544)], [int(16), int(16)], exitImg)
+DetCurrent = DetKB
+saveLevel()
+
+
+createFloor(0, 0, 9, 64)
+createFloor(960, 144, 36, 4)
+rand1 = Grate([int(80), int(480)], [int(304), int(32)], ["guy"])
+rand2 = Grate([int(352), int(384)], [int(32), int(96)], ["guy"])
+createSensor(384, 304, 4, 3, 0, ["guy"], rand1)
+createSensor(384, 304, 4, 3, 0, ["guy"], rand2)
+grates.append(rand1)
+grates.append(rand2)
+grates.append(Grate([int(224), int(448)], [int(32), int(32)], ["bomb"]))
+grates.append(Grate([int(0), int(144)], [int(80), int(576)], ["guy"]))
+createFloor(288, 352, 2, 21)
+createFloor(544, 656, 4, 26)
+createFloor(592, 144, 13, 2)
+createMovingBlock(288, 304, 6, 3, 0)
+grates.append(Grate([int(256), int(144)], [int(32), int(240)], ["guy", "moving"]))
+entrances = [Entrance(4, [int(112), int(448)], [int(16), int(16)], entranceImg)]
+exits = [Exit(4, [int(864), int(624)], [int(16), int(16)], exitImg)]
+createExit(4, [int(864), int(640)], [int(16), int(16)], exitImg)
+DetCurrent = DetKB
+saveLevel()
+
+
+createFloor(0, 624, 6, 64)
+createFloor(0, 0, 6, 64)
+createFloor(0, 96, 33, 3)
+createFloor(976, 560, 4, 3)
+createFloor(48, 560, 4, 2)
+createFloor(112, 512, 3, 4)
+createFloor(144, 448, 4, 2)
+createMovingBlock(144, 192, 2, 2, 0)
+createMovingBlock(624, 464, 2, 10, 2, 1000)
+createMovingBlock(176, 384, 45, 5, 0)
+grates.append(Grate([int(176), int(384)], [int(720), int(176)], ["guy", "bomb"]))
+createFloor(896, 320, 15, 8)
+createFloor(928, 256, 4, 2)
+createFloor(960, 96, 14, 4)
+createFloor(48, 224, 2, 52)
+rand = Grate([int(880), int(224)], [int(80), int(32)], ["guy"])
+createSensor(864, 560, 2, 4, 2, ["guy"], rand)
+grates.append(rand)
+entrances = [Entrance(4, [int(384), int(368)], [int(16), int(16)], entranceImg)]
+createExit(4, [int(928), int(608)], [int(16), int(16)], exitImg)
+DetCurrent = DetNorm
+saveLevel()
+
 		
-	elif lvl == 6: #4
-		createFloor(0, 448, 17, 64)
-		createFloor(0, 0, 12, 20)
-		createFloor(0, 384, 4, 7)
-		createMovingBlock(320, 288, 4, 4, 1)
-		createMovingBlock(320, 368, 4, 5, 0)
-		createFloor(160, 336, 3, 10)
-		createFloor(384, 240, 9, 11)
-		createFloor(384, 0, 13, 11)
-		createFloor(624, 0, 24, 25)
-		createMovingBlock(560, 368, 4, 5, 0)
-		createMovingBlock(560, 288, 4, 4, 1)
-		entrances = [Entrance(4, [int(192), int(416)], [int(16), int(16)], entranceImg)]
-		createExit(4, [int(768), int(432)], [int(16), int(16)], exitImg)
-		DetCurrent = DetKB
+createFloor(0, 448, 17, 64)
+createFloor(0, 0, 12, 20)
+createFloor(0, 384, 4, 7)
+createMovingBlock(320, 288, 4, 4, 1)
+createMovingBlock(320, 368, 4, 5, 0)
+createFloor(160, 336, 3, 10)
+createFloor(384, 240, 9, 11)
+createFloor(384, 0, 13, 11)
+createFloor(624, 0, 24, 25)
+createMovingBlock(560, 368, 4, 5, 0)
+createMovingBlock(560, 288, 4, 4, 1)
+entrances = [Entrance(4, [int(192), int(416)], [int(16), int(16)], entranceImg)]
+createExit(4, [int(768), int(432)], [int(16), int(16)], exitImg)
+DetCurrent = DetKB
+saveLevel()
 		
-	elif lvl == 7: #5
-		createFloor(0, 0, 45, 5)
-		createFloor(80, 608, 7, 59)
-		createFloor(80, 448, 3, 21)
-		createFloor(416, 544, 1, 1)
-		createFloor(464, 544, 1, 1)
-		createFloor(80, 0, 8, 45)
-		createFloor(800, 0, 31, 14)
-		createFloor(480, 336, 10, 20)
-		createFloor(192, 272, 4, 34)
-		entrances = [Entrance(4, [int(128), int(576)], [int(16), int(16)], entranceImg)]
-		createMovingBlock(416, 480, 4, 4, 0)
-		rand = Grate([int(736), int(496)], [int(64), int(112)], ["guy", "moving"])
-		createSensor(736, 272, 4, 4, 0, ["guy"], rand)
-		grates.append(rand)
-		createExit(4, [int(912), int(592)], [int(16), int(16)], exitImg)
+
+createFloor(0, 0, 45, 5)
+createFloor(80, 608, 7, 59)
+createFloor(80, 448, 3, 21)
+createFloor(416, 544, 1, 1)
+createFloor(464, 544, 1, 1)
+createFloor(80, 0, 8, 45)
+createFloor(800, 0, 31, 14)
+createFloor(480, 336, 10, 20)
+createFloor(192, 272, 4, 34)
+entrances = [Entrance(4, [int(128), int(576)], [int(16), int(16)], entranceImg)]
+createMovingBlock(416, 480, 4, 4, 0)
+rand = Grate([int(736), int(496)], [int(64), int(112)], ["guy", "moving"])
+createSensor(736, 272, 4, 4, 0, ["guy"], rand)
+grates.append(rand)
+createExit(4, [int(912), int(592)], [int(16), int(16)], exitImg)
+
+DetCurrent = DetMulti
+saveLevel()
+
+
+createFloor(0, 256, 29, 22)
+createFloor(352, 592, 8, 42)
+createFloor(448, 0, 31, 15)
+createFloor(0, 0, 16, 3)
+createFloor(800, 528, 4, 4)
+createFloor(864, 464, 8, 10)
+createFloor(688, 0, 18, 21)
+createFloor(960, 288, 11, 4)
+createMovingBlock(512, 496, 7, 6, 1, 6000)
+createMovingBlock(352, 256, 6, 8, 1, 4000)
+createMovingBlock(800, 464, 4, 4, 1, 8000)
+createExit(4, [int(912), int(448)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(128), int(240)], [int(16), int(16)], entranceImg)]
+
+DetCurrent = DetDest
+saveLevel()
 		
-		DetCurrent = DetMulti
-		
-	elif lvl == 8:
-		createFloor(0, 256, 29, 22)
-		createFloor(352, 592, 8, 42)
-		createFloor(448, 0, 31, 15)
-		createFloor(0, 0, 16, 3)
-		createFloor(800, 528, 4, 4)
-		createFloor(864, 464, 8, 10)
-		createFloor(688, 0, 18, 21)
-		createFloor(960, 288, 11, 4)
-		createMovingBlock(512, 496, 7, 6, 1, 6000)
-		createMovingBlock(352, 256, 6, 8, 1, 4000)
-		createMovingBlock(800, 464, 4, 4, 1, 8000)
-		createExit(4, [int(912), int(448)], [int(16), int(16)], exitImg)
-		entrances = [Entrance(4, [int(128), int(240)], [int(16), int(16)], entranceImg)]
-		
-		DetCurrent = DetDest
-		
-	elif lvl == 11:
-		createFloor(0, 224, 5, 40)
-		createFloor(976, 0, 20, 3)
-		createFloor(736, 320, 3, 18)
-		createFloor(576, 416, 1, 10)
-		createFloor(480, 464, 1, 7)
-		createFloor(368, 496, 1, 8)
-		createFloor(0, 608, 1, 19)
-		createFloor(336, 608, 1, 2)
-		createFloor(400, 608, 1, 3)
-		createFloor(480, 608, 1, 3)
-		createFloor(560, 608, 1, 4)
-		createFloor(656, 608, 1, 3)
-		createFloor(736, 608, 1, 3)
-		createFloor(816, 608, 1, 3)
-		createFloor(896, 608, 1, 8)
-		createMovingBlock(64, 192, 6, 2, 0)
-		entrances = [Entrance(4, [int(16), int(208)], [int(16), int(16)], entranceImg)]
-		createExit(4, [int(960), int(592)], [int(16), int(16)], exitImg)
-		grates.append(Grate([int(944), int(560)], [int(48), int(48)], []))
-		createFloor(0, 368, 15, 1)
-		createFloor(144, 528, 1, 13)
-		createFloor(0, 32, 12, 1)
-		createFloor(736, 368, 4, 1)
-		createFloor(576, 432, 2, 1)
-		createFloor(480, 480, 1, 1)
-		createFloor(352, 496, 3, 1)
-		createMovingBlock(0, 704, 64, 1, 1)
-		createSensor(672, 576, 6, 2, 0, [])
 
-	#elif lvl == 10:
+createFloor(0, 224, 5, 40)
+createFloor(976, 0, 20, 3)
+createFloor(736, 320, 3, 18)
+createFloor(576, 416, 1, 10)
+createFloor(480, 464, 1, 7)
+createFloor(368, 496, 1, 8)
+createFloor(0, 608, 1, 19)
+createFloor(336, 608, 1, 2)
+createFloor(400, 608, 1, 3)
+createFloor(480, 608, 1, 3)
+createFloor(560, 608, 1, 4)
+createFloor(656, 608, 1, 3)
+createFloor(736, 608, 1, 3)
+createFloor(816, 608, 1, 3)
+createFloor(896, 608, 1, 8)
+createMovingBlock(64, 192, 6, 2, 0)
+entrances = [Entrance(4, [int(16), int(208)], [int(16), int(16)], entranceImg)]
+createExit(4, [int(960), int(592)], [int(16), int(16)], exitImg)
+grates.append(Grate([int(944), int(560)], [int(48), int(48)], []))
+createFloor(0, 368, 15, 1)
+createFloor(144, 528, 1, 13)
+createFloor(0, 32, 12, 1)
+createFloor(736, 368, 4, 1)
+createFloor(576, 432, 2, 1)
+createFloor(480, 480, 1, 1)
+createFloor(352, 496, 3, 1)
+createMovingBlock(0, 704, 64, 1, 1)
+createSensor(672, 576, 6, 2, 0, [])
+saveLevel()
 
-	
-	#SEPERATION
 
-	elif lvl == 98:
-		createFloor(0, 688, 2, 64)
-		createFloor(992, 32, 41, 2)
-		createFloor(0, 0, 2, 64)
-		createFloor(0, 32, 41, 2)
-		createFloor(32, 96, 2, 4)
-		createFloor(128, 32, 6, 2)
-		createMovingBlock(96, 96, 2, 2, 1)
-		createFloor(160, 32, 38, 2)
-		createFloor(240, 640, 3, 2)
-		createFloor(272, 592, 6, 2)
-		createFloor(304, 544, 9, 2)
-		createFloor(336, 496, 12, 2)
-		createFloor(368, 448, 15, 2)
-		createFloor(192, 400, 2, 8)
-		createFloor(64, 160, 2, 6)
-		createFloor(32, 224, 2, 6)
-		createFloor(64, 288, 2, 6)
-		createFloor(32, 352, 2, 6)
-		createFloor(64, 416, 2, 6)
-		createFloor(112, 496, 2, 3)
-		createFloor(32, 496, 2, 3)
-		createFloor(64, 592, 2, 4)
-		createMovingBlock(32, 128, 8, 2, 1)
-		createMovingBlock(32, 160, 2, 4, 1)
-		createMovingBlock(128, 224, 2, 4, 1)
-		createMovingBlock(64, 192, 6, 2, 1)
-		createMovingBlock(64, 256, 4, 2, 1)
-		createMovingBlock(32, 256, 2, 2, 1)
-		createMovingBlock(32, 288, 2, 4, 1)
-		createMovingBlock(64, 320, 6, 2, 1)
-		createMovingBlock(128, 352, 2, 4, 1)
-		createMovingBlock(32, 384, 6, 2, 1)
-		createMovingBlock(32, 416, 2, 2, 1)
-		createMovingBlock(32, 448, 8, 3, 1)
-		createMovingBlock(80, 496, 2, 6, 1)
-		createMovingBlock(112, 528, 3, 4, 1)
-		createMovingBlock(32, 528, 2, 10, 1)
-		createMovingBlock(64, 528, 1, 4, 1)
-		createMovingBlock(64, 624, 4, 4, 1)
-		createMovingBlock(128, 592, 2, 4, 1)
-		createMovingBlock(128, 656, 7, 2, 1)
-		createMovingBlock(160, 640, 5, 1, 1)
-		createMovingBlock(192, 512, 4, 8, 1)
-		createMovingBlock(256, 432, 1, 13, 1)
-		createMovingBlock(224, 432, 2, 5, 1)
-		createMovingBlock(192, 464, 2, 3, 1)
-		createMovingBlock(192, 432, 2, 2, 1)
-		createMovingBlock(272, 544, 2, 3, 1)
-		createMovingBlock(272, 432, 4, 7, 1)
-		createMovingBlock(320, 400, 5, 2, 1)
-		createFloor(400, 112, 36, 2)
-		createFloor(240, 336, 2, 7)
-		createFloor(320, 256, 2, 5)
-		createFloor(256, 160, 3, 4)
-		createFloor(352, 112, 1, 3)
-		createMovingBlock(432, 112, 35, 34, 1)
-		createMovingBlock(432, 656, 32, 2, 1)
-		entrances = [Entrance(4, [int(48), int(64)], [int(16), int(16)], entranceImg)]
-		createExit(4, [int(960), int(672)], [int(16), int(16)], exitImg)
-		createMovingBlock(192, 368, 13, 2, 1)
-		createMovingBlock(288, 288, 2, 3, 1)
-		createMovingBlock(192, 288, 6, 3, 1)
-		createMovingBlock(320, 288, 3, 3, 1)
-		createMovingBlock(368, 288, 2, 5, 1)
-		createMovingBlock(352, 336, 1, 2, 1)
-		createMovingBlock(192, 336, 3, 2, 1)
-		createMovingBlock(192, 208, 8, 5, 1)
-		createMovingBlock(320, 128, 5, 8, 1)
-		createMovingBlock(192, 128, 8, 2, 1)
-		createMovingBlock(192, 160, 4, 3, 1)
-		createMovingBlock(192, 80, 10, 3, 1)
-		createMovingBlock(192, 32, 50, 3, 1)
-		createMovingBlock(352, 80, 40, 2, 1)
-		createMovingBlock(336, 432, 2, 4, 1)
-		createMovingBlock(368, 432, 2, 1, 1)
-		createMovingBlock(80, 32, 3, 4, 1)
-		createMovingBlock(32, 32, 3, 1, 1)
-		createMovingBlock(944, 656, 3, 1, 1)
-		createMovingBlock(976, 672, 1, 1, 1)
-		createMovingBlock(944, 672, 1, 1, 1)
+createFloor(0, 688, 2, 64)
+createFloor(992, 32, 41, 2)
+createFloor(0, 0, 2, 64)
+createFloor(0, 32, 41, 2)
+createFloor(32, 96, 2, 4)
+createFloor(128, 32, 6, 2)
+createMovingBlock(96, 96, 2, 2, 1)
+createFloor(160, 32, 38, 2)
+createFloor(240, 640, 3, 2)
+createFloor(272, 592, 6, 2)
+createFloor(304, 544, 9, 2)
+createFloor(336, 496, 12, 2)
+createFloor(368, 448, 15, 2)
+createFloor(192, 400, 2, 8)
+createFloor(64, 160, 2, 6)
+createFloor(32, 224, 2, 6)
+createFloor(64, 288, 2, 6)
+createFloor(32, 352, 2, 6)
+createFloor(64, 416, 2, 6)
+createFloor(112, 496, 2, 3)
+createFloor(32, 496, 2, 3)
+createFloor(64, 592, 2, 4)
+createMovingBlock(32, 128, 8, 2, 1)
+createMovingBlock(32, 160, 2, 4, 1)
+createMovingBlock(128, 224, 2, 4, 1)
+createMovingBlock(64, 192, 6, 2, 1)
+createMovingBlock(64, 256, 4, 2, 1)
+createMovingBlock(32, 256, 2, 2, 1)
+createMovingBlock(32, 288, 2, 4, 1)
+createMovingBlock(64, 320, 6, 2, 1)
+createMovingBlock(128, 352, 2, 4, 1)
+createMovingBlock(32, 384, 6, 2, 1)
+createMovingBlock(32, 416, 2, 2, 1)
+createMovingBlock(32, 448, 8, 3, 1)
+createMovingBlock(80, 496, 2, 6, 1)
+createMovingBlock(112, 528, 3, 4, 1)
+createMovingBlock(32, 528, 2, 10, 1)
+createMovingBlock(64, 528, 1, 4, 1)
+createMovingBlock(64, 624, 4, 4, 1)
+createMovingBlock(128, 592, 2, 4, 1)
+createMovingBlock(128, 656, 7, 2, 1)
+createMovingBlock(160, 640, 5, 1, 1)
+createMovingBlock(192, 512, 4, 8, 1)
+createMovingBlock(256, 432, 1, 13, 1)
+createMovingBlock(224, 432, 2, 5, 1)
+createMovingBlock(192, 464, 2, 3, 1)
+createMovingBlock(192, 432, 2, 2, 1)
+createMovingBlock(272, 544, 2, 3, 1)
+createMovingBlock(272, 432, 4, 7, 1)
+createMovingBlock(320, 400, 5, 2, 1)
+createFloor(400, 112, 36, 2)
+createFloor(240, 336, 2, 7)
+createFloor(320, 256, 2, 5)
+createFloor(256, 160, 3, 4)
+createFloor(352, 112, 1, 3)
+createMovingBlock(432, 112, 35, 34, 1)
+createMovingBlock(432, 656, 32, 2, 1)
+entrances = [Entrance(4, [int(48), int(64)], [int(16), int(16)], entranceImg)]
+createExit(4, [int(960), int(672)], [int(16), int(16)], exitImg)
+createMovingBlock(192, 368, 13, 2, 1)
+createMovingBlock(288, 288, 2, 3, 1)
+createMovingBlock(192, 288, 6, 3, 1)
+createMovingBlock(320, 288, 3, 3, 1)
+createMovingBlock(368, 288, 2, 5, 1)
+createMovingBlock(352, 336, 1, 2, 1)
+createMovingBlock(192, 336, 3, 2, 1)
+createMovingBlock(192, 208, 8, 5, 1)
+createMovingBlock(320, 128, 5, 8, 1)
+createMovingBlock(192, 128, 8, 2, 1)
+createMovingBlock(192, 160, 4, 3, 1)
+createMovingBlock(192, 80, 10, 3, 1)
+createMovingBlock(192, 32, 50, 3, 1)
+createMovingBlock(352, 80, 40, 2, 1)
+createMovingBlock(336, 432, 2, 4, 1)
+createMovingBlock(368, 432, 2, 1, 1)
+createMovingBlock(80, 32, 3, 4, 1)
+createMovingBlock(32, 32, 3, 1, 1)
+createMovingBlock(944, 656, 3, 1, 1)
+createMovingBlock(976, 672, 1, 1, 1)
+createMovingBlock(944, 672, 1, 1, 1)
 
-		DetCurrent = DetDest
+DetCurrent = DetDest
+saveLevel()
 
-	elif lvl == 99:
-		createFloor(0, 688, 2, 64)
-		createFloor(960, 368, 20, 4)
-		createMovingBlock(240, 0, 2, 15, 0)
-		createMovingBlock(352, 0, 3, 2, 0)
-		createMovingBlock(352, 32, 3, 2, 0)
-		createMovingBlock(400, 0, 2, 4, 0)
-		createFloor(272, 0, 15, 4)
-		createMovingBlock(336, 64, 7, 24, 1)
-		createMovingBlock(240, 240, 2, 13, 1)
-		createFloor(544, 0, 15, 4)
-		createMovingBlock(512, 0, 2, 15, 0)
-		createFloor(176, 0, 14, 4)
-		createExit(4, [int(624), int(16)], [int(16), int(16)], exitImg)
-		entrances = [Entrance(4, [int(64), int(640)], [int(16), int(16)], entranceImg)]
-		grates.append(Grate([int(608), int(208)], [int(128), int(32)], []))
-		grates.append(Grate([int(704), int(0)], [int(32), int(208)], []))
-		createFloor(608, 240, 2, 2)
-		createFloor(448, 0, 15, 2)
-		createMovingBlock(480, 0, 2, 15, 0)
-		createMovingBlock(480, 240, 4, 13, 1)
-		switches.append(Switch('Switch', [int(992), int(352)], [int(16), int(16)], switchImg, False))
 
-		DetCurrent = DetMulti
+createFloor(0, 688, 2, 64)
+createFloor(960, 368, 20, 4)
+createMovingBlock(240, 0, 2, 15, 0)
+createMovingBlock(352, 0, 3, 2, 0)
+createMovingBlock(352, 32, 3, 2, 0)
+createMovingBlock(400, 0, 2, 4, 0)
+createFloor(272, 0, 15, 4)
+createMovingBlock(336, 64, 7, 24, 1)
+createMovingBlock(240, 240, 2, 13, 1)
+createFloor(544, 0, 15, 4)
+createMovingBlock(512, 0, 2, 15, 0)
+createFloor(176, 0, 14, 4)
+createExit(4, [int(624), int(16)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(64), int(640)], [int(16), int(16)], entranceImg)]
+grates.append(Grate([int(608), int(208)], [int(128), int(32)], []))
+grates.append(Grate([int(704), int(0)], [int(32), int(208)], []))
+createFloor(608, 240, 2, 2)
+createFloor(448, 0, 15, 2)
+createMovingBlock(480, 0, 2, 15, 0)
+createMovingBlock(480, 240, 4, 13, 1)
+switches.append(Switch('Switch', [int(992), int(352)], [int(16), int(16)], switchImg, False))
 
-	else:
-		createFloor(0, 688, 2, 64)
-		
-	if lvl == 100:
-		openReadFile("saves/LevelCutscene1.txt")
-		#switches.append(Switch("Switch",(256,)))
-		
-	print "Loaded level: ", lvl
-	DB.refresh()
-	for i in bricks:
-		DB.img.blit(i.img, i.coords)
-	spawnChar(entrances[0])
+DetCurrent = DetMulti
+saveLevel()
+
 
 def soundEffect(sfxkey):
 	if not muteon:
@@ -1346,10 +1334,6 @@ def soundEffect(sfxkey):
 
 # Current main screen, basic level.
 Running = True
-
-
-createLevel(4)
-saveLevel()
 
 bombWaitTime = 0
 normalBombWait = 1
@@ -1385,10 +1369,11 @@ gL = 0
 isCrouching = False
 counter = 0
 movingbA = 10
-createLevel(currLvl)
+loadSaved(currLvl)
 isCutsecne = True
 if isCutsecne == True:
-	createLevel(100)
+	#loadSaved(100)
+	pass
 
 	
 def changeSwitch():
@@ -1484,18 +1469,14 @@ while Running:
 				Running = False
 			if event.key == K_p:  # Increment level by 1
 				currLvl += 1
-				if currLvl >= totalLvls:
+				if currLvl > len(levels)-1:
 					currLvl = 0
-				
-				loadSaved(0)
+				loadSaved(currLvl)
 			if event.key == K_o:
 				currLvl -= 1
 				if currLvl < 0:
-					currLvl = totalLvls - 1
-				loadSaved(0)
-			if event.key == K_l:  # slow down
-				currLvl = -1
-				createLevel(-1)
+					currLvl = len(levels) - 1
+				loadSaved(currLvl)
 			if event.key == pygame.K_SPACE:  # exploding
 				bombsExplode = True
 			if event.key == pygame.K_t:  # print cursor location, useful for putting stuff in the right spot
@@ -1623,7 +1604,7 @@ while Running:
 	for i in exits:
 		if collide([player.coords[0]-8, player.coords[1]-8], [16,16], [i.coords[0]-8, i.coords[1]-8], [16,16]):
 			currLvl += 1
-			createLevel(currLvl)
+			loadSaved(currLvl)
 
 
 
