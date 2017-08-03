@@ -359,9 +359,9 @@ class movingBlock(object):
 		self.vel = [0, 0]
 		self.isExploding = False
 		self.imgNum = 0
-		self.explodeImg = squareExplodeImgs
-		for i in range(len(self.explodeImg)):
-			self.explodeImg[i] = pygame.transform.scale(self.explodeImg[i], self.size)
+		self.explodeImg = []
+		for i in range(len(squareExplodeImgs)):
+			self.explodeImg.append(pygame.transform.scale(squareExplodeImgs[i], self.size))
 		
 		self.mass = (size[0]*size[1])/256
 		self.sixteens = (size[0]/16, size[1]/16)
