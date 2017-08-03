@@ -1,0 +1,28 @@
+CONTROLS:
+
+WASD/ARROW KEYS >>> MOVE
+
+MOUSE BUTTONS >>> THROW BOMBS
+
+SPACEBAR >>> DETONATE BOMBS
+
+E/ALT >>> DEFUSE BOMBS
+
+X >>> RESET LEVEL
+
+O/P >>> CYCLE LEVELS
+
+
+TIPS:
+
+1. Try bomb jumping!
+
+2. Some blocks can be moved
+
+3. Some blocks can be destroyed
+
+4. Some blocks can do both
+
+5. Bomb damage scales differently from knockback. Essentially, you can push a breakable block further by hitting it indirectly multiple times
+
+6. Have fun!
