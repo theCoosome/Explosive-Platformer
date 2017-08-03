@@ -1200,7 +1200,6 @@ createFloor(976, 0, 20, 3)
 createFloor(736, 320, 3, 18)
 createFloor(576, 416, 1, 10)
 createFloor(480, 464, 1, 7)
-createFloor(368, 496, 1, 8)
 createFloor(0, 608, 1, 19)
 createFloor(336, 608, 1, 2)
 createFloor(400, 608, 1, 3)
@@ -1213,16 +1212,20 @@ createFloor(896, 608, 1, 8)
 createMovingBlock(64, 192, 6, 2, 0)
 entrances = [Entrance(4, [int(16), int(208)], [int(16), int(16)], entranceImg)]
 createExit(4, [int(960), int(592)], [int(16), int(16)], exitImg)
-grates.append(Grate([int(944), int(560)], [int(48), int(48)], []))
+great = Grate([int(944), int(560)], [int(48), int(48)], ["guy"])
 createFloor(0, 368, 15, 1)
-createFloor(144, 528, 1, 13)
 createFloor(0, 32, 12, 1)
 createFloor(736, 368, 4, 1)
 createFloor(576, 432, 2, 1)
 createFloor(480, 480, 1, 1)
-createFloor(352, 496, 3, 1)
 createMovingBlock(0, 704, 64, 1, 1)
-createSensor(672, 576, 6, 2, 0, [])
+createFloor(352, 496, 1, 9)
+createFloor(144, 528, 1, 14)
+createFloor(352, 512, 1, 1)
+createFloor(672, 240, 1, 2)
+grates.append(great)
+createSensor(672, 576, 6, 2, 0, ["guy"], great)
+DetCurrent = DetKB
 saveLevel()
 
 #destructable heaven
@@ -1334,6 +1337,18 @@ createMovingBlock(480, 240, 4, 13, 1)
 switches.append(Switch('Switch', [int(992), int(352)], [int(16), int(16)], switchImg, False))
 
 DetCurrent = DetMulti
+saveLevel()
+
+createMovingBlock(16, 400, 10, 2, 1)
+createMovingBlock(96, 256, 6, 2, 1)
+createMovingBlock(320, 176, 11, 2, 1)
+createMovingBlock(480, 320, 7, 2, 1)
+createMovingBlock(656, 160, 2, 12, 1)
+createMovingBlock(688, 320, 8, 2, 1)
+createMovingBlock(784, 624, 13, 3, 1)
+createExit(4, [int(960), int(608)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
+DetCurrent = DetKB
 saveLevel()
 
 
