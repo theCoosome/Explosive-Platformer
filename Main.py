@@ -1088,7 +1088,7 @@ saveLevel()
 
 #Multi intro
 createFloor(0, 560, 10, 46)
-createMovingBlock(224, 512, 6, 3, 2, 800)
+createMovingBlock(224, 512, 6, 3, 2, 1000)
 createFloor(736, 592, 8, 7)
 createFloor(848, 496, 14, 11)
 rand = Grate([int(848), int(432)], [int(128), int(64)], ["guy"])
@@ -1671,6 +1671,8 @@ while Running:
 	for i in exits:
 		if collide([player.coords[0]-8, player.coords[1]-8], [16,16], [i.coords[0]-8, i.coords[1]-8], [16,16]):
 			currLvl += 1
+			if currLvl > len(levels)-1:
+				currLvl = 0
 			loadSaved(currLvl)
 
 
