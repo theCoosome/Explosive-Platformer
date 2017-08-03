@@ -1168,7 +1168,35 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		
 		DetCurrent = DetDest
 		
-	#elif lvl == 9:
+	elif lvl == 11:
+		createFloor(0, 224, 5, 40)
+		createFloor(976, 0, 20, 3)
+		createFloor(736, 320, 3, 18)
+		createFloor(576, 416, 1, 10)
+		createFloor(480, 464, 1, 7)
+		createFloor(368, 496, 1, 8)
+		createFloor(0, 608, 1, 19)
+		createFloor(336, 608, 1, 2)
+		createFloor(400, 608, 1, 3)
+		createFloor(480, 608, 1, 3)
+		createFloor(560, 608, 1, 4)
+		createFloor(656, 608, 1, 3)
+		createFloor(736, 608, 1, 3)
+		createFloor(816, 608, 1, 3)
+		createFloor(896, 608, 1, 8)
+		createMovingBlock(64, 192, 6, 2, 0)
+		entrances = [Entrance(4, [int(16), int(208)], [int(16), int(16)], entranceImg)]
+		createExit(4, [int(960), int(592)], [int(16), int(16)], exitImg)
+		grates.append(Grate([int(944), int(560)], [int(48), int(48)], []))
+		createFloor(0, 368, 15, 1)
+		createFloor(144, 528, 1, 13)
+		createFloor(0, 32, 12, 1)
+		createFloor(736, 368, 4, 1)
+		createFloor(576, 432, 2, 1)
+		createFloor(480, 480, 1, 1)
+		createFloor(352, 496, 3, 1)
+		createMovingBlock(0, 704, 64, 1, 1)
+		createSensor(672, 576, 6, 2, 0, [])
 
 	#elif lvl == 10:
 
