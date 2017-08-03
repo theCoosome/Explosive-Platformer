@@ -1036,7 +1036,36 @@ createFloor(112, 512, 4, 1)
 createMovingBlock(64, 528, 3, 3, 1)
 
 saveLevel()
+=======
+
 '''
+#Test level
+borderedLevel()
+openReadFile("saves/Level0.txt")
+
+#platforms.append(Platform((896, 626), (64, 64), platformImg))
+switches.append(Switch("Switch", (256, 288), (32, 32), switchImg, False))
+crates.append(Crate((432, 160), (16, 16), crateImg))
+keys.append(Key((432, 160), (8, 8), keyImg))
+gates.append(Gate((896, 626), (64, 64), lockImg, False))
+saveLevel()
+
+#Dest intro
+createFloor(0, 256, 29, 22)
+createFloor(352, 592, 8, 42)
+createFloor(448, 0, 31, 15)
+createFloor(0, 0, 16, 3)
+createFloor(800, 528, 4, 4)
+createFloor(864, 464, 8, 10)
+createFloor(688, 0, 18, 21)
+createFloor(960, 288, 11, 4)
+createMovingBlock(512, 496, 7, 6, 1, 6000)
+createMovingBlock(352, 256, 6, 8, 1, 4000)
+createMovingBlock(800, 464, 4, 4, 1, 8000)
+createExit(4, [int(912), int(448)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(128), int(240)], [int(16), int(16)], entranceImg)]
+DetCurrent = DetDest
+saveLevel()
 
 #Dest intro
 createFloor(0, 256, 29, 22)
