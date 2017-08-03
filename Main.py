@@ -1135,6 +1135,21 @@ createFloor(976, 48, 28, 3)
 DetCurrent = DetNorm
 saveLevel([("sensor", 0)])
 
+#Intro to bomb grates
+createFloor(16, 0, 1, 63)
+createFloor(0, 560, 10, 64)
+createFloor(1008, 16, 34, 1)
+createFloor(0, 0, 35, 1)
+gyah = grates.append(Grate([int(16), int(432)], [int(176), int(128)], ["guy"]))
+createExit(4, [int(96), int(528)], [int(16), int(16)], exitImg)
+grates.append(Grate([int(528), int(16)], [int(128), int(544)], ["bomb"]))
+entrances = [Entrance(4, [int(352), int(544)], [int(16), int(16)], entranceImg)]
+createMovingBlock(768, 48, 15, 11, 0)
+createMovingBlock(720, 384, 18, 3, 1)
+createSensor(816, 448, 9, 5, 0, ["guy"], gyah)
+saveLevel([("sensor", 0) ])
+
+
 #launching a block
 createFloor(0, 560, 10, 64)
 createFloor(0, 0, 12, 64)
@@ -1155,6 +1170,7 @@ DetCurrent = DetKB
 saveLevel([("sensor", 0)])
 
 #it's just nice and blue
+#needs a higher bomb limit
 createFloor(0, 480, 15, 44)
 createFloor(704, 688, 2, 19)
 createFloor(1008, 0, 45, 1)
@@ -1162,15 +1178,16 @@ createExit(4, [int(816), int(128)], [int(16), int(16)], exitImg)
 entrances = [Entrance(4, [int(32), int(464)], [int(16), int(16)], entranceImg)]
 createFloor(0, 0, 30, 1)
 createFloor(16, 0, 1, 62)
-createMovingBlock(96, 336, 19, 9, 0)
-createMovingBlock(96, 192, 19, 9, 0)
-createMovingBlock(96, 48, 19, 9, 0)
-grates.append(Grate([int(784), int(176)], [int(112), int(80)], ["guy"]))
 grates.append(Grate([int(640), int(320)], [int(64), int(160)], ["guy"]))
 grates.append(Grate([int(592), int(368)], [int(48), int(112)], ["guy"]))
 grates.append(Grate([int(544), int(416)], [int(48), int(64)], ["guy"]))
 grates.append(Grate([int(512), int(448)], [int(32), int(32)], ["guy"]))
+createMovingBlock(96, 272, 19, 13, 0)
+createMovingBlock(96, 64, 19, 13, 0)
+grates.append(Grate([int(752), int(224)], [int(48), int(48)], ["guy"]))
+grates.append(Grate([int(800), int(176)], [int(80), int(96)], ["guy"]))
 saveLevel()
+
 #grate over a pit
 createFloor(0, 0, 9, 64)
 createFloor(960, 144, 36, 4)
