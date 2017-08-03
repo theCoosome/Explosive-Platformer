@@ -97,7 +97,7 @@ class DispObj(object):
 		self.simple = simple
 		self.size = size
 		self.refresh()
-	
+
 #takes single string, max width, font used, and color of text. returns list of dispObj
 def wraptext(text, fullline, Font, render = False, color = (0,0,0)):  #need way to force indent in string
 	Denting = True
@@ -970,8 +970,29 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 	global entrances
 	wipeFloor()
 	if (lvl == -1):
+		createFloor(0, 576, 3, 64)
+		createMovingBlock(352, 512, 1, 4, 0)
+		createMovingBlock(368, 512, 3, 1, 0)
+		createMovingBlock(416, 512, 1, 4, 0)
+		createMovingBlock(464, 496, 2, 5, 0)
+		createMovingBlock(496, 496, 3, 2, 0)
+		createMovingBlock(544, 496, 2, 5, 0)
+		createMovingBlock(608, 480, 3, 6, 0)
+		createMovingBlock(656, 480, 3, 3, 0)
+		createMovingBlock(704, 480, 3, 6, 0)
+		createMovingBlock(656, 528, 3, 3, 1)
+		createMovingBlock(496, 528, 3, 3, 1)
+		createMovingBlock(368, 528, 3, 3, 1)
+		entrances = [Entrance(4, [int(240), int(560)], [int(16), int(16)], entranceImg)]
+		createExit(4, [int(928), int(560)], [int(16), int(16)], exitImg)
+		createFloor(48, 512, 4, 1)
+		createFloor(64, 512, 1, 3)
+		createFloor(112, 512, 4, 1)
+		createMovingBlock(64, 528, 3, 3, 1)
+
+
+	elif (lvl == 0):
 		pass
-		'''elif (lvl == 0):
 		borderedLevel()
 		openReadFile("saves/Level0.txt")
 
@@ -980,7 +1001,7 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		crates.append(Crate((432, 160), (16, 16), crateImg))
 		keys.append(Key((432, 160), (8, 8), keyImg))
 		gates.append(Gate((896, 626), (64, 64), lockImg, False))
-
+		'''
 		elif (lvl == 1):
 		createFloor(0, 0, 45, 2)
 		createFloor(992, 0, 45, 2)
@@ -1000,9 +1021,9 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		createExit(4, [int(768), int(672)], [int(16), int(16)], exitImg)
 		entrances = [Entrance(4, [int(48), int(256)], [int(16), int(16)], entranceImg)]
 		grates.append(Grate([int(896), int(624)], [int(64), int(64)], []))
-		
-		DetCurrent = DetGod'''
 
+		DetCurrent = DetGod
+		'''
 	elif lvl == 1: #1
 		createFloor(0, 544, 11, 64)
 		createFloor(64, 256, 18, 5)
@@ -1014,7 +1035,7 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		createFloor(0, 64, 30, 4)
 		createFloor(960, 64, 30, 4)
 		DetCurrent = DetKB
-		
+
 	elif lvl == 2: #1
 		createFloor(0, 560, 10, 46)
 		createMovingBlock(224, 512, 6, 3, 2, 800)
@@ -1046,7 +1067,7 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		entrances = [Entrance(4, [int(110), int(540)], [int(16), int(16)], entranceImg)]
 		createExit(4, [int(864), int(544)], [int(16), int(16)], exitImg)
 		DetCurrent = DetKB
-		
+
 	elif lvl == 4: #2
 		createFloor(0, 0, 9, 64)
 		createFloor(960, 144, 36, 4)
@@ -1056,10 +1077,10 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		createSensor(384, 304, 4, 3, 0, ["guy"], rand2)
 		grates.append(rand1)
 		grates.append(rand2)
-		
+
 		grates.append(Grate([int(224), int(448)], [int(32), int(32)], ["bomb"]))
 		grates.append(Grate([int(0), int(144)], [int(80), int(576)], ["guy"]))
-		
+
 		createFloor(288, 352, 2, 21)
 		createFloor(544, 656, 4, 26)
 		createFloor(592, 144, 13, 2)
@@ -1069,7 +1090,7 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		exits = [Exit(4, [int(864), int(624)], [int(16), int(16)], exitImg)]
 		createExit(4, [int(864), int(640)], [int(16), int(16)], exitImg)
 		DetCurrent = DetKB
-		
+
 	elif lvl == 5: #3
 		createFloor(0, 624, 6, 64)
 		createFloor(0, 0, 6, 64)
@@ -1089,11 +1110,11 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		rand = Grate([int(880), int(224)], [int(80), int(32)], ["guy"])
 		createSensor(864, 560, 2, 4, 2, ["guy"], rand)
 		grates.append(rand)
-		
+
 		entrances = [Entrance(4, [int(384), int(368)], [int(16), int(16)], entranceImg)]
 		createExit(4, [int(928), int(608)], [int(16), int(16)], exitImg)
 
-		DetCurrent = DetNorm
+		DetCurrent = DetNormal
 		
 	elif lvl == 6: #4
 		createFloor(0, 448, 17, 64)
@@ -1146,11 +1167,6 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		entrances = [Entrance(4, [int(128), int(240)], [int(16), int(16)], entranceImg)]
 		
 		DetCurrent = DetDest
-		
-		
-
-
-	
 		
 	#elif lvl == 9:
 

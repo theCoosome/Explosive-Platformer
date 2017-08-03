@@ -47,8 +47,8 @@ grateImg = getImg("Bricks/Grate")
 personimg = getImg("Dereks/Derek")
 movingImg = getImg("Bricks/BrickMoving")
 destructableImg = getImg("Bricks/BrickDestructable")
-exitImg = getImg("Bricks/Entrance")
-entranceImg = getImg("Bricks/Exit2")
+exitImg = getImg("Bricks/Exit")
+entranceImg = getImg("Bricks/Entrance")
 multiImg = getImg("Bricks/BrickMulti")
 bombImg = getImg("Bomb")
 no_thing = getImg("no_thing")
@@ -325,6 +325,7 @@ def deleteAll():
 			delList.append(switches[i])
 	for i in delList:
 		del switches[switches.index(i)]
+	delList = []
 	for i in range(len(sensors)):
 		coords = (min(rectX, brx), min(rectY, bry))
 		pSize = (int(math.fabs(brx - rectX)), int(math.fabs(bry - rectY)))
