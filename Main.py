@@ -268,7 +268,7 @@ class Person(object):
 	def __init__(self, coords, size, hasKey):
 		self.coords = coords
 		self.size = size
-		self.vel = [0, -15]  # starts going up
+		self.vel = [0, 0]  # starts going up
 		self.motion = [0.0, 0.0]  # attempted motion, xy direction
 		self.floor = False  # is on ground
 		self.crouch = False
@@ -935,7 +935,10 @@ def Reset():
 	sensors = this["sensors"]
 	switches = this["switches"]
 	grates = this["grates"]
+	
 	player.coords = this["spawn"]
+	player.vel = [0, 0]
+	player.floor = True
 	
 
 def openReadFile(filePath):
@@ -964,7 +967,7 @@ def openReadFile(filePath):
 
 currLvl = 0
 
-
+#covered destructables
 createFloor(0, 576, 3, 64)
 createMovingBlock(352, 512, 1, 4, 0)
 createMovingBlock(368, 512, 3, 1, 0)
@@ -987,7 +990,8 @@ createMovingBlock(64, 528, 3, 3, 1)
 
 saveLevel()
 
-
+'''
+#Test level
 borderedLevel()
 openReadFile("saves/Level0.txt")
 
@@ -996,7 +1000,7 @@ switches.append(Switch("Switch", (256, 288), (32, 32), switchImg, False))
 crates.append(Crate((432, 160), (16, 16), crateImg))
 keys.append(Key((432, 160), (8, 8), keyImg))
 gates.append(Gate((896, 626), (64, 64), lockImg, False))
-saveLevel()
+saveLevel()'''
 
 '''
 elif (lvl == 1):
@@ -1022,7 +1026,7 @@ grates.append(Grate([int(896), int(624)], [int(64), int(64)], []))
 DetCurrent = DetGod
 '''
 
-
+#jump intro
 createFloor(0, 544, 11, 64)
 createFloor(64, 256, 18, 5)
 createFloor(720, 352, 12, 15)
@@ -1035,7 +1039,7 @@ createFloor(960, 64, 30, 4)
 DetCurrent = DetKB
 saveLevel()
 
-
+#Multi intro
 createFloor(0, 560, 10, 46)
 createMovingBlock(224, 512, 6, 3, 2, 800)
 createFloor(736, 592, 8, 7)
@@ -1050,7 +1054,7 @@ createFloor(976, 48, 28, 3)
 DetCurrent = DetNorm
 saveLevel()
 
-
+#launching a block
 createFloor(0, 560, 10, 64)
 createFloor(0, 0, 12, 64)
 createFloor(624, 192, 18, 12)
@@ -1069,7 +1073,7 @@ createExit(4, [int(864), int(544)], [int(16), int(16)], exitImg)
 DetCurrent = DetKB
 saveLevel()
 
-
+#grate over a pit
 createFloor(0, 0, 9, 64)
 createFloor(960, 144, 36, 4)
 rand1 = Grate([int(80), int(480)], [int(304), int(32)], ["guy"])
@@ -1091,7 +1095,7 @@ createExit(4, [int(864), int(640)], [int(16), int(16)], exitImg)
 DetCurrent = DetKB
 saveLevel()
 
-
+#Multi support
 createFloor(0, 624, 6, 64)
 createFloor(0, 0, 6, 64)
 createFloor(0, 96, 33, 3)
@@ -1115,7 +1119,7 @@ createExit(4, [int(928), int(608)], [int(16), int(16)], exitImg)
 DetCurrent = DetNorm
 saveLevel()
 
-		
+#Running under launched
 createFloor(0, 448, 17, 64)
 createFloor(0, 0, 12, 20)
 createFloor(0, 384, 4, 7)
@@ -1132,7 +1136,7 @@ createExit(4, [int(768), int(432)], [int(16), int(16)], exitImg)
 DetCurrent = DetKB
 saveLevel()
 		
-
+#Multi challenge
 createFloor(0, 0, 45, 5)
 createFloor(80, 608, 7, 59)
 createFloor(80, 448, 3, 21)
@@ -1152,7 +1156,7 @@ createExit(4, [int(912), int(592)], [int(16), int(16)], exitImg)
 DetCurrent = DetMulti
 saveLevel()
 
-
+#Dest intro
 createFloor(0, 256, 29, 22)
 createFloor(352, 592, 8, 42)
 createFloor(448, 0, 31, 15)
@@ -1170,7 +1174,7 @@ entrances = [Entrance(4, [int(128), int(240)], [int(16), int(16)], entranceImg)]
 DetCurrent = DetDest
 saveLevel()
 		
-
+#stairs and platforms
 createFloor(0, 224, 5, 40)
 createFloor(976, 0, 20, 3)
 createFloor(736, 320, 3, 18)
@@ -1201,7 +1205,7 @@ createMovingBlock(0, 704, 64, 1, 1)
 createSensor(672, 576, 6, 2, 0, [])
 saveLevel()
 
-
+#destructable heaven
 createFloor(0, 688, 2, 64)
 createFloor(992, 32, 41, 2)
 createFloor(0, 0, 2, 64)
@@ -1286,7 +1290,7 @@ createMovingBlock(944, 672, 1, 1, 1)
 DetCurrent = DetDest
 saveLevel()
 
-
+#Dropping movables down
 createFloor(0, 688, 2, 64)
 createFloor(960, 368, 20, 4)
 createMovingBlock(240, 0, 2, 15, 0)
