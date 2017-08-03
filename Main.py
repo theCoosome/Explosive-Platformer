@@ -3,6 +3,7 @@ from pygame.locals import *
 import math
 from decimal import *
 import time
+import copy
 
 pygame.mixer.pre_init(44100, -16, 2, 2048)
 pygame.init()
@@ -289,7 +290,7 @@ class Person(object):
 
 	def Kill(self):
 		print "Ded"
-		Reset()
+		ResetLevel()
 	def Collide(self, i):
 		if hit(i.coords, i.size, self.coords, self.size):  # UP
 
@@ -895,9 +896,8 @@ def saveLevel():
 	global grates
 	global sensors
 	global entrances
-	
 	global DetCurrent
-	levels.append({"bricks":bricks, "movingblocks":movingblocks, "sensors":sensors, "switches":switches, "grates":grates, "exits":exits, "spawn":entrances[0].coords, "Det":DetCurrent})
+	levels.append({"bricks":bricks, "movingblocks":movingblocks, "sensors":sensors, "switches":switches, "grates":grates, "exits":exits, "spawn":entrances[0].coords[:], "Det":DetCurrent, "pairs":[]})
 	wipeFloor()
 	
 def loadSaved(lvl):
@@ -911,10 +911,16 @@ def loadSaved(lvl):
 	wipeFloor()
 	this = levels[lvl]
 	bricks = this["bricks"]
-	movingblocks = this["movingblocks"]
-	sensors = this["sensors"]
-	switches = this["switches"]
-	grates = this["grates"]
+	
+	for i in this["movingblocks"]:
+		movingblocks.append(copy.copy(i))
+	#movingblocks = this["movingblocks"][:]
+	for i in this["sensors"]:
+		sensors.append(copy.copy(i))
+	for i in this["switches"]:
+		switches.append(copy.copy(i))
+	for i in this["grates"]:
+		grates.append(copy.copy(i))
 	exits = this["exits"]
 	DetCurrent = this["Det"]
 	
@@ -924,24 +930,38 @@ def loadSaved(lvl):
 		DB.img.blit(i.img, i.coords)
 	player.coords = this["spawn"]
 	
-def Reset():
+def ResetLevel():
 	global movingblocks
 	global switches
 	global grates
 	global sensors
+	global currLvl
+	global levels
 	this = levels[currLvl]
 	
-	movingblocks = this["movingblocks"]
-	sensors = this["sensors"]
-	switches = this["switches"]
-	grates = this["grates"]
+	movingblocks = this["movingblocks"][:]
+	sensors = this["sensors"][:]
+	switches = this["switches"][:]
+	grates = this["grates"][:]
 	
-	player.coords = this["spawn"]
+	'''for i in this["movingblocks"]:
+		movingblocks.append(copy.copy(i))
+	movingblocks = this["movingblocks"][:]
+	for i in this["sensors"]:
+		sensors.append(copy.copy(i))
+	for i in this["switches"]:
+		switches.append(copy.copy(i))
+	for i in this["grates"]:
+		grates.append(copy.copy(i))'''
+	
+	player.coords = this["spawn"][:]
+	print this["spawn"]
 	player.vel = [0, 0]
 	player.floor = True
+	print "Resetting level"
 	
 
-def openReadFile(filePath):
+'''def openReadFile(filePath):
 	entrances = [Entrance(0, [700, 250], [1, 1], entranceImg)]
 	file = open(filePath, "r")
 	cont = file.readlines()
@@ -963,7 +983,7 @@ def openReadFile(filePath):
 			else:
 				print "moveBlock"
 				createMovingBlock(int(x), int(y), int(int(xs) / 16), int(int(ys) / 16), int(type))
-	spawnChar(entrances[0])
+	spawnChar(entrances[0])'''
 
 currLvl = 0
 
