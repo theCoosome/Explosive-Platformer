@@ -31,7 +31,7 @@ size = (1024, 720)
 standardSize = (16, 16)
 bombSize = ((standardSize[0] / 2), (standardSize[1] / 2))
 
-screen = pygame.display.set_mode(size)
+screen = pygame.display.set_mode(size, FULLSCREEN)
 
 
 clock = pygame.time.Clock()
@@ -1014,6 +1014,30 @@ def ResetLevel():
 	spawnChar(entrances[0])'''
 
 currLvl = 0
+'''
+#covered destructables
+createFloor(0, 576, 3, 64)
+createMovingBlock(352, 512, 1, 4, 0)
+createMovingBlock(368, 512, 3, 1, 0)
+createMovingBlock(416, 512, 1, 4, 0)
+createMovingBlock(464, 496, 2, 5, 0)
+createMovingBlock(496, 496, 3, 2, 0)
+createMovingBlock(544, 496, 2, 5, 0)
+createMovingBlock(608, 480, 3, 6, 0)
+createMovingBlock(656, 480, 3, 3, 0)
+createMovingBlock(704, 480, 3, 6, 0)
+createMovingBlock(656, 528, 3, 3, 1)
+createMovingBlock(496, 528, 3, 3, 1)
+createMovingBlock(368, 528, 3, 3, 1)
+entrances = [Entrance(4, [int(240), int(560)], [int(16), int(16)], entranceImg)]
+createExit(4, [int(928), int(560)], [int(16), int(16)], exitImg)
+createFloor(48, 512, 4, 1)
+createFloor(64, 512, 1, 3)
+createFloor(112, 512, 4, 1)
+createMovingBlock(64, 528, 3, 3, 1)
+
+saveLevel()
+=======
 
 '''
 #Test level
@@ -1025,31 +1049,24 @@ switches.append(Switch("Switch", (256, 288), (32, 32), switchImg, False))
 crates.append(Crate((432, 160), (16, 16), crateImg))
 keys.append(Key((432, 160), (8, 8), keyImg))
 gates.append(Gate((896, 626), (64, 64), lockImg, False))
-saveLevel()'''
+saveLevel()
 
-'''
-elif (lvl == 1):
-createFloor(0, 0, 45, 2)
-createFloor(992, 0, 45, 2)
-createFloor(32, 688, 2, 60)
-createFloor(32, 0, 2, 60)
-createFloor(32, 304, 1, 18)
-createFloor(368, 288, 1, 12)
-createFloor(464, 272, 1, 3)
-createFloor(192, 224, 1, 13)
-createFloor(320, 240, 1, 2)
-createFloor(560, 224, 1, 15)
-createFloor(496, 192, 1, 17)
-createMovingBlock(656, 208, 2, 1, 1)
-createMovingBlock(240, 192, 3, 2, 0)
-createFloor(160, 416, 4, 12)
-createFloor(544, 528, 1, 16)
-createExit(4, [int(768), int(672)], [int(16), int(16)], exitImg)
-entrances = [Entrance(4, [int(48), int(256)], [int(16), int(16)], entranceImg)]
-grates.append(Grate([int(896), int(624)], [int(64), int(64)], []))
-
-DetCurrent = DetGod
-'''
+#Dest intro
+createFloor(0, 256, 29, 22)
+createFloor(352, 592, 8, 42)
+createFloor(448, 0, 31, 15)
+createFloor(0, 0, 16, 3)
+createFloor(800, 528, 4, 4)
+createFloor(864, 464, 8, 10)
+createFloor(688, 0, 18, 21)
+createFloor(960, 288, 11, 4)
+createMovingBlock(512, 496, 7, 6, 1, 6000)
+createMovingBlock(352, 256, 6, 8, 1, 4000)
+createMovingBlock(800, 464, 4, 4, 1, 8000)
+createExit(4, [int(912), int(448)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(128), int(240)], [int(16), int(16)], entranceImg)]
+DetCurrent = DetDest
+saveLevel()
 
 #Dest intro
 createFloor(0, 256, 29, 22)
@@ -1079,6 +1096,24 @@ createFloor(0, 0, 4, 64)
 createFloor(0, 64, 30, 4)
 createFloor(960, 64, 30, 4)
 DetCurrent = DetKB
+saveLevel()
+
+#Dest intro
+createFloor(0, 256, 29, 22)
+createFloor(352, 592, 8, 42)
+createFloor(448, 0, 31, 15)
+createFloor(0, 0, 16, 3)
+createFloor(800, 528, 4, 4)
+createFloor(864, 464, 8, 10)
+createFloor(688, 0, 18, 21)
+createFloor(960, 288, 11, 4)
+createMovingBlock(512, 496, 7, 6, 1, 6000)
+createMovingBlock(352, 256, 6, 8, 1, 4000)
+createMovingBlock(800, 464, 4, 4, 1, 8000)
+createExit(4, [int(912), int(448)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(128), int(240)], [int(16), int(16)], entranceImg)]
+
+DetCurrent = DetDest
 saveLevel()
 
 #Moving block intro
@@ -1568,7 +1603,7 @@ while Running:
 					muteon = False
 				else:
 					muteon = True
-			if event.key == K_x:
+			if event.key == K_k:
 				player.Kill()
 			if event.key == K_z:
 				print "Coords: ", player.coords[0], player.coords[1]

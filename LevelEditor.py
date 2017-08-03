@@ -667,14 +667,7 @@ while Running:
 					createFloor(min(rectX, brx), min(rectY, bry), 1, 1, CENTRANCE)
 				elif(currImgNum == 8):
 					delList = []
-					for i in range(len(bricks)):
-						coords = (min(rectX, brx), min(rectY, bry))
-						pSize = (int(math.fabs(brx-rectX)), int(math.fabs(bry-rectY)))
-						if collide(coords, pSize, bricks[i].coords, bricks[i].size):
-							print "Touching"
-							delList.append(bricks[i])
-					for i in delList:
-						del bricks[bricks.index(i)]
+					deleteAll()
 				elif(currImgNum == 9):
 					createFloor(min(rectX, brx), min(rectY, bry), 1, 1, CSWITCH)
 				elif(currImgNum == 10):
