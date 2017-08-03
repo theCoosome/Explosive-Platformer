@@ -512,6 +512,7 @@ class Sensor(object):
 		self.trigger = None
 		self.On = False
 		self.actions = []
+		self.sixteens = (size[0]/16, size[1]/16)
 		
 		if self.type == 0:
 			self.img = pygame.transform.scale(sens1Img, size)
@@ -867,6 +868,11 @@ def createSensor(coordx, coordy, rx, ry, type, actions, link = None):
 	rand.actions = actions
 	rand.trigger = link
 	sensors.append(rand)
+def createSwitch(coordx, coordy, rx, ry, type, actions, link = None):
+	rand = switch(type, (coordx, coordy), (rx, ry))
+	rand.actions = actions
+	rand.trigger = link
+	sensors.append(rand)
 	
 def createGrate(coordx, coordy, rx, ry, blocked):
 	grates.append(Grate((coordx, coordy), (rx*16, ry*16), blocked))
@@ -888,7 +894,7 @@ platforms = []
 levels = []
 entrances = []
 
-def saveLevel():
+def saveLevel(links = []): #links: list of tuples, ("sensor", 1)
 	global bricks
 	global movingblocks
 	global switches
@@ -897,7 +903,7 @@ def saveLevel():
 	global sensors
 	global entrances
 	global DetCurrent
-	levels.append({"bricks":bricks, "movingblocks":movingblocks, "sensors":sensors, "switches":switches, "grates":grates, "exits":exits, "spawn":entrances[0].coords[:], "Det":DetCurrent, "pairs":[]})
+	levels.append({"bricks":bricks[:], "movingblocks":movingblocks[:], "sensors":sensors[:], "switches":switches[:], "grates":grates[:], "exits":exits[:], "spawn":entrances[0].coords[:], "Det":DetCurrent, "pairs":links})
 	wipeFloor()
 	
 def loadSaved(lvl):
@@ -913,14 +919,23 @@ def loadSaved(lvl):
 	bricks = this["bricks"]
 	
 	for i in this["movingblocks"]:
-		movingblocks.append(copy.copy(i))
-	#movingblocks = this["movingblocks"][:]
-	for i in this["sensors"]:
-		sensors.append(copy.copy(i))
-	for i in this["switches"]:
-		switches.append(copy.copy(i))
+		createMovingBlock(i.coords[0], i.coords[1], i.sixteens[0], i.sixteens[1], i.type, i.hp)
+		
 	for i in this["grates"]:
-		grates.append(copy.copy(i))
+		grates.append(Grate(i.coords[:], i.size, i.blocked[:]))
+	
+	SensCount = 0
+	SwitCount = 0
+	for i in this["pairs"]:
+		if i[0] == "sensor":
+			x = this["sensors"][SensCount]
+			createSensor(x.coords[0], x.coords[1], x.sixteens[0], x.sixteens[1], x.type, x.actions, grates[i[1]])
+			SensCount += 1
+		if i[0] == "switch":
+			x = this["switches"][SwitCount]
+			createSwitch(x.coords[0], x.coords[1], x.sixteens[0], x.sixteens[1], x.type, x.actions, grates[i[1]])
+			SwitCount += 1
+	
 	exits = this["exits"]
 	DetCurrent = this["Det"]
 	
@@ -928,7 +943,7 @@ def loadSaved(lvl):
 	DB.refresh()
 	for i in bricks:
 		DB.img.blit(i.img, i.coords)
-	player.coords = this["spawn"]
+	player.coords = this["spawn"][:]
 	
 def ResetLevel():
 	global movingblocks
@@ -937,27 +952,37 @@ def ResetLevel():
 	global sensors
 	global currLvl
 	global levels
+	global bombs
 	this = levels[currLvl]
 	
-	movingblocks = this["movingblocks"][:]
-	sensors = this["sensors"][:]
-	switches = this["switches"][:]
-	grates = this["grates"][:]
+	movingblocks = []
+	grates = []
+	sensors = []
+	switches = []
 	
-	'''for i in this["movingblocks"]:
-		movingblocks.append(copy.copy(i))
-	movingblocks = this["movingblocks"][:]
-	for i in this["sensors"]:
-		sensors.append(copy.copy(i))
-	for i in this["switches"]:
-		switches.append(copy.copy(i))
+	for i in this["movingblocks"]:
+		createMovingBlock(i.coords[0], i.coords[1], i.sixteens[0], i.sixteens[1], i.type, i.hp)
+		
 	for i in this["grates"]:
-		grates.append(copy.copy(i))'''
+		grates.append(Grate(i.coords[:], i.size, i.blocked[:]))
 	
-	player.coords = this["spawn"][:]
+	SensCount = 0
+	SwitCount = 0
+	for i in this["pairs"]:
+		if i[0] == "sensor":
+			x = this["sensors"][SensCount]
+			createSensor(x.coords[0], x.coords[1], x.sixteens[0], x.sixteens[1], x.type, x.actions, grates[i[1]])
+			SensCount += 1
+		if i[0] == "switch":
+			x = this["switches"][SwitCount]
+			createSwitch(x.coords[0], x.coords[1], x.sixteens[0], x.sixteens[1], x.type, x.actions, grates[i[1]])
+			SwitCount += 1
+	
+	player.coords = [this["spawn"][0], this["spawn"][1]]
 	print this["spawn"]
 	player.vel = [0, 0]
 	player.floor = True
+	bombs = []
 	print "Resetting level"
 	
 
@@ -1066,13 +1091,14 @@ createFloor(736, 592, 8, 7)
 createFloor(848, 496, 14, 11)
 rand = Grate([int(848), int(432)], [int(128), int(64)], ["guy"])
 createSensor(736, 560, 7, 2, 2, ["guy"], rand)
+grates.append(rand)
 createExit(4, [int(912), int(480)], [int(16), int(16)], exitImg)
 entrances = [Entrance(4, [int(96), int(544)], [int(16), int(16)], entranceImg)]
 createFloor(0, 0, 3, 64)
 createFloor(0, 48, 32, 3)
 createFloor(976, 48, 28, 3)
 DetCurrent = DetNorm
-saveLevel()
+saveLevel([("sensor", 0)])
 
 #launching a block
 createFloor(0, 560, 10, 64)
@@ -1091,7 +1117,7 @@ grates.append(Grate([int(592), int(400)], [int(32), int(48)], ["guy"]))
 entrances = [Entrance(4, [int(110), int(540)], [int(16), int(16)], entranceImg)]
 createExit(4, [int(864), int(544)], [int(16), int(16)], exitImg)
 DetCurrent = DetKB
-saveLevel()
+saveLevel([("sensor", 0)])
 
 #grate over a pit
 createFloor(0, 0, 9, 64)
@@ -1113,7 +1139,7 @@ entrances = [Entrance(4, [int(112), int(448)], [int(16), int(16)], entranceImg)]
 exits = [Exit(4, [int(864), int(624)], [int(16), int(16)], exitImg)]
 createExit(4, [int(864), int(640)], [int(16), int(16)], exitImg)
 DetCurrent = DetKB
-saveLevel()
+saveLevel([("sensor", 0), ("sensor", 1)])
 
 #Multi support
 createFloor(0, 624, 6, 64)
@@ -1137,7 +1163,7 @@ grates.append(rand)
 entrances = [Entrance(4, [int(384), int(368)], [int(16), int(16)], entranceImg)]
 createExit(4, [int(928), int(608)], [int(16), int(16)], exitImg)
 DetCurrent = DetNorm
-saveLevel()
+saveLevel([("sensor", 0)])
 
 #Running under launched
 createFloor(0, 448, 17, 64)
@@ -1174,7 +1200,7 @@ grates.append(rand)
 createExit(4, [int(912), int(592)], [int(16), int(16)], exitImg)
 
 DetCurrent = DetMulti
-saveLevel()
+saveLevel([("sensor", 0)])
 
 #Dest intro
 createFloor(0, 256, 29, 22)
@@ -1226,7 +1252,7 @@ createFloor(672, 240, 1, 2)
 grates.append(great)
 createSensor(672, 576, 6, 2, 0, ["guy"], great)
 DetCurrent = DetKB
-saveLevel()
+saveLevel([("sensor", 0)])
 
 #destructable heaven
 createFloor(0, 688, 2, 64)
