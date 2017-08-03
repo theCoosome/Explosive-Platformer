@@ -1,0 +1,13 @@
+createFloor(0, 256, 29, 22)
+createFloor(352, 592, 8, 42)
+createFloor(448, 0, 31, 15)
+createFloor(0, 0, 16, 3)
+createFloor(800, 528, 4, 4)
+createFloor(864, 464, 8, 10)
+createFloor(688, 0, 18, 21)
+createFloor(960, 288, 11, 4)
+createMovingBlock(512, 496, 7, 6, 1)
+createMovingBlock(352, 256, 6, 8, 1)
+createMovingBlock(800, 464, 4, 4, 1)
+createExit(4, [int(912), int(448)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(128), int(240)], [int(16), int(16)], entranceImg)]
