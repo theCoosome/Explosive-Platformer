@@ -1676,6 +1676,7 @@ for i in range(len(levels)):
 		rand.img.blit(lvl["Imgs"][0], (24, 10))
 	for n in range(lvl["difficulty"]):
 		rand.img.blit(rateImg, ((14*n)+23, 57))
+	rand.img.blit(font.render(str(i+1), False, BLACK), (3, 15))
 		
 	Dlevels.all.append(rand)
 	x += 1
@@ -1691,7 +1692,7 @@ while Running:
 	for i in range(len(levels)):
 		lvl = levels[i]
 		if unlocked[i]:
-			DlevelCap.all[0].all[i].img .blit(lvl["Imgs"][1], (24, 10))
+			DlevelCap.all[0].all[i].img.blit(lvl["Imgs"][1], (24, 10))
 		else:
 			DlevelCap.all[0].all[i].img.blit(lvl["Imgs"][0], (24, 10))
 	DlevelCap.all[0].refresh()
@@ -1756,26 +1757,26 @@ while Running:
 					mouse_down = False
 
 					
-		if Screen == 0:
+		if Screen == 0:   #Main title
 			screen.blit(DTitle, (50, 100))
 			screen.blit(Dstory, (100, 200))
 			screen.blit(Dselect, (100, 300))
 			screen.blit(Dcontrols, (100, 400))
-			if pointCollide((100, 200), (200, 28), mousepos):
+			if pointCollide((100, 200), (200, 28), mousepos): #story
 				mouseImg = OnImg
 				if mouse_down:
-						#Screen = 1
-						pass
-			if pointCollide((100, 300), (200, 28), mousepos):
+					#Screen = 1
+					pass
+			if pointCollide((100, 300), (200, 28), mousepos): #levels
 				mouseImg = OnImg
 				if mouse_down:
 						Screen = 1
-			if pointCollide((100, 400), (200, 28), mousepos):
+			if pointCollide((100, 400), (200, 28), mousepos): #controls
 				mouseImg = OnImg
 				if mouse_down:
 						Screen = 2
 		
-		if Screen == 1:
+		if Screen == 1:   #Level select
 			screen.blit(Dback, (10, 5))
 			Dbacking.coords = (-400, 0)
 			for n in range(len(DlevelCap.all[0].all)):
@@ -1784,11 +1785,12 @@ while Running:
 					mouseImg = OnImg
 					Dbacking.coords = (64+i.coords[0], 64+i.coords[1])
 					if mouse_down and unlocked[n]:
+						currLvl = n
 						loadSaved(n)
 						Title = False
 						inGame = True
 			
-			if pointCollide((0, 0), (90, 40), mousepos):
+			if pointCollide((0, 0), (90, 40), mousepos): #back
 				mouseImg = OnImg
 				if mouse_down:
 					Screen = 0
@@ -1796,7 +1798,7 @@ while Running:
 			screen.blit(Dbacking.img, Dbacking.coords)
 			screen.blit(DlevelCap.img, DlevelCap.coords)
 		
-		if Screen == 2:
+		if Screen == 2:   #Options
 			screen.blit(Dback, (10, 5))
 			
 			if pointCollide((0, 0), (90, 40), mousepos):
