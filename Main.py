@@ -1649,7 +1649,6 @@ while Running:
 	Title = True
 	mouse_down = False
 	mouseImg = AimImg
-	Screen = 0
 	for i in range(len(levels)):
 		lvl = levels[i]
 		if unlocked[i]:
