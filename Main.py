@@ -835,11 +835,19 @@ class detonator(object):
 	def newBomb(self, coords, vel):
 		return bomb(self.type, [coords[0]+4, coords[1]+4], vel, (8, 8), self.kbP, self.kbB, self.dmg, self.arm, self.bomb, self.armImg)
 
+
+DetGod = detonator(0, 16, 16, 5, 0, 99999, getImg("UI/DetGod"), bombImg, getImg("Bombs/ArmNorm/ArmBlipBomb (1)"))
+DetNorm = detonator(1, 2, 8, 3, 30, 4, getImg("UI/DetDefault"), bombImg, getImg("Bombs/ArmNorm/ArmBlipBomb (1)"))
+DetKB = detonator(2, 16, 30, 1, 20, 2, getImg("UI/DetJumper"), getImg("Bombs/Tosser"), getImg("Bombs/ArmTosser/ArmBlipTosser (1)"))
+DetMulti = detonator(3, 1, 10, 2, 80, 10, getImg("UI/DetMulti"), getImg("Bombs/Multi"), getImg("Bombs/ArmMulti/ArmBlipMulti (1)"))
+DetDest = detonator(4, 1, 1, 20, 30, 4, getImg("UI/DetDestructive"), getImg("Bombs/Dest"), getImg("Bombs/ArmDest/ArmBlipDest (1)"))
+
 DetGod = detonator(0, 16, 16, 5, 0, 99999, getImg("UI/DetGod"), bombImg, getImg("Bombs/ArmNorm/ArmBlipBomb (3)"))
 DetNorm = detonator(1, 2, 8, 3, 30, 4, getImg("UI/DetDefault"), bombImg, getImg("Bombs/ArmNorm/ArmBlipBomb (3)"))
 DetKB = detonator(2, 16, 30, 1, 20, 2, getImg("UI/DetJumper"), getImg("Bombs/tosser"), getImg("Bombs/ArmTosser/ArmBlipTosser (4)"))
 DetMulti = detonator(3, 1, 10, 2, 80, 10, getImg("UI/DetMulti"), getImg("Bombs/Multi"), getImg("Bombs/ArmMulti/ArmBlipMulti (4)"))
 DetDest = detonator(4, 1, 1, 20, 30, 4, getImg("UI/DetDestructive"), getImg("Bombs/Dest"), getImg("Bombs/ArmDest/ArmBlipDest (3)"))
+
 DetCurrent = DetGod
 
 bombs = []
@@ -1255,8 +1263,10 @@ createMovingBlock(96, 272, 19, 13, 0)
 createMovingBlock(96, 64, 19, 13, 0)
 grates.append(Grate([int(752), int(224)], [int(48), int(48)], ["guy"]))
 grates.append(Grate([int(800), int(176)], [int(80), int(96)], ["guy"]))
+
 DetCurrent = detonator(2, 16, 30, 1, 20, 10, getImg("UI/DetJumper"), getImg("Bombs/tosser"), getImg("Bombs/ArmTosser/ArmBlipTosser(2)"))
 saveLevel(2)
+
 
 #grate over a pit
 createFloor(0, 0, 9, 64)
@@ -1537,7 +1547,7 @@ createSensor(912, 128, 3, 3, 0, ["guy"])
 
 DetCurrent = DetNorm
 
-saveLevel(3, [("sensor", 8)])
+saveLevel(3, [("sensor", 9)])
 
 #Dropping movables down
 createFloor(0, 688, 2, 64)
