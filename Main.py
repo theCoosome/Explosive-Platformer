@@ -835,11 +835,11 @@ class detonator(object):
 	def newBomb(self, coords, vel):
 		return bomb(self.type, [coords[0]+4, coords[1]+4], vel, (8, 8), self.kbP, self.kbB, self.dmg, self.arm, self.bomb, self.armImg)
 
-DetGod = detonator(0, 16, 16, 5, 0, 99999, getImg("UI/DetGod"), bombImg, getImg("Bombs/ArmBlipBomb"))
-DetNorm = detonator(1, 2, 8, 3, 30, 4, getImg("UI/DetDefault"), bombImg, getImg("Bombs/ArmBlipBomb"))
-DetKB = detonator(2, 16, 30, 1, 20, 2, getImg("UI/DetJumper"), getImg("Bombs/tosser"), getImg("Bombs/ArmBlipTosser"))
-DetMulti = detonator(3, 1, 10, 2, 80, 10, getImg("UI/DetMulti"), getImg("Bombs/Multi"), getImg("Bombs/ArmBlipMulti"))
-DetDest = detonator(4, 1, 1, 20, 30, 4, getImg("UI/DetDestructive"), getImg("Bombs/Dest"), getImg("Bombs/ArmBlipDest"))
+DetGod = detonator(0, 16, 16, 5, 0, 99999, getImg("UI/DetGod"), bombImg, getImg("Bombs/ArmNorm/ArmBlipBomb (3)"))
+DetNorm = detonator(1, 2, 8, 3, 30, 4, getImg("UI/DetDefault"), bombImg, getImg("Bombs/ArmNorm/ArmBlipBomb (3)"))
+DetKB = detonator(2, 16, 30, 1, 20, 2, getImg("UI/DetJumper"), getImg("Bombs/tosser"), getImg("Bombs/ArmTosser/ArmBlipTosser (4)"))
+DetMulti = detonator(3, 1, 10, 2, 80, 10, getImg("UI/DetMulti"), getImg("Bombs/Multi"), getImg("Bombs/ArmMulti/ArmBlipMulti (4)"))
+DetDest = detonator(4, 1, 1, 20, 30, 4, getImg("UI/DetDestructive"), getImg("Bombs/Dest"), getImg("Bombs/ArmDest/ArmBlipDest (3)"))
 DetCurrent = DetGod
 
 bombs = []
@@ -1255,8 +1255,13 @@ createMovingBlock(96, 272, 19, 13, 0)
 createMovingBlock(96, 64, 19, 13, 0)
 grates.append(Grate([int(752), int(224)], [int(48), int(48)], ["guy"]))
 grates.append(Grate([int(800), int(176)], [int(80), int(96)], ["guy"]))
+<<<<<<< HEAD
+DetCurrent = DetNorm
+saveLevel()
+=======
 DetCurrent = detonator(2, 16, 30, 1, 20, 10, getImg("UI/DetJumper"), getImg("Bombs/tosser"), getImg("Bombs/ArmTosser/ArmBlipTosser(2)"))
 saveLevel(2)
+>>>>>>> eabb8b667b7be01a847dcfb6b0316973ca966d78
 
 #grate over a pit
 createFloor(0, 0, 9, 64)
@@ -1499,6 +1504,45 @@ createMovingBlock(944, 672, 1, 1, 1)
 
 DetCurrent = DetDest
 saveLevel(2)
+
+#Movables and grates. What more could a guy ask for?
+createFloor(0, 688, 2, 64)
+createMovingBlock(256, 640, 8, 3, 0)
+createMovingBlock(64, 576, 10, 3, 0)
+createMovingBlock(544, 512, 10, 3, 0)
+grates.append(Grate([int(0), int(560)], [int(1024), int(16)], ["moving", "dest"]))
+grates.append(Grate([int(0), int(624)], [int(1024), int(16)], ["moving", "dest"]))
+grates.append(Grate([int(0), int(496)], [int(1024), int(16)], ["moving", "dest"]))
+createMovingBlock(320, 448, 7, 3, 2, 3000)
+grates.append(Grate([int(0), int(432)], [int(1024), int(16)], ["moving", "dest"]))
+createMovingBlock(848, 384, 7, 3, 0)
+grates.append(Grate([int(0), int(368)], [int(1024), int(16)], ["moving", "dest"]))
+grates.append(Grate([int(0), int(304)], [int(1024), int(16)], ["moving", "dest"]))
+grates.append(Grate([int(0), int(240)], [int(1024), int(16)], ["moving", "dest"]))
+grates.append(Grate([int(0), int(176)], [int(1024), int(16)], ["moving", "dest"]))
+createMovingBlock(144, 320, 8, 3, 0)
+createMovingBlock(656, 256, 7, 3, 0)
+createMovingBlock(800, 192, 7, 3, 0)
+createMovingBlock(112, 128, 8, 3, 0)
+grates.append(Grate([int(0), int(112)], [int(1024), int(16)], ["moving", "dest"]))
+createExit(4, [int(80), int(48)], [int(16), int(16)], exitImg)
+createFloor(0, 0, 2, 64)
+createFloor(960, 0, 45, 4)
+createFloor(0, 0, 45, 4)
+entrances = [Entrance(4, [int(80), int(672)], [int(16), int(16)], entranceImg)]
+grates.append(Grate([int(64), int(32)], [int(64), int(80)], ["guy"]))
+createMovingBlock(496, 128, 3, 3, 1, 500)
+createMovingBlock(432, 384, 3, 3, 1, 500)
+createMovingBlock(512, 448, 3, 3, 1, 500)
+createMovingBlock(384, 640, 3, 3, 1, 500)
+createMovingBlock(208, 640, 3, 3, 1, 500)
+createMovingBlock(784, 320, 3, 3, 1, 500)
+createMovingBlock(368, 256, 3, 3, 1, 500)
+createSensor(912, 128, 3, 3, 0, ["guy"])
+
+DetCurrent = DetNorm
+
+saveLevel([("sensor", 8)])
 
 #Dropping movables down
 createFloor(0, 688, 2, 64)
