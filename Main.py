@@ -1537,7 +1537,7 @@ createSensor(912, 128, 3, 3, 0, ["guy"])
 
 DetCurrent = DetNorm
 
-saveLevel(3, [("sensor", 8)])
+saveLevel(3, [("sensor", 9)])
 
 #Dropping movables down
 createFloor(0, 688, 2, 64)
