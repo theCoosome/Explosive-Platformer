@@ -1697,6 +1697,7 @@ while Running:
 			DlevelCap.all[0].all[i].img.blit(lvl["Imgs"][0], (24, 10))
 	DlevelCap.all[0].refresh()
 	DlevelCap.refresh()
+	fps = 60
 	
 	while Title:
 		mouseImg = AimImg
@@ -1831,6 +1832,7 @@ while Running:
 		pygame.display.update()
 		clock.tick(fps)
 		
+	mouseImg = AimImg
 	while inGame and Running:
 		mousepos = pygame.mouse.get_pos()
 		if debugon:
