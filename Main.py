@@ -1236,7 +1236,7 @@ grates.append(Grate([int(592), int(400)], [int(32), int(48)], ["guy"]))
 entrances = [Entrance(4, [int(110), int(540)], [int(16), int(16)], entranceImg)]
 createExit(4, [int(864), int(544)], [int(16), int(16)], exitImg)
 DetCurrent = DetKB
-saveLevel(1, [("sensor", 0)])
+saveLevel(2, [("sensor", 0)])
 
 #it's just nice and blue
 #needs a higher bomb limit
@@ -1255,13 +1255,8 @@ createMovingBlock(96, 272, 19, 13, 0)
 createMovingBlock(96, 64, 19, 13, 0)
 grates.append(Grate([int(752), int(224)], [int(48), int(48)], ["guy"]))
 grates.append(Grate([int(800), int(176)], [int(80), int(96)], ["guy"]))
-<<<<<<< HEAD
-DetCurrent = DetNorm
-saveLevel()
-=======
 DetCurrent = detonator(2, 16, 30, 1, 20, 10, getImg("UI/DetJumper"), getImg("Bombs/tosser"), getImg("Bombs/ArmTosser/ArmBlipTosser(2)"))
 saveLevel(2)
->>>>>>> eabb8b667b7be01a847dcfb6b0316973ca966d78
 
 #grate over a pit
 createFloor(0, 0, 9, 64)
@@ -1283,7 +1278,7 @@ entrances = [Entrance(4, [int(112), int(448)], [int(16), int(16)], entranceImg)]
 exits = [Exit(4, [int(864), int(624)], [int(16), int(16)], exitImg)]
 createExit(4, [int(864), int(640)], [int(16), int(16)], exitImg)
 DetCurrent = DetKB
-saveLevel(3, [("sensor", 0), ("sensor", 1)])
+saveLevel(2, [("sensor", 0), ("sensor", 1)])
 
 #fastrun
 createFloor(864, 384, 1, 10)
@@ -1542,7 +1537,7 @@ createSensor(912, 128, 3, 3, 0, ["guy"])
 
 DetCurrent = DetNorm
 
-saveLevel([("sensor", 8)])
+saveLevel(3, [("sensor", 8)])
 
 #Dropping movables down
 createFloor(0, 688, 2, 64)
