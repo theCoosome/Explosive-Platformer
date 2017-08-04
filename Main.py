@@ -1042,7 +1042,7 @@ saveLevel()
 '''
 #Test level
 borderedLevel()
-openReadFile("saves/Level0.txt")
+#openReadFile("saves/Level0.txt")
 
 #platforms.append(Platform((896, 626), (64, 64), platformImg))
 switches.append(Switch("Switch", (256, 288), (32, 32), switchImg, False))
