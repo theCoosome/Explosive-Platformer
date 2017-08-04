@@ -1049,7 +1049,7 @@ switches.append(Switch("Switch", (256, 288), (32, 32), switchImg, False))
 crates.append(Crate((432, 160), (16, 16), crateImg))
 keys.append(Key((432, 160), (8, 8), keyImg))
 gates.append(Gate((896, 626), (64, 64), lockImg, False))
-saveLevel()
+
 
 #Dest intro
 createFloor(0, 256, 29, 22)
