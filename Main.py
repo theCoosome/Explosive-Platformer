@@ -24,7 +24,7 @@ pygame.mouse.set_visible(False)
 font = pygame.font.SysFont('couriernew', 13)
 fontComp = pygame.font.SysFont('couriernew', 26, True)
 smallfont = pygame.font.SysFont('couriernew', 12)
-massive = pygame.font.SysFont('couriernew', 200, True)
+massive = pygame.font.SysFont('couriernew', 50, True)
 
 # sizes so nothing is hardcoded
 size = (1024, 720)
@@ -63,6 +63,18 @@ sens2Img = getImg("Bricks/SensorDest")
 sens3Img = getImg("Bricks/SensorMulti")
 exitImg = getImg("Bricks/Exit")
 entranceImg = getImg("Bricks/Exit2")
+
+Mblack = getImg("Bricks/SimBlack")
+Mhollow = getImg("Bricks/SimHollow")
+Mbrick = getImg("Bricks/SimBrick")
+Mdest = getImg("Bricks/SimDest")
+Mgrate = getImg("Bricks/SimGrate")
+Mmove = getImg("Bricks/SimMove")
+Mmulti = getImg("Bricks/SimMulti")
+Msdest = getImg("Bricks/SimSdest")
+Msmove = getImg("Bricks/SimSmove")
+Msmulti = getImg("Bricks/SimSmulti")
+
 
 switchImages= [getImg("Switch"),getImg("Switch2")]
 switchImg = switchImages[0]
@@ -503,6 +515,7 @@ class Brick(object):
 		self.coords = coords
 		self.vel = (0, 0)
 		self.size = size
+		self.sixteens = (size[0]/16, size[1]/16)
 		rand = pygame.transform.scale(brickImg, size)
 		self.img = rand
 
@@ -898,6 +911,8 @@ platforms = []
 levels = []
 entrances = []
 
+unlocked = []
+
 def saveLevel(links = []): #links: list of tuples, ("sensor", 1)
 	global bricks
 	global movingblocks
@@ -907,7 +922,37 @@ def saveLevel(links = []): #links: list of tuples, ("sensor", 1)
 	global sensors
 	global entrances
 	global DetCurrent
-	levels.append({"bricks":bricks[:], "movingblocks":movingblocks[:], "sensors":sensors[:], "switches":switches[:], "grates":grates[:], "exits":exits[:], "spawn":entrances[0].coords[:], "Det":DetCurrent, "pairs":links})
+	
+	rand = pygame.Surface((64, 45), pygame.SRCALPHA, 32).convert_alpha()
+	rand2 = pygame.Surface((64, 45), pygame.SRCALPHA, 32).convert_alpha()
+	rand.fill(WHITE)
+	rand2.fill(WHITE)
+	for i in bricks:
+		rand.blit(pygame.transform.scale(Mbrick, i.sixteens), (i.coords[0]/16, i.coords[1]/16))
+		rand2.blit(pygame.transform.scale(Mblack, i.sixteens), (i.coords[0]/16, i.coords[1]/16))
+	for i in movingblocks:
+		if i.type == 0:
+			rand.blit(pygame.transform.scale(Mmove, i.sixteens), (i.coords[0]/16, i.coords[1]/16))
+		if i.type == 1:
+			rand.blit(pygame.transform.scale(Mdest, i.sixteens), (i.coords[0]/16, i.coords[1]/16))
+		if i.type == 2:
+			rand.blit(pygame.transform.scale(Mmulti, i.sixteens), (i.coords[0]/16, i.coords[1]/16))
+		rand2.blit(pygame.transform.scale(Mblack, i.sixteens), (i.coords[0]/16, i.coords[1]/16))
+	for i in sensors:
+		if i.type == 0:
+			rand.blit(pygame.transform.scale(Msmove, i.sixteens), (i.coords[0]/16, i.coords[1]/16))
+		if i.type == 1:
+			rand.blit(pygame.transform.scale(Msdest, i.sixteens), (i.coords[0]/16, i.coords[1]/16))
+		if i.type == 2:
+			rand.blit(pygame.transform.scale(Msmulti, i.sixteens), (i.coords[0]/16, i.coords[1]/16))
+		rand2.blit(pygame.transform.scale(Mhollow, i.sixteens), (i.coords[0]/16, i.coords[1]/16))
+	for i in grates:
+		rand.blit(pygame.transform.scale(Mgrate, i.sixteens), (i.coords[0]/16, i.coords[1]/16))
+		rand2.blit(pygame.transform.scale(Mhollow, i.sixteens), (i.coords[0]/16, i.coords[1]/16))
+	
+	levels.append({"bricks":bricks[:], "movingblocks":movingblocks[:], "sensors":sensors[:], "switches":switches[:], "grates":grates[:], "exits":exits[:], "spawn":entrances[0].coords[:], "Det":DetCurrent, "pairs":links, "Imgs":[rand2, rand]})
+	unlocked.append(False)
+	
 	wipeFloor()
 	
 def loadSaved(lvl):
@@ -1057,6 +1102,7 @@ createExit(4, [int(912), int(448)], [int(16), int(16)], exitImg)
 entrances = [Entrance(4, [int(128), int(240)], [int(16), int(16)], entranceImg)]
 DetCurrent = DetDest
 saveLevel()
+unlocked[0] = True
 
 #jump intro
 createFloor(0, 544, 11, 64)
@@ -1486,7 +1532,135 @@ def changeSwitch():
 	for s in switches:
 		s.img = switchImages[0]
 timer = 10
+
+Screen = 0
+netSize = 0
+mouse_down = False
+scrollMom, scrollMod = 0, 0
+
+DTitle = massive.render("Explosive Platformer", True, BLACK)
+#level display, goes within size limiter display (896, 592)
+DlevelCap = DispObj([], (64, 64), False, (896, 592))
+Dlevels = DispObj([], [0, 0], False, (896, 10000))
+Dbacking = DispObj(no_thing, [-100, 0], True, (112, 74))
+Dbacking.img.fill((80, 225, 225))
+
+x, y = 0, -1
+for i in range(len(levels)):
+	if ((x) % 8 == 0):
+		y += 1
+		x = 0
+	lvl = levels[i]
+	rand = DispObj(no_thing, (x*112, y*74), True, (112, 74))
+	if unlocked[i]:
+		rand.img.blit(lvl["Imgs"][1], (24, 10))
+	else:
+		rand.img.blit(lvl["Imgs"][0], (24, 10))
+	Dlevels.all.append(rand)
+	x += 1
+Dlevels.refresh()
+DlevelCap.all = [Dlevels]
+DlevelCap.refresh()
+
 while Running:
+	
+	mousepos = pygame.mouse.get_pos()
+	screen.fill(WHITE)
+	
+	for event in pygame.event.get():
+		if event.type == pygame.KEYDOWN:
+			if event.key == K_q:
+				Running = False
+			if event.key == K_u and debugon:
+				for i in unlocked:
+					i = True
+			if event.key == K_d:
+				toggle(debugon)
+			if event.key == pygame.K_t:  # print cursor location, useful for putting stuff in the right spot
+				x, y = pygame.mouse.get_pos()
+				print "Absolute: ", x, y
+				print "16 base:", x/16, y/16, "("+str((x/16)*16), str((y/16)*16)+")"
+				
+		if event.type == pygame.MOUSEBUTTONDOWN:
+			if event.button == 1: #lclick
+				mouse_down = True
+			if event.button == 3: #rclick
+				if Screen in [1]:
+					Screen = 0
+			if event.button == 4 and Screen == 1:
+				if pointCollide((115, 10), (370, 239), mousepos): #scrolling on the level list
+					if netSize > 239: #Scrolling up
+						if scrollMom >= -8:
+							scrollMom += 10
+						else:
+							scrollMom = -10
+					else:
+						scrollMom = 0
+				
+			if event.button == 5 and Screen == 1:
+				if pointCollide((115, 10), (370, 239), mousepos): #scrolling on the level list
+					if netSize > 239: #Scrolling down
+						if scrollMom <= 8:
+							scrollMom -= 10
+						else:
+							scrollMom = 10
+					else:
+						scrollMom = 0
+						
+		if event.type == pygame.MOUSEBUTTONUP:
+			if event.button == 1:
+				mouse_down = False
+
+				
+	if Screen == 0:
+		screen.blit(DTitle, (20, 100))
+		if mouse_down:
+			Screen = 1
+	
+	if Screen == 1:
+		Dbacking.coords = (-400, 0)
+		for n in range(len(DlevelCap.all[0].all)):
+			i = DlevelCap.all[0].all[n]
+			if pointCollide((64+i.coords[0], 64+i.coords[1]), i.size, mousepos):
+				Dbacking.coords = (64+i.coords[0], 64+i.coords[1])
+				if mouse_down and unlocked[n]:
+					loadSaved(n)
+					Running = False
+			
+			
+		screen.blit(Dbacking.img, Dbacking.coords)
+		screen.blit(DlevelCap.img, DlevelCap.coords)
+	
+	if scrollMom != 0:
+		if scrollMom < -20:
+			scrollMom = -20
+		if scrollMom > 20:
+			scrollMom = 20
+			
+		if within(-10, 10, scrollMom):
+			scrollMom = Zero(scrollMom, 0.5)
+		else:
+			scrollMom = Zero(scrollMom, 1)
+		scrollMod += scrollMom
+
+		if scrollMod > 0: #make sure you didn't scroll too far
+			scrollMod = 0
+			scrollMom = 0
+		if scrollMod + netSize < 239: #make sure you didn't scroll too far
+			scrollMod = 0-(netSize - 239)
+			scrollMom = 0
+	
+	
+	screen.blit(mouseImg, (mousepos[0]-3, mousepos[1]-3))
+	pygame.display.update()
+	clock.tick(fps)
+		
+		
+		
+		
+Running = True
+inGame = True
+while inGame and Running:
 	mousepos = pygame.mouse.get_pos()
 	if debugon:
 		debugOverlay = pygame.Surface(size, pygame.SRCALPHA, 32).convert_alpha()
@@ -1572,7 +1746,7 @@ while Running:
 				player.floor = toggle(player.floor)
 				player.vel[1] = 0
 			if event.key == pygame.K_q:  # quitting
-				Running = False
+				inGame = False
 			if event.key == K_p:  # Increment level by 1
 				currLvl += 1
 				if currLvl > len(levels)-1:
@@ -1712,11 +1886,8 @@ while Running:
 			currLvl += 1
 			if currLvl > len(levels)-1:
 				currLvl = 0
+			unlocked[currLvl] = True
 			loadSaved(currLvl)
-
-
-
-
 
 	if player.vel[0] == 0 and player.vel[1] == 0:
 		movingLeft = False
@@ -1943,7 +2114,7 @@ while Running:
 	screen.blit(DetCurrent.img, (4, 4))
 	for i in exits:
 		screen.blit(i.img, i.coords)
-
+		
 	screen.blit(mouseImg, (mousepos[0]-3, mousepos[1]-3))
 	if debugon:
 		screen.blit(debugOverlay, (0, 0))
