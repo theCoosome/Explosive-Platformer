@@ -24,7 +24,7 @@ pygame.mouse.set_visible(False)
 font = pygame.font.SysFont('couriernew', 13)
 fontComp = pygame.font.SysFont('couriernew', 26, True)
 smallfont = pygame.font.SysFont('couriernew', 12)
-massive = pygame.font.SysFont('couriernew', 200, True)
+massive = pygame.font.SysFont('couriernew', 50, True)
 
 # sizes so nothing is hardcoded
 size = (1024, 720)
@@ -76,6 +76,19 @@ sens2Img = getImg("Bricks/SensorDest")
 sens3Img = getImg("Bricks/SensorMulti")
 exitImg = getImg("Bricks/Exit")
 entranceImg = getImg("Bricks/Exit2")
+
+Mblack = getImg("Bricks/SimBlack")
+Mhollow = getImg("Bricks/SimHollow")
+Mbrick = getImg("Bricks/SimBrick")
+Mdest = getImg("Bricks/SimDest")
+Mgrate = getImg("Bricks/SimGrate")
+Mmove = getImg("Bricks/SimMove")
+Mmulti = getImg("Bricks/SimMulti")
+Msdest = getImg("Bricks/SimSdest")
+Msmove = getImg("Bricks/SimSmove")
+Msmulti = getImg("Bricks/SimSmulti")
+rateImg = getImg("Bomb")
+
 
 switchImages= [getImg("Switch"),getImg("Switch2")]
 switchImg = switchImages[0]
@@ -191,11 +204,12 @@ normalExplode = [getImg("")]
 
 #Mice
 AimImg = getImg("Mouse/Aim")
+OnImg = getImg("Mouse/AimOn")
 mouseImg = AimImg
 
 
 def toggle(bool):  # is used to make bomb and players stop when in contact with floor
-	if bool:
+	if bool == True:
 		return False
 	else:
 		return True
@@ -522,6 +536,7 @@ class Brick(object):
 		self.coords = coords
 		self.vel = (0, 0)
 		self.size = size
+		self.sixteens = (size[0]/16, size[1]/16)
 		rand = pygame.transform.scale(brickImg, size)
 		self.img = rand
 
@@ -929,7 +944,9 @@ platforms = []
 levels = []
 entrances = []
 
-def saveLevel(links = []): #links: list of tuples, ("sensor", 1)
+unlocked = []
+
+def saveLevel(difficulty, links = []): #links: list of tuples, ("sensor", 1)
 	global bricks
 	global movingblocks
 	global switches
@@ -938,7 +955,37 @@ def saveLevel(links = []): #links: list of tuples, ("sensor", 1)
 	global sensors
 	global entrances
 	global DetCurrent
-	levels.append({"bricks":bricks[:], "movingblocks":movingblocks[:], "sensors":sensors[:], "switches":switches[:], "grates":grates[:], "exits":exits[:], "spawn":entrances[0].coords[:], "Det":DetCurrent, "pairs":links})
+	
+	rand = pygame.Surface((64, 45), pygame.SRCALPHA, 32).convert_alpha()
+	rand2 = pygame.Surface((64, 45), pygame.SRCALPHA, 32).convert_alpha()
+	rand.fill(WHITE)
+	rand2.fill(WHITE)
+	for i in bricks:
+		rand.blit(pygame.transform.scale(Mbrick, i.sixteens), (i.coords[0]/16, i.coords[1]/16))
+		rand2.blit(pygame.transform.scale(Mblack, i.sixteens), (i.coords[0]/16, i.coords[1]/16))
+	for i in movingblocks:
+		if i.type == 0:
+			rand.blit(pygame.transform.scale(Mmove, i.sixteens), (i.coords[0]/16, i.coords[1]/16))
+		if i.type == 1:
+			rand.blit(pygame.transform.scale(Mdest, i.sixteens), (i.coords[0]/16, i.coords[1]/16))
+		if i.type == 2:
+			rand.blit(pygame.transform.scale(Mmulti, i.sixteens), (i.coords[0]/16, i.coords[1]/16))
+		rand2.blit(pygame.transform.scale(Mblack, i.sixteens), (i.coords[0]/16, i.coords[1]/16))
+	for i in sensors:
+		if i.type == 0:
+			rand.blit(pygame.transform.scale(Msmove, i.sixteens), (i.coords[0]/16, i.coords[1]/16))
+		if i.type == 1:
+			rand.blit(pygame.transform.scale(Msdest, i.sixteens), (i.coords[0]/16, i.coords[1]/16))
+		if i.type == 2:
+			rand.blit(pygame.transform.scale(Msmulti, i.sixteens), (i.coords[0]/16, i.coords[1]/16))
+		rand2.blit(pygame.transform.scale(Mhollow, i.sixteens), (i.coords[0]/16, i.coords[1]/16))
+	for i in grates:
+		rand.blit(pygame.transform.scale(Mgrate, i.sixteens), (i.coords[0]/16, i.coords[1]/16))
+		rand2.blit(pygame.transform.scale(Mhollow, i.sixteens), (i.coords[0]/16, i.coords[1]/16))
+	
+	levels.append({"bricks":bricks[:], "movingblocks":movingblocks[:], "sensors":sensors[:], "switches":switches[:], "grates":grates[:], "exits":exits[:], "spawn":entrances[0].coords[:], "Det":DetCurrent, "pairs":links, "Imgs":[rand2, rand], "difficulty":difficulty})
+	unlocked.append(False)
+	
 	wipeFloor()
 	
 def loadSaved(lvl):
@@ -1087,7 +1134,8 @@ createMovingBlock(800, 464, 4, 4, 1, 8000)
 createExit(4, [int(912), int(448)], [int(16), int(16)], exitImg)
 entrances = [Entrance(4, [int(128), int(240)], [int(16), int(16)], entranceImg)]
 DetCurrent = DetDest
-saveLevel()
+saveLevel(1)
+unlocked[0] = True
 
 #jump intro
 createFloor(0, 544, 11, 64)
@@ -1100,7 +1148,7 @@ createFloor(0, 0, 4, 64)
 createFloor(0, 64, 30, 4)
 createFloor(960, 64, 30, 4)
 DetCurrent = DetKB
-saveLevel()
+saveLevel(1)
 
 #Moving block intro
 createFloor(0, 560, 10, 64)
@@ -1112,7 +1160,7 @@ createExit(4, [int(912), int(320)], [int(16), int(16)], exitImg)
 createMovingBlock(320, 448, 5, 7, 0)
 entrances = [Entrance(4, [int(96), int(528)], [int(16), int(16)], entranceImg)]
 DetCurrent = DetNorm
-saveLevel()
+saveLevel(1)
 
 #Sensors and player grate
 createFloor(0, 528, 12, 64)
@@ -1126,7 +1174,7 @@ createMovingBlock(544, 464, 4, 4, 0)
 createFloor(0, 464, 4, 3)
 createSensor(896, 496, 5, 2, 0, ["guy"])
 DetCurrent = DetNorm
-saveLevel([("sensor", 0)])
+saveLevel(1, [("sensor", 0)])
 
 #Moving block grates
 createFloor(0, 512, 13, 28)
@@ -1138,7 +1186,7 @@ createFloor(0, 96, 26, 3)
 entrances = [Entrance(4, [int(96), int(496)], [int(16), int(16)], entranceImg)]
 createExit(4, [int(912), int(368)], [int(16), int(16)], exitImg)
 createFloor(976, 96, 18, 3)
-saveLevel()
+saveLevel(1)
 
 #Multi intro
 createFloor(0, 560, 10, 46)
@@ -1154,7 +1202,7 @@ createFloor(0, 0, 3, 64)
 createFloor(0, 48, 32, 3)
 createFloor(976, 48, 28, 3)
 DetCurrent = DetNorm
-saveLevel([("sensor", 0)])
+saveLevel(2, [("sensor", 0)])
 
 #Intro to bomb grates
 createFloor(16, 0, 1, 63)
@@ -1168,7 +1216,7 @@ entrances = [Entrance(4, [int(352), int(544)], [int(16), int(16)], entranceImg)]
 createMovingBlock(768, 48, 15, 11, 0)
 createMovingBlock(720, 384, 18, 3, 1)
 createSensor(816, 448, 9, 5, 0, ["guy"], gyah)
-saveLevel([("sensor", 0) ])
+saveLevel(2, [("sensor", 0) ])
 
 
 #launching a block
@@ -1188,7 +1236,7 @@ grates.append(Grate([int(592), int(400)], [int(32), int(48)], ["guy"]))
 entrances = [Entrance(4, [int(110), int(540)], [int(16), int(16)], entranceImg)]
 createExit(4, [int(864), int(544)], [int(16), int(16)], exitImg)
 DetCurrent = DetKB
-saveLevel([("sensor", 0)])
+saveLevel(1, [("sensor", 0)])
 
 #it's just nice and blue
 #needs a higher bomb limit
@@ -1207,8 +1255,13 @@ createMovingBlock(96, 272, 19, 13, 0)
 createMovingBlock(96, 64, 19, 13, 0)
 grates.append(Grate([int(752), int(224)], [int(48), int(48)], ["guy"]))
 grates.append(Grate([int(800), int(176)], [int(80), int(96)], ["guy"]))
+<<<<<<< HEAD
 DetCurrent = DetNorm
 saveLevel()
+=======
+DetCurrent = detonator(2, 16, 30, 1, 20, 10, getImg("UI/DetJumper"), getImg("Bombs/tosser"), getImg("Bombs/ArmTosser/ArmBlipTosser(2)"))
+saveLevel(2)
+>>>>>>> eabb8b667b7be01a847dcfb6b0316973ca966d78
 
 #grate over a pit
 createFloor(0, 0, 9, 64)
@@ -1230,7 +1283,47 @@ entrances = [Entrance(4, [int(112), int(448)], [int(16), int(16)], entranceImg)]
 exits = [Exit(4, [int(864), int(624)], [int(16), int(16)], exitImg)]
 createExit(4, [int(864), int(640)], [int(16), int(16)], exitImg)
 DetCurrent = DetKB
-saveLevel([("sensor", 0), ("sensor", 1)])
+saveLevel(3, [("sensor", 0), ("sensor", 1)])
+
+#fastrun
+createFloor(864, 384, 1, 10)
+createFloor(32, 688, 1, 7)
+createFloor(832, 688, 1, 12)
+createFloor(0, 560, 1, 12)
+createFloor(80, 432, 1, 7)
+createFloor(0, 656, 1, 55)
+createFloor(880, 608, 1, 9)
+createFloor(0, 576, 5, 1)
+createFloor(144, 400, 2, 3)
+createFloor(0, 352, 1, 62)
+createFloor(144, 528, 1, 55)
+createFloor(144, 448, 5, 1)
+createMovingBlock(160, 688, 6, 1, 1)
+createMovingBlock(272, 688, 6, 1, 1)
+createMovingBlock(384, 688, 6, 1, 1)
+createMovingBlock(496, 688, 6, 1, 1)
+createMovingBlock(608, 688, 6, 1, 1)
+createMovingBlock(720, 688, 6, 1, 1)
+createMovingBlock(704, 560, 8, 1, 1)
+createMovingBlock(544, 560, 8, 1, 1)
+createMovingBlock(384, 560, 8, 1, 1)
+createMovingBlock(224, 560, 8, 1, 1)
+createFloor(1008, 624, 4, 1)
+createFloor(832, 576, 1, 2)
+createFloor(0, 0, 22, 1)
+createFloor(16, 0, 1, 63)
+createFloor(1008, 16, 18, 1)
+createFloor(16, 528, 1, 1)
+createFloor(48, 480, 2, 2)
+createFloor(0, 368, 12, 1)
+entrances = [Entrance(4, [int(64), int(672)], [int(16), int(16)], entranceImg)]
+createExit(4, [int(512), int(144)], [int(16), int(16)], exitImg)
+createMovingBlock(688, 384, 9, 1, 1)
+createMovingBlock(512, 384, 9, 1, 1)
+createMovingBlock(336, 384, 9, 1, 1)
+createMovingBlock(160, 384, 9, 1, 1)
+detCurrent=DetKB
+saveLevel(3)
 
 #Multi support
 createFloor(0, 624, 6, 64)
@@ -1254,7 +1347,7 @@ grates.append(rand)
 entrances = [Entrance(4, [int(384), int(368)], [int(16), int(16)], entranceImg)]
 createExit(4, [int(928), int(608)], [int(16), int(16)], exitImg)
 DetCurrent = DetNorm
-saveLevel([("sensor", 1)])
+saveLevel(4, [("sensor", 1)])
 
 #Running under launched
 createFloor(0, 448, 17, 64)
@@ -1271,7 +1364,7 @@ createMovingBlock(560, 288, 4, 4, 1)
 entrances = [Entrance(4, [int(192), int(416)], [int(16), int(16)], entranceImg)]
 createExit(4, [int(768), int(432)], [int(16), int(16)], exitImg)
 DetCurrent = DetKB
-saveLevel()
+saveLevel(5)
 		
 #Multi challenge
 createFloor(0, 0, 45, 5)
@@ -1291,7 +1384,7 @@ grates.append(rand)
 createExit(4, [int(912), int(592)], [int(16), int(16)], exitImg)
 
 DetCurrent = DetMulti
-saveLevel([("sensor", 0)])
+saveLevel(5, [("sensor", 0)])
 		
 #stairs and platforms
 createFloor(0, 224, 5, 40)
@@ -1325,7 +1418,7 @@ createFloor(672, 240, 1, 2)
 grates.append(great)
 createSensor(672, 576, 6, 2, 0, ["guy"], great)
 DetCurrent = DetKB
-saveLevel([("sensor", 0)])
+saveLevel(3, [("sensor", 0)])
 
 #destructable heaven
 createFloor(0, 688, 2, 64)
@@ -1410,7 +1503,7 @@ createMovingBlock(976, 672, 1, 1, 1)
 createMovingBlock(944, 672, 1, 1, 1)
 
 DetCurrent = DetDest
-saveLevel()
+saveLevel(2)
 
 #Movables and grates. What more could a guy ask for?
 createFloor(0, 688, 2, 64)
@@ -1475,7 +1568,7 @@ createMovingBlock(480, 240, 4, 13, 1)
 switches.append(Switch('Switch', [int(992), int(352)], [int(16), int(16)], switchImg, False))
 
 DetCurrent = DetMulti
-saveLevel()
+saveLevel(6)
 
 createMovingBlock(16, 400, 10, 2, 1)
 createMovingBlock(96, 256, 6, 2, 1)
@@ -1487,7 +1580,7 @@ createMovingBlock(784, 624, 13, 3, 1)
 createExit(4, [int(960), int(608)], [int(16), int(16)], exitImg)
 entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
 DetCurrent = DetKB
-saveLevel()
+saveLevel(4)
 
 
 def soundEffect(sfxkey):
@@ -1557,472 +1650,653 @@ def changeSwitch():
 	for s in switches:
 		s.img = switchImages[0]
 timer = 10
+
+Screen = 0
+netSize = 0
+mouse_down = False
+scrollMom, scrollMod = 0, 0
+
+DTitle = massive.render("Explosive Platformer", True, BLACK)
+Dstory = fontComp.render("Story Mode", False, BLACK)
+Dselect = fontComp.render("Level Select", False, BLACK)
+Dcontrols = fontComp.render("Controls", False, BLACK)
+Dback = fontComp.render("Back", False, BLACK)
+#level display, goes within size limiter display (896, 592)
+DlevelCap = DispObj([], (64, 64), False, (896, 592))
+Dlevels = DispObj([], [0, 0], False, (896, 10000))
+Dbacking = DispObj(no_thing, [-100, 0], True, (112, 74))
+Dbacking.img.fill((80, 225, 225))
+
+x, y = 0, -1
+for i in range(len(levels)):
+	if ((x) % 8 == 0):
+		y += 1
+		netSize += 74
+		x = 0
+	lvl = levels[i]
+	rand = DispObj(no_thing, (x*112, y*74), True, (112, 74))
+	if unlocked[i]:
+		rand.img.blit(lvl["Imgs"][1], (24, 10))
+	else:
+		rand.img.blit(lvl["Imgs"][0], (24, 10))
+	for n in range(lvl["difficulty"]):
+		rand.img.blit(rateImg, ((14*n)+23, 57))
+		
+	Dlevels.all.append(rand)
+	x += 1
+Dlevels.refresh()
+DlevelCap.all = [Dlevels]
+DlevelCap.refresh()
+
 while Running:
-	mousepos = pygame.mouse.get_pos()
-	if debugon:
-		debugOverlay = pygame.Surface(size, pygame.SRCALPHA, 32).convert_alpha()
-	if bombWaitTime > 0:  # sets off bomb
-		bombWaitTime -= 1
-	bombsExplode = False
-	player.dualColliding = False
-	player.collided = [0, 0]
-	bombType = 1
-	screen.fill(WHITE)
-	startTimer = False
+	
+	Title = True
+	mouse_down = False
+	mouseImg = AimImg
+	for i in range(len(levels)):
+		lvl = levels[i]
+		if unlocked[i]:
+			DlevelCap.all[0].all[i].img .blit(lvl["Imgs"][1], (24, 10))
+		else:
+			DlevelCap.all[0].all[i].img.blit(lvl["Imgs"][0], (24, 10))
+	DlevelCap.all[0].refresh()
+	DlevelCap.refresh()
+	
+	while Title:
+		mouseImg = AimImg
+		mousepos = pygame.mouse.get_pos()
+		screen.fill(WHITE)
+		
+		for event in pygame.event.get():
+			if event.type == pygame.KEYDOWN:
+				if event.key == K_q:
+					Running = False
+					inGame = False
+					Title = False
+				if event.key == K_u and debugon:
+					for i in range(len(unlocked)):
+						unlocked[i] = True
+					for i in range(len(levels)):
+						lvl = levels[i]
+						if unlocked[i]:
+							DlevelCap.all[0].all[i].img .blit(lvl["Imgs"][1], (24, 10))
+						else:
+							DlevelCap.all[0].all[i].img.blit(lvl["Imgs"][0], (24, 10))
+					DlevelCap.all[0].refresh()
+					DlevelCap.refresh()
+					print "Unlocked"
+				if event.key == K_d:
+					debugon = toggle(debugon)
+					print "Toggled debug to", debugon
+				if event.key == pygame.K_t:  # print cursor location, useful for putting stuff in the right spot
+					x, y = pygame.mouse.get_pos()
+					print "Absolute: ", x, y
+					print "16 base:", x/16, y/16, "("+str((x/16)*16), str((y/16)*16)+")"
+					
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				if event.button == 1: #lclick
+					mouse_down = True
+				if event.button == 3: #rclick
+					Screen = 0
+				if event.button == 4 and Screen == 1:
+						if netSize > 592: #Scrolling up
+							if scrollMom >= -8:
+								scrollMom += 10
+							else:
+								scrollMom = -10
+						else:
+							scrollMom = 0
+					
+				if event.button == 5 and Screen == 1:
+						if netSize > 592: #Scrolling down
+							if scrollMom <= 8:
+								scrollMom -= 10
+							else:
+								scrollMom = 10
+						else:
+							scrollMom = 0
+							
+			if event.type == pygame.MOUSEBUTTONUP:
+				if event.button == 1:
+					mouse_down = False
 
-	# user input
-	for event in pygame.event.get():
-
-		if event.type == pygame.KEYDOWN:
-		#Switches and Interactable Objects
-			if(len(switches) > 0):
-				if (isNear(center(switches[0]), center(player))):
-						if event.key in [K_e]:
-
-
-								for s in switches:
-									if len(movingblocks) <= s.blockamount and s.on == False:
-
-										s.on = True
-										movingblocks.append(movingBlock(0, [64, 64], (16, 16)))
-										s.img = switchImages[1]
-
-			# movement
-			if event.key in [K_RIGHT, K_d]:  # move ->
-				player.motion[0] += 2.0
-				gR = 0
-				personimg = right[player.index]
-				movingRight = True
-				movingLeft = False
-			if event.key in [K_LEFT, K_a]:  # move <-
-				player.motion[0] -= 2.0
-				gL =0
-				time.sleep(.02)
-				personimg = left[player.index]
-				movingLeft = True
-				movingRight = False
-			if event.key in [K_RIGHT and K_a, K_LEFT and K_d]:  # move ->
-				movingRight = False
-				movingLeft = False
-			if event.key in [K_DOWN, K_s]:  # v
-				player.motion[1] += 0.5
-				player.Crouch()
-			if event.key in [K_UP, K_w] and player.floor:  # ^
-				player.vel[1] = -8
-				sfxkey = 1
-				soundEffect(sfxkey)
-				player.floor = False
-			if event.key in [K_LALT, K_e]:
-				bombs = []
+					
+		if Screen == 0:
+			screen.blit(DTitle, (50, 100))
+			screen.blit(Dstory, (100, 200))
+			screen.blit(Dselect, (100, 300))
+			screen.blit(Dcontrols, (100, 400))
+			if pointCollide((100, 200), (200, 28), mousepos):
+				mouseImg = OnImg
+				if mouse_down:
+						#Screen = 1
+						pass
+			if pointCollide((100, 300), (200, 28), mousepos):
+				mouseImg = OnImg
+				if mouse_down:
+						Screen = 1
+			if pointCollide((100, 400), (200, 28), mousepos):
+				mouseImg = OnImg
+				if mouse_down:
+						Screen = 2
+		
+		if Screen == 1:
+			screen.blit(Dback, (10, 5))
+			Dbacking.coords = (-400, 0)
+			for n in range(len(DlevelCap.all[0].all)):
+				i = DlevelCap.all[0].all[n]
+				if pointCollide((64+i.coords[0], 64+i.coords[1]), i.size, mousepos):
+					mouseImg = OnImg
+					Dbacking.coords = (64+i.coords[0], 64+i.coords[1])
+					if mouse_down and unlocked[n]:
+						loadSaved(n)
+						Title = False
+						inGame = True
+			
+			if pointCollide((0, 0), (90, 40), mousepos):
+				mouseImg = OnImg
+				if mouse_down:
+					Screen = 0
 				
-			if event.key == K_r:  # slow down
-				fps = 1
-			if event.key == K_f:  # speed up
-				fps = 60
-			if event.key == K_c:
-				if debugon:
-					debugon = False
+			screen.blit(Dbacking.img, Dbacking.coords)
+			screen.blit(DlevelCap.img, DlevelCap.coords)
+		
+		if Screen == 2:
+			screen.blit(Dback, (10, 5))
+			
+			if pointCollide((0, 0), (90, 40), mousepos):
+				mouseImg = OnImg
+				if mouse_down:
+					Screen = 0
+		
+		if scrollMom != 0:
+			if scrollMom < -20:
+				scrollMom = -20
+			if scrollMom > 20:
+				scrollMom = 20
+				
+			if within(-10, 10, scrollMom):
+				scrollMom = Zero(scrollMom, 0.5)
+			else:
+				scrollMom = Zero(scrollMom, 1)
+			scrollMod += scrollMom
+
+			if scrollMod > 0: #make sure you didn't scroll too far
+				scrollMod = 0
+				scrollMom = 0
+			if scrollMod + netSize < 592: #make sure you didn't scroll too far
+				scrollMod = 0-(netSize - 592)
+				scrollMom = 0
+			DlevelCap[0].coords = (0, scrollMod)
+			DlevelCap.refresh()
+		
+		screen.blit(mouseImg, (mousepos[0]-3, mousepos[1]-3))
+		pygame.display.update()
+		clock.tick(fps)
+		
+	while inGame and Running:
+		mousepos = pygame.mouse.get_pos()
+		if debugon:
+			debugOverlay = pygame.Surface(size, pygame.SRCALPHA, 32).convert_alpha()
+		if bombWaitTime > 0:  # sets off bomb
+			bombWaitTime -= 1
+		bombsExplode = False
+		player.dualColliding = False
+		player.collided = [0, 0]
+		bombType = 1
+		screen.fill(WHITE)
+		startTimer = False
+
+		# user input
+		for event in pygame.event.get():
+
+			if event.type == pygame.KEYDOWN:
+			#Switches and Interactable Objects
+				if(len(switches) > 0):
+					if (isNear(center(switches[0]), center(player))):
+							if event.key in [K_e]:
+
+
+									for s in switches:
+										if len(movingblocks) <= s.blockamount and s.on == False:
+
+											s.on = True
+											movingblocks.append(movingBlock(0, [64, 64], (16, 16)))
+											s.img = switchImages[1]
+
+				# movement
+				if event.key in [K_RIGHT, K_d]:  # move ->
+					player.motion[0] += 2.0
+					gR = 0
+					personimg = right[player.index]
+					movingRight = True
+					movingLeft = False
+				if event.key in [K_LEFT, K_a]:  # move <-
+					player.motion[0] -= 2.0
+					gL =0
+					time.sleep(.02)
+					personimg = left[player.index]
+					movingLeft = True
+					movingRight = False
+				if event.key in [K_RIGHT and K_a, K_LEFT and K_d]:  # move ->
+					movingRight = False
+					movingLeft = False
+				if event.key in [K_DOWN, K_s]:  # v
+					player.motion[1] += 0.5
+					player.Crouch()
+				if event.key in [K_UP, K_w] and player.floor:  # ^
+					player.vel[1] = -8
+					sfxkey = 1
+					soundEffect(sfxkey)
+					player.floor = False
+				if event.key in [K_LALT, K_e]:
+					bombs = []
+					
+				if event.key == K_r:  # slow down
+					fps = 1
+				if event.key == K_f:  # speed up
+					fps = 60
+				if event.key == K_c:
+					if debugon:
+						debugon = False
+					else:
+						debugon = True
+				if event.key == K_m:
+					if muteon:
+						muteon = False
+					else:
+						muteon = True
+				if event.key == K_k:
+					player.Kill()
+				if event.key == K_z:
+					print "Coords: ", player.coords[0], player.coords[1]
+					print "Velocity: ", player.vel[0], player.vel[1]
+					print "Motion: ", player.motion[0], player.motion[1]
+					print "Floored: ", player.floor
+				if event.key == K_g:  # defunct?gravty on and off
+					for i in bombs:
+						i.floor = toggle(player.floor)
+						i.vel[1] = 0
+					player.floor = toggle(player.floor)
+					player.vel[1] = 0
+				if event.key == pygame.K_q:  # quitting
+					inGame = False
+				if event.key == K_p:  # Increment level by 1
+					currLvl += 1
+					if currLvl > len(levels)-1:
+						currLvl = 0
+					loadSaved(currLvl)
+				if event.key == K_o:
+					currLvl -= 1
+					if currLvl < 0:
+						currLvl = len(levels) - 1
+					loadSaved(currLvl)
+				if event.key == pygame.K_SPACE:  # exploding
+					bombsExplode = True
+				if event.key == pygame.K_t:  # print cursor location, useful for putting stuff in the right spot
+					x, y = pygame.mouse.get_pos()
+					print "Absolute: ", x, y
+					print "16 base:", x/16, y/16, "("+str((x/16)*16), str((y/16)*16)+")"
+
+				if event.key == K_1 and debugon:
+					bombs = []
+					DetCurrent = DetGod
+				if event.key == K_2 and debugon:
+					bombs = []
+					DetCurrent = DetNorm
+				if event.key == K_3 and debugon:
+					bombs = []
+					DetCurrent = DetKB
+				if event.key == K_4 and debugon:
+					bombs = []
+					DetCurrent = DetMulti
+				if event.key == K_5 and debugon:
+					bombs = []
+					DetCurrent = DetDest
+
+			if event.type == pygame.KEYUP:
+				if event.key in [K_LEFT, K_a]:
+					player.motion[0] += 2.0
+				if event.key in [K_RIGHT, K_d]:
+					player.motion[0] -= 2.0
+				if event.key in [K_DOWN, K_s]:
+					player.motion[1] -= 0.5
+					player.unCrouch()
+
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				if bombWaitTime == 0 and len(bombs) < DetCurrent.max:
+					x, y = pygame.mouse.get_pos()
+
+					xChng = x - player.coords[0]
+					yChng = y - player.coords[1]
+
+					hy = math.hypot(xChng, yChng)
+
+					if (hy != 0):
+						bombs.append(DetCurrent.newBomb([player.coords[0], player.coords[1]], [((xChng / hy) * throwPower), ((yChng / hy) * throwPower)]))
+
+					bombWaitTime = normalBombWait
+
+
+		# Player
+		# if not player.floor:
+		if player.vel[1] < maxFallSpeed:  # maxFallSpeed
+			player.vel[1] += gravity
+
+		#PLAYER MOVEMENT INPUT
+		if (not player.floor):
+			if player.vel[0] < .5 and player.motion[0] > 0:
+				player.vel[0] += player.motion[0] / 4
+			elif player.vel[0] > -.5 and player.motion[0] < 0:
+				player.vel[0] += player.motion[0] / 4
+
+		else:
+			if player.motion[0] != 0:
+				if player.crouch:
+					if player.vel[0] > player.motion[0] / 4:
+						player.vel[0] -= 0.5
+					elif player.vel[0] < player.motion[0] / 4:
+						player.vel[0] += 0.5
 				else:
-					debugon = True
-			if event.key == K_m:
-				if muteon:
-					muteon = False
-				else:
-					muteon = True
-			if event.key == K_k:
-				player.Kill()
-			if event.key == K_z:
-				print "Coords: ", player.coords[0], player.coords[1]
-				print "Velocity: ", player.vel[0], player.vel[1]
-				print "Motion: ", player.motion[0], player.motion[1]
-				print "Floored: ", player.floor
-			if event.key == K_g:  # defunct?gravty on and off
-				for i in bombs:
-					i.floor = toggle(player.floor)
-					i.vel[1] = 0
-				player.floor = toggle(player.floor)
-				player.vel[1] = 0
-			if event.key == pygame.K_q:  # quitting
-				Running = False
-			if event.key == K_p:  # Increment level by 1
+					if player.vel[0] > player.motion[0]:
+						player.vel[0] -= 0.5
+					elif player.vel[0] < player.motion[0]:
+						player.vel[0] += 0.5
+
+		if player.vel[0]  <=-16:
+			player.vel[0] = -16
+
+		if player.vel[1] <=-16:
+			player.vel[1] = -16
+
+		if player.vel[0] >= 16:
+			player.vel[0] = 16
+
+		if player.vel[1] >= 16:
+			player.vel[1] = 16
+
+
+		p1 = center(player)
+		player.coords[0] += player.vel[0]
+		player.coords[1] += player.vel[1]
+		if debugon:
+			pygame.draw.line(debugOverlay, PURPLE, p1, center(player))
+			pygame.draw.rect(debugOverlay, PURPLE, (player.coords[0], player.coords[1], player.size[0], player.size[1]), 1)
+
+		if not hit(player.coords, player.size, (0, 0), size):
+			player.Kill()
+
+
+		player.floor = False
+
+		for k in keys:
+			screen.blit(k.img,k.coords)
+			if isNear(player.coords, k.coords):
+				player.hasKey = True
+				sfxkey = 2
+				soundEffect(sfxkey)
+
+				keys.remove(k)
+		for g in gates:
+			if isNear(g.coords, player.coords):
+				if player.hasKey == True:
+					sfxkey = 3
+					soundEffect(sfxkey)
+
+		if len(movingblocks) > 0:
+			for i in bricks:
+				player.Collide(i)
+
+
+
+		for i in platforms:
+			player.Collide(i)
+		for i in crates:
+			player.Collide(i)
+		for g in gates:
+			player.Collide(g)
+		for i in exits:
+			if collide([player.coords[0]-8, player.coords[1]-8], [16,16], [i.coords[0]-8, i.coords[1]-8], [16,16]):
 				currLvl += 1
 				if currLvl > len(levels)-1:
 					currLvl = 0
+				unlocked[currLvl] = True
 				loadSaved(currLvl)
-			if event.key == K_o:
-				currLvl -= 1
-				if currLvl < 0:
-					currLvl = len(levels) - 1
-				loadSaved(currLvl)
-			if event.key == pygame.K_SPACE:  # exploding
-				bombsExplode = True
-			if event.key == pygame.K_t:  # print cursor location, useful for putting stuff in the right spot
-				x, y = pygame.mouse.get_pos()
-				print "Absolute: ", x, y
-				print "16 base:", x/16, y/16, "("+str((x/16)*16), str((y/16)*16)+")"
 
-			if event.key == K_1 and debugon:
-				bombs = []
-				DetCurrent = DetGod
-			if event.key == K_2 and debugon:
-				bombs = []
-				DetCurrent = DetNorm
-			if event.key == K_3 and debugon:
-				bombs = []
-				DetCurrent = DetKB
-			if event.key == K_4 and debugon:
-				bombs = []
-				DetCurrent = DetMulti
-			if event.key == K_5 and debugon:
-				bombs = []
-				DetCurrent = DetDest
-
-		if event.type == pygame.KEYUP:
-			if event.key in [K_LEFT, K_a]:
-				player.motion[0] += 2.0
-			if event.key in [K_RIGHT, K_d]:
-				player.motion[0] -= 2.0
-			if event.key in [K_DOWN, K_s]:
-				player.motion[1] -= 0.5
-				player.unCrouch()
-
-		if event.type == pygame.MOUSEBUTTONDOWN:
-			if bombWaitTime == 0 and len(bombs) < DetCurrent.max:
-				x, y = pygame.mouse.get_pos()
-
-				xChng = x - player.coords[0]
-				yChng = y - player.coords[1]
-
-				hy = math.hypot(xChng, yChng)
-
-				if (hy != 0):
-					bombs.append(DetCurrent.newBomb([player.coords[0], player.coords[1]], [((xChng / hy) * throwPower), ((yChng / hy) * throwPower)]))
-
-				bombWaitTime = normalBombWait
-
-
-	# Player
-	# if not player.floor:
-	if player.vel[1] < maxFallSpeed:  # maxFallSpeed
-		player.vel[1] += gravity
-
-	#PLAYER MOVEMENT INPUT
-	if (not player.floor):
-		if player.vel[0] < .5 and player.motion[0] > 0:
-			player.vel[0] += player.motion[0] / 4
-		elif player.vel[0] > -.5 and player.motion[0] < 0:
-			player.vel[0] += player.motion[0] / 4
-
-	else:
-		if player.motion[0] != 0:
-			if player.crouch:
-				if player.vel[0] > player.motion[0] / 4:
-					player.vel[0] -= 0.5
-				elif player.vel[0] < player.motion[0] / 4:
-					player.vel[0] += 0.5
+		if player.vel[0] == 0 and player.vel[1] == 0:
+			movingLeft = False
+			movingRight = False
+		if player.crouch:
+			if player.motion[0] < 0:
+				personimg = crouchImg[1]
 			else:
-				if player.vel[0] > player.motion[0]:
-					player.vel[0] -= 0.5
-				elif player.vel[0] < player.motion[0]:
-					player.vel[0] += 0.5
-
-	if player.vel[0]  <=-16:
-		player.vel[0] = -16
-
-	if player.vel[1] <=-16:
-		player.vel[1] = -16
-
-	if player.vel[0] >= 16:
-		player.vel[0] = 16
-
-	if player.vel[1] >= 16:
-		player.vel[1] = 16
-
-
-	p1 = center(player)
-	player.coords[0] += player.vel[0]
-	player.coords[1] += player.vel[1]
-	if debugon:
-		pygame.draw.line(debugOverlay, PURPLE, p1, center(player))
-		pygame.draw.rect(debugOverlay, PURPLE, (player.coords[0], player.coords[1], player.size[0], player.size[1]), 1)
-
-	if not hit(player.coords, player.size, (0, 0), size):
-		player.Kill()
-
-
-	player.floor = False
-
-	for k in keys:
-		screen.blit(k.img,k.coords)
-		if isNear(player.coords, k.coords):
-			player.hasKey = True
-			sfxkey = 2
-			soundEffect(sfxkey)
-
-			keys.remove(k)
-	for g in gates:
-		if isNear(g.coords, player.coords):
-			if player.hasKey == True:
-				sfxkey = 3
-				soundEffect(sfxkey)
-
-	if len(movingblocks) > 0:
-		for i in bricks:
-			player.Collide(i)
-
-
-
-	for i in platforms:
-		player.Collide(i)
-	for i in crates:
-		player.Collide(i)
-	for g in gates:
-		player.Collide(g)
-	for i in exits:
-		if collide([player.coords[0]-8, player.coords[1]-8], [16,16], [i.coords[0]-8, i.coords[1]-8], [16,16]):
-			currLvl += 1
-			if currLvl > len(levels)-1:
-				currLvl = 0
-			loadSaved(currLvl)
-
-
-
-
-
-	if player.vel[0] == 0 and player.vel[1] == 0:
-		movingLeft = False
-		movingRight = False
-	if player.crouch:
-		if player.motion[0] < 0:
-			personimg = crouchImg[1]
+				personimg = crouchImg[0]
 		else:
-			personimg = crouchImg[0]
-	else:
-		if player.motion[0] == 0:
+			if player.motion[0] == 0:
 
-			personimg = derek
-		if player.motion[0] < 0:
-			counter += 1
-			if counter == 10:
-				player.index += 1
-				counter = 0
-			if player.index >= len(left):
-				player.index = 0
-			personimg = left[player.index]
-		if player.motion[0] > 0:
-			if not isCrouching :
+				personimg = derek
+			if player.motion[0] < 0:
 				counter += 1
 				if counter == 10:
 					player.index += 1
 					counter = 0
-				if player.index >= len(right):
+				if player.index >= len(left):
 					player.index = 0
+				personimg = left[player.index]
+			if player.motion[0] > 0:
+				if not isCrouching :
+					counter += 1
+					if counter == 10:
+						player.index += 1
+						counter = 0
+					if player.index >= len(right):
+						player.index = 0
 
-			personimg = right[player.index]
+				personimg = right[player.index]
 
-	# Moving Blocks
-	for i in movingblocks: #Player hit with moving blocks
-		if i.isExploding:
-			i.incrementSprite(1)
-		if i.type in [0, 2]:
-			if i.vel[1] < maxFallSpeed and not i.floor:  # Gravity
-				i.vel[1] += gravity
+		# Moving Blocks
+		for i in movingblocks: #Player hit with moving blocks
+			if i.isExploding:
+				i.incrementSprite(1)
+			if i.type in [0, 2]:
+				if i.vel[1] < maxFallSpeed and not i.floor:  # Gravity
+					i.vel[1] += gravity
 
-			i.floor = False
-			if i.vel[0] <= -16:
-				i.vel[0] = -16
+				i.floor = False
+				if i.vel[0] <= -16:
+					i.vel[0] = -16
 
-			if i.vel[1] <= -16:
-				i.vel[1] = -16
+				if i.vel[1] <= -16:
+					i.vel[1] = -16
 
-			if i.vel[0] >= 16:
-				i.vel[0] = 16
+				if i.vel[0] >= 16:
+					i.vel[0] = 16
 
-			if i.vel[1] >= 16:
-				i.vel[1] = 16
+				if i.vel[1] >= 16:
+					i.vel[1] = 16
 
-			p1 = center(i)
-			i.coords[0] += i.vel[0]
-			i.coords[1] += i.vel[1]
-			if debugon:
-				pygame.draw.line(debugOverlay, PURPLE, p1, center(i))
-				pygame.draw.rect(debugOverlay, PURPLE, (i.coords[0], i.coords[1], i.size[0], i.size[1]), 1)
+				p1 = center(i)
+				i.coords[0] += i.vel[0]
+				i.coords[1] += i.vel[1]
+				if debugon:
+					pygame.draw.line(debugOverlay, PURPLE, p1, center(i))
+					pygame.draw.rect(debugOverlay, PURPLE, (i.coords[0], i.coords[1], i.size[0], i.size[1]), 1)
 
-		for p in movingblocks:
-			if (p != i) and p.type != 1:
-				p.Collide(i)
-				for x in bricks:
-					p.Collide(x)
-				if hit(i.coords, (i.size[0], i.size[1] + 1), p.coords, p.size):
-					i.floor = True
-		for p in bricks:
-			i.Collide(p)
-
-		for p in platforms:
-			player.Collide(p)
-			for mb in movingblocks:
-				if isOnTop(p,mb) and isNear(center(p),center(mb)):
-					print "you won!"
-				mb.Collide(p)
-			screen.blit(p.img,p.coords)
-
-		screen.blit(i.img,i.coords)
-
-	for i in movingblocks:
-		player.Collide(i)
-		
-	for i in sensors:
-		if i.trigger != None:
 			for p in movingblocks:
-				i.collide(p)
-			
-	for p in platforms:
-		player.Collide(p)
-	'''for mb in movingblocks:
-		if isOnTop(p, mb) and isNear(center(p), center(mb)):
-			print "you won!"
-		mb.Collide(p)'''
-	for i in bricks:
-		#screen.blit(i.img, i.coords)
-		player.Collide(i)
-	for i in grates:
-		if "guy" in i.blocked:
-			player.Collide(i)
-		if "bomb" in i.blocked:
-			for p in bombs:
-				p.Collide(i)
-		if "moving" in i.blocked:
-			for p in movingblocks:
-				if (p.type == 0) or ("dest" in i.blocked and p.type == 2):
+				if (p != i) and p.type != 1:
 					p.Collide(i)
-
-	for i in bombs:
-		if i.isExploding:
-			i.explodeTime -= 1
-			i.incrementSprite(1, i.explodeTime)
-			sfxkey = 4
-			soundEffect(sfxkey)
-			if i.explodeTime > 10:
-
-				pygame.draw.circle(screen, BLACK, (int(center(i)[0]), int(center(i)[1])), detRange-player.size[0], 1)
-
-
-		if i.explodeTime <= 0:
-			bombs.remove(i)
-
-		if not i.stuck:
-			if i.vel[1] < 8:
-				i.vel[1] += gravity*.75
-
-			if i.vel[0] <= -8:
-				i.vel[0] = -8
-
-			if i.vel[1] <= -8:
-				i.vel[1] = -8
-
-			if i.vel[0] >= 8:
-				i.vel[0] = 8
-
-			if i.vel[1] >= 8:
-				i.vel[1] = 8
-				
-			p1 = center(i)
-			i.coords[0] += i.vel[0]
-			i.coords[1] += i.vel[1]
-			if debugon:
-				pygame.draw.line(debugOverlay, PURPLE, p1, center(i))
-				pygame.draw.rect(debugOverlay, PURPLE, (i.coords[0], i.coords[1], i.size[0], i.size[1]), 1)
-
-		if not i.armed:
-			i.time += 1
-			if i.time >= i.arm:
-				i.armed = True
-				i.img = i.armImg
-				sfxkey = 5
-				soundEffect(sfxkey)
-
-		if i.armed and i.armImgTime > 0:
-			i.armImgTime -= 1
-			if i.armImgTime <= 0:
-				i.img = i.defaultImg
-
-		if (i.stuckOn != None):
-			if (i.stuckOn in movingblocks): #Follow what it is stuck to
-				i.coords = [i.stuckOn.coords[0]+i.relative[0], i.stuckOn.coords[1]+i.relative[1]]
-			elif (i.stuckOn in crates): #Follow what it is stuck to
-				i.coords = [i.stuckOn.coords[0]+i.relative[0], i.stuckOn.coords[1]+i.relative[1]]
-			else:
-				i.stuck = False
-				i.stuckOn = None
-
-		if not i.stuck:
+					for x in bricks:
+						p.Collide(x)
+					if hit(i.coords, (i.size[0], i.size[1] + 1), p.coords, p.size):
+						i.floor = True
 			for p in bricks:
 				i.Collide(p)
-			for p in movingblocks:
-				i.Collide(p)
-			for p in crates:
-				i.Collide(p)
 
+			for p in platforms:
+				player.Collide(p)
+				for mb in movingblocks:
+					if isOnTop(p,mb) and isNear(center(p),center(mb)):
+						print "you won!"
+					mb.Collide(p)
+				screen.blit(p.img,p.coords)
 
-	if bombsExplode:
+			screen.blit(i.img,i.coords)
+
+		for i in movingblocks:
+			player.Collide(i)
+			
+		for i in sensors:
+			if i.trigger != None:
+				for p in movingblocks:
+					i.collide(p)
+				
+		for p in platforms:
+			player.Collide(p)
+		'''for mb in movingblocks:
+			if isOnTop(p, mb) and isNear(center(p), center(mb)):
+				print "you won!"
+			mb.Collide(p)'''
+		for i in bricks:
+			#screen.blit(i.img, i.coords)
+			player.Collide(i)
+		for i in grates:
+			if "guy" in i.blocked:
+				player.Collide(i)
+			if "bomb" in i.blocked:
+				for p in bombs:
+					p.Collide(i)
+			if "moving" in i.blocked:
+				for p in movingblocks:
+					if (p.type == 0) or ("dest" in i.blocked and p.type == 2):
+						p.Collide(i)
+
 		for i in bombs:
-			if i.armed:
-				if (i.type != 3) or (isNear(center(i), mousepos, 32)) or (isNear(center(i), center(player), 20)):
-					i.isExploding = True
-					i.img = normalBombImgs[0]
-					i.Detonate(player)
-					for p in movingblocks:
-						i.Detonate(p)
-					i.stuck = True
+			if i.isExploding:
+				i.explodeTime -= 1
+				i.incrementSprite(1, i.explodeTime)
+				sfxkey = 4
+				soundEffect(sfxkey)
+				if i.explodeTime > 10:
+
+					pygame.draw.circle(screen, BLACK, (int(center(i)[0]), int(center(i)[1])), detRange-player.size[0], 1)
+
+
+			if i.explodeTime <= 0:
+				bombs.remove(i)
+
+			if not i.stuck:
+				if i.vel[1] < 8:
+					i.vel[1] += gravity*.75
+
+				if i.vel[0] <= -8:
+					i.vel[0] = -8
+
+				if i.vel[1] <= -8:
+					i.vel[1] = -8
+
+				if i.vel[0] >= 8:
+					i.vel[0] = 8
+
+				if i.vel[1] >= 8:
+					i.vel[1] = 8
+					
+				p1 = center(i)
+				i.coords[0] += i.vel[0]
+				i.coords[1] += i.vel[1]
+				if debugon:
+					pygame.draw.line(debugOverlay, PURPLE, p1, center(i))
+					pygame.draw.rect(debugOverlay, PURPLE, (i.coords[0], i.coords[1], i.size[0], i.size[1]), 1)
+
+			if not i.armed:
+				i.time += 1
+				if i.time >= i.arm:
+					i.armed = True
+					i.img = i.armImg
+					sfxkey = 5
+					soundEffect(sfxkey)
+
+			if i.armed and i.armImgTime > 0:
+				i.armImgTime -= 1
+				if i.armImgTime <= 0:
+					i.img = i.defaultImg
+
+			if (i.stuckOn != None):
+				if (i.stuckOn in movingblocks): #Follow what it is stuck to
+					i.coords = [i.stuckOn.coords[0]+i.relative[0], i.stuckOn.coords[1]+i.relative[1]]
+				elif (i.stuckOn in crates): #Follow what it is stuck to
+					i.coords = [i.stuckOn.coords[0]+i.relative[0], i.stuckOn.coords[1]+i.relative[1]]
+				else:
+					i.stuck = False
 					i.stuckOn = None
-					i.vel = [0, 0]
+
+			if not i.stuck:
+				for p in bricks:
+					i.Collide(p)
+				for p in movingblocks:
+					i.Collide(p)
+				for p in crates:
+					i.Collide(p)
 
 
-	if player.floor:
-		player.vel[0] = Zero(player.vel[0], friction)
+		if bombsExplode:
+			for i in bombs:
+				if i.armed:
+					if (i.type != 3) or (isNear(center(i), mousepos, 32)) or (isNear(center(i), center(player), 20)):
+						i.isExploding = True
+						i.img = normalBombImgs[0]
+						i.Detonate(player)
+						for p in movingblocks:
+							i.Detonate(p)
+						i.stuck = True
+						i.stuckOn = None
+						i.vel = [0, 0]
 
-	screen.blit(DB.img, (0, 0))
-	for i in movingblocks:
-		if i.floor:
-			i.vel[0] = Zero(i.vel[0], friction)
-	
-	for i in sensors:
-		screen.blit(i.img, i.coords)
-	for i in bombs:
-		screen.blit(i.img, i.coords)
-	for s in switches:
-		if s.on == True:
-			s.time -= 1
 
-		if s.time <= 0:
-			s.on = False
+		if player.floor:
+			player.vel[0] = Zero(player.vel[0], friction)
 
-		if s.on == False:
-			s.img = switchImages[0]
-			s.time = 500
-		screen.blit(s.img, s.coords)
-	for k in keys:
-		screen.blit(k.img, k.coords)
-	for g in gates:
-		screen.blit(g.img, g.coords)
-	for i in grates:
-		screen.blit(i.img.img, i.coords)
-	for c in crates:
-		screen.blit(c.img, c.coords)
-	#UI display
-	
-	screen.blit(personimg, player.coords)
-	if DetCurrent.type == 3:
-		pygame.draw.circle(screen, RED, mousepos, 32, 1)
-		pygame.draw.rect(screen, WHITE, (0, 0, 123, 38))
-	pygame.draw.rect(screen, WHITE, (0, 0, 100, 38))
-	screen.blit(fontComp.render(str(len(bombs))+"/"+str(DetCurrent.max), False, BLACK), (41, 3))
-	screen.blit(DetCurrent.img, (4, 4))
-	for i in exits:
-		screen.blit(i.img, i.coords)
+		screen.blit(DB.img, (0, 0))
+		for i in movingblocks:
+			if i.floor:
+				i.vel[0] = Zero(i.vel[0], friction)
+		
+		for i in sensors:
+			screen.blit(i.img, i.coords)
+		for i in bombs:
+			screen.blit(i.img, i.coords)
+		for s in switches:
+			if s.on == True:
+				s.time -= 1
 
-	screen.blit(mouseImg, (mousepos[0]-3, mousepos[1]-3))
-	if debugon:
-		screen.blit(debugOverlay, (0, 0))
-	pygame.display.update()
-	clock.tick(fps)
+			if s.time <= 0:
+				s.on = False
+
+			if s.on == False:
+				s.img = switchImages[0]
+				s.time = 500
+			screen.blit(s.img, s.coords)
+		for k in keys:
+			screen.blit(k.img, k.coords)
+		for g in gates:
+			screen.blit(g.img, g.coords)
+		for i in grates:
+			screen.blit(i.img.img, i.coords)
+		for c in crates:
+			screen.blit(c.img, c.coords)
+		#UI display
+		
+		screen.blit(personimg, player.coords)
+		if DetCurrent.type == 3:
+			pygame.draw.circle(screen, RED, mousepos, 32, 1)
+			pygame.draw.rect(screen, WHITE, (0, 0, 123, 38))
+		pygame.draw.rect(screen, WHITE, (0, 0, 100, 38))
+		screen.blit(fontComp.render(str(len(bombs))+"/"+str(DetCurrent.max), False, BLACK), (41, 3))
+		screen.blit(DetCurrent.img, (4, 4))
+		for i in exits:
+			screen.blit(i.img, i.coords)
+			
+		screen.blit(mouseImg, (mousepos[0]-3, mousepos[1]-3))
+		if debugon:
+			screen.blit(debugOverlay, (0, 0))
+		pygame.display.update()
+		clock.tick(fps)
