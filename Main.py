@@ -53,11 +53,24 @@ def getImg(name):  # gets images and prints their retrieval
 
 
 # SET GET IMAGES HERE
-brickImg = getImg("Bricks/Brick")
+brickImgs = [getImg("Bricks/Brick")]
+for i in range(0,4):
+	brickImgs.append(getImg("Bricks/CrackingBricks/CrackingGrey (" + str(i+1) + ")"))
+brickImg = brickImgs[0]
 personimg = getImg("Dereks/Derek")
-movingImg = getImg("Bricks/BrickMoving")
-destructableImg = getImg("Bricks/BrickDestructable")
-multiImg = getImg("Bricks/BrickMulti")
+movingImgs = [getImg("Bricks/BrickMoving")]
+for i in range(0,4):
+	movingImgs.append(getImg("Bricks/CrackingBricks/CrackingBlue (" + str(i+1) + ")"))
+movingImg = movingImgs[0]
+destructableImgs = [getImg("Bricks/BrickDestructable")]
+for i in range(0,4):
+	destructableImgs.append(getImg("Bricks/CrackingBricks/CrackingOrange (" + str(i+1) + ")"))
+	print "Bricks/CrackingBricks/CrackingOrange(" + str(i+1) + ")"
+destructableImg = destructableImgs[0]
+multiImgs = [getImg("Bricks/BrickMulti")]
+for i in range(0,4):
+	multiImgs.append(getImg("Bricks/CrackingBricks/CrackingPurple (" + str(i+1) + ")"))
+multiImg = multiImgs[0]
 sens1Img = getImg("Bricks/SensorMoving")
 sens2Img = getImg("Bricks/SensorDest")
 sens3Img = getImg("Bricks/SensorMulti")
@@ -354,6 +367,7 @@ def getCorners(it):
 class movingBlock(object):
 	def __init__(self, type, coords, size):
 		self.hp = 1
+		self.ht = 1
 		self.type = type
 		self.coords = coords
 		self.size = size
@@ -362,6 +376,7 @@ class movingBlock(object):
 		self.isExploding = False
 		self.imgNum = 0
 		self.explodeImg = []
+		self.imgList = []
 		for i in range(len(squareExplodeImgs)):
 			self.explodeImg.append(pygame.transform.scale(squareExplodeImgs[i], self.size))
 		
@@ -374,13 +389,19 @@ class movingBlock(object):
 			self.big = False
 		
 		if type == 0: #Movable
-			self.img = pygame.transform.scale(movingImg, size)
+			self.img = pygame.transform.scale(movingImgs[0], size)
+			for i in movingImgs:
+				self.imgList.append(pygame.transform.scale(i, size))
 
 		if type == 1: #Destructable
-			self.img = pygame.transform.scale(destructableImg, size)
+			self.img = pygame.transform.scale(destructableImgs[0], size)
+			for i in destructableImgs:
+				self.imgList.append(pygame.transform.scale(i, size))
 
 		if type == 2: #Movable and Destructable
-			self.img = pygame.transform.scale(multiImg, size)
+			self.img = pygame.transform.scale(multiImgs[0], size)
+			for i in multiImgs:
+				self.imgList.append(pygame.transform.scale(i, size))
 
 	def incrementSprite(self, amount):
 		newNum = self.imgNum+amount
@@ -390,8 +411,6 @@ class movingBlock(object):
 		else:
 			self.isExploding = False
 			movingblocks.remove(self)
-
-
 			
 	def Collide(self, i):
 		if hit(i.coords, i.size, self.coords, self.size):  # UP
@@ -632,7 +651,7 @@ class Crate(object):
 		self.img = img
 
 class bomb(object):
-	def __init__(self, type, coords, vel, size, pow, pow2, dmg, arm, img):
+	def __init__(self, type, coords, vel, size, pow, pow2, dmg, arm, img, armImg):
 		self.type = type
 		self.coords = coords
 		self.size = size
@@ -642,12 +661,14 @@ class bomb(object):
 		self.dmg = dmg
 		self.time = 0
 		self.arm = arm
+		self.armImg = armImg
 		self.armed = False
 		self.explodeTime = 16
 		self.isExploding = False
 		self.floor = False
 		self.stuck = False
-
+		self.armImgTime = 12
+		self.defaultImg = img
 		self.stuckOn = None
 		self.relative = (0, 0)
 
@@ -767,6 +788,14 @@ class bomb(object):
 						dmg = (netpow ** 2) * self.dmg
 						print "Damage: ", dmg
 						mob.hp -= dmg
+						if mob.hp/mob.ht < .8:
+							mob.img = mob.imgList[1]
+						if mob.hp/mob.ht < .6:
+							mob.img = mob.imgList[2]
+						if mob.hp/mob.ht < .4:
+							mob.img = mob.imgList[3]
+						if mob.hp/mob.ht < .2:
+							mob.img = mob.imgList[4]
 						if mob.hp <= 0:
 							mob.img = mob.explodeImg[0]
 							mob.isExploding = True
@@ -778,23 +807,24 @@ class bomb(object):
 
 
 class detonator(object):
-	def __init__(self, type, kbP, kbB, dmg, arm, max, img, img2):
+	def __init__(self, type, kbP, kbB, dmg, arm, max, img, img2, armImg):
 		self.type = type
 		self.kbP = kbP #player knockback
 		self.kbB = kbB #block knockback
 		self.dmg = dmg
 		self.arm = arm #arm time
+		self.armImg = armImg
 		self.max = max #Max quantity out
 		self.img = img #Detonator image
 		self.bomb = img2 #Bomb image
 	def newBomb(self, coords, vel):
-		return bomb(self.type, [coords[0]+4, coords[1]+4], vel, (8, 8), self.kbP, self.kbB, self.dmg, self.arm, self.bomb)
+		return bomb(self.type, [coords[0]+4, coords[1]+4], vel, (8, 8), self.kbP, self.kbB, self.dmg, self.arm, self.bomb, self.armImg)
 
-DetGod = detonator(0, 16, 16, 5, 0, 99999, getImg("UI/DetGod"), bombImg)
-DetNorm = detonator(1, 2, 8, 3, 30, 4, getImg("UI/DetDefault"), bombImg)
-DetKB = detonator(2, 16, 30, 1, 20, 2, getImg("UI/DetJumper"), getImg("Bombs/tosser"))
-DetMulti = detonator(3, 1, 10, 2, 80, 10, getImg("UI/DetMulti"), getImg("Bombs/Multi"))
-DetDest = detonator(4, 1, 1, 20, 30, 4, getImg("UI/DetDestructive"), getImg("Bombs/Dest"))
+DetGod = detonator(0, 16, 16, 5, 0, 99999, getImg("UI/DetGod"), bombImg, getImg("Bombs/ArmBlipBomb"))
+DetNorm = detonator(1, 2, 8, 3, 30, 4, getImg("UI/DetDefault"), bombImg, getImg("Bombs/ArmBlipBomb"))
+DetKB = detonator(2, 16, 30, 1, 20, 2, getImg("UI/DetJumper"), getImg("Bombs/tosser"), getImg("Bombs/ArmBlipTosser"))
+DetMulti = detonator(3, 1, 10, 2, 80, 10, getImg("UI/DetMulti"), getImg("Bombs/Multi"), getImg("Bombs/ArmBlipMulti"))
+DetDest = detonator(4, 1, 1, 20, 30, 4, getImg("UI/DetDestructive"), getImg("Bombs/Dest"), getImg("Bombs/ArmBlipDest"))
 DetCurrent = DetGod
 
 bombs = []
@@ -865,6 +895,7 @@ def createWall(coordx, coordy, rx, ry, dir):
 def createMovingBlock(coordx, coordy, rx, ry, type, hp = 1):
 	rand = movingBlock(type, [coordx, coordy], [rx*16, ry*16])
 	rand.hp = hp
+	rand.ht = hp
 	movingblocks.append(rand)
 	
 def createSensor(coordx, coordy, rx, ry, type, actions, link = None):
@@ -1867,8 +1898,14 @@ while Running:
 			i.time += 1
 			if i.time >= i.arm:
 				i.armed = True
+				i.img = i.armImg
 				sfxkey = 5
 				soundEffect(sfxkey)
+
+		if i.armed and i.armImgTime > 0:
+			i.armImgTime -= 1
+			if i.armImgTime <= 0:
+				i.img = i.defaultImg
 
 		if (i.stuckOn != None):
 			if (i.stuckOn in movingblocks): #Follow what it is stuck to
