@@ -1880,6 +1880,7 @@ entrances = [Entrance(4, [int(80), int(48)], [int(16), int(16)], entranceImg)]
 createExit(4, [int(272), int(368)], [int(16), int(16)], exitImg)
 createFloor(0, 0, 4, 1)
 createFloor(16, 0, 1, 14)
+DetCurrent = DetKB
 saveLevel(4)
 
 
@@ -1950,7 +1951,7 @@ createMovingBlock(560, 368, 12, 1, 0)
 createFloor(960, 384, 1, 1)
 createFloor(912, 288, 1, 2)
 createFloor(912, 272, 1, 1)
-detCurrent = DetNorm
+DetCurrent = DetNorm
 saveLevel(3)
 
 #destructable heaven
