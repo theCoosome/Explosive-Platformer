@@ -3083,8 +3083,12 @@ while Running:
 				if i.vel[0] <= -8:
 					i.vel[0] = -8
 
+				if i.vel[0] >= 8:
+					i.vel[0] = 8
+
 				if i.vel[1] <= -8:
 					i.vel[1] = -8
+					
 				if i.vel[1] >= 8:
 					i.vel[1] = 8
 					
