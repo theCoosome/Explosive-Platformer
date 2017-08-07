@@ -904,7 +904,6 @@ def wipeFloor():
 	platforms = []
 	exits = []
 
-
 def createExit(type, coords, size, img):
 	exits.append(Exit(type, coords, size, img))
 
@@ -953,6 +952,36 @@ levels = []
 entrances = []
 
 unlocked = []
+
+def saveUnlocks():
+	file = open("Unlocks.txt", "w")
+	file.truncate
+	for i in unlocked:
+		file.write(str(i) + "\n")
+
+def emptyUnlocks():
+	file = open("Unlocks.txt", "w")
+	file.truncate
+
+def loadUnlocks():
+	global unlocked
+	print unlocked
+	file = open("Unlocks.txt", "r")
+	fileLines = file.readlines()
+	print fileLines
+	length = len(unlocked)
+	unlocked = []
+	for i in fileLines:
+		unlocked.append(i.lower() == "true\n")
+		if i.lower() == "true\n":
+			print "found true"
+	if (length - len(unlocked)) != 0:
+		print "Differing Length!"
+		unlocked.append(True)
+		for i in range(0, length - 1):
+			unlocked.append(False)
+	print unlocked
+
 
 def saveLevel(difficulty, links = []): #links: list of tuples, ("sensor", 1)
 	global bricks
@@ -1593,7 +1622,6 @@ entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
 DetCurrent = DetKB
 saveLevel(4)
 
-
 def soundEffect(sfxkey):
 	if not muteon:
 		if sfxkey == 1:
@@ -1678,6 +1706,8 @@ Dlevels = DispObj([], [0, 0], False, (896, 10000))
 Dbacking = DispObj(no_thing, [-100, 0], True, (112, 74))
 Dbacking.img.fill((80, 225, 225))
 
+loadUnlocks()
+
 x, y = 0, -1
 for i in range(len(levels)):
 	if ((x) % 8 == 0):
@@ -1699,6 +1729,9 @@ for i in range(len(levels)):
 Dlevels.refresh()
 DlevelCap.all = [Dlevels]
 DlevelCap.refresh()
+
+
+
 
 while Running:
 	
@@ -2313,3 +2346,4 @@ while Running:
 			screen.blit(debugOverlay, (0, 0))
 		pygame.display.update()
 		clock.tick(fps)
+saveUnlocks()
