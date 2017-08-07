@@ -1307,13 +1307,12 @@ grates.append(Grate([int(752), int(224)], [int(48), int(48)], ["guy"]))
 grates.append(Grate([int(800), int(176)], [int(80), int(96)], ["guy"]))
 
 DetCurrent = detonator(2, 16, 30, 1, 20, 10,getImg("UI/DetJumper"), getImg("Bombs/Tosser"), getImg("Bombs/ArmTosser/ArmBlipTosser (1)"))
-#saveLevel()
-
-DetCurrent = detonator(2, 16, 30, 1, 20, 10, getImg("UI/DetJumper"), getImg("Bombs/tosser"), getImg("Bombs/ArmTosser/ArmBlipTosser(2)"))
-#saveLevel(2)
-
-DetCurrent = detonator(2, 16, 30, 1, 20, 10, getImg("UI/DetJumper"), getImg("Bombs/tosser"), getImg("Bombs/ArmTosser/ArmBlipTosser(2)"))
-#saveLevel(2)
+saveLevel(2)
+# DetCurrent = detonator(2, 16, 30, 1, 20, 10, getImg("UI/DetJumper"), getImg("Bombs/tosser"), getImg("Bombs/ArmTosser/ArmBlipTosser(2)"))
+# #saveLevel(2)
+#
+# DetCurrent = detonator(2, 16, 30, 1, 20, 10, getImg("UI/DetJumper"), getImg("Bombs/tosser"), getImg("Bombs/ArmTosser/ArmBlipTosser(2)"))
+# #saveLevel(2)
 
 
 #grate over a pit
@@ -1718,7 +1717,7 @@ DCont = DispObj([], (50, 50), False, (900, 900))
 DCont.all = wraptext("W, A, S, D or Arrow keys for Movement&E or LALT to defuse all bombs&Space to detonate&X to reset level&Q to exit level or game&Right click to go to previous screen", 500, smallfont, True)
 DCont.refresh()
 
-Ddevs = DispObj(wraptext("Lead developer: Colton&Brett&Harrison&Sarah", 1000, smallfont, True), (50, 560), False, (900, 900))
+Ddevs = DispObj(wraptext("Lead developer: Colton&Person manager: Brett&Intro and support: Harrison&Level and aesthetic: Sarah", 1000, smallfont, True), (50, 560), False, (900, 900))
 
 Don = smallfont.render("On", False, BLACK)
 Doff = smallfont.render("Off", False, BLACK)
