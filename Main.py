@@ -972,9 +972,12 @@ def loadUnlocks():
 	length = len(unlocked)
 	unlocked = []
 	for i in fileLines:
-		unlocked.append(i.lower() == "true\n")
-		if i.lower() == "true\n":
-			print "found true"
+		if fileLines.index(i) == 0:
+			unlocked.append(True)
+		else:
+			unlocked.append(i.lower() == "true\n")
+			if i.lower() == "true\n":
+				print "found true"
 	if (length - len(unlocked)) != 0:
 		print "Differing Length!"
 		unlocked.append(True)
