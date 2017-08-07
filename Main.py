@@ -990,6 +990,7 @@ def loadUnlocks():
 				print "found true"
 	if (length - len(unlocked)) != 0:
 		print "Differing Length!"
+		unlocked = []
 		unlocked.append(True)
 		for i in range(0, length - 1):
 			unlocked.append(False)
