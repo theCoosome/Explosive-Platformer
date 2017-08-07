@@ -1350,10 +1350,10 @@ def ResetLevel():
 	global currLvl
 	global levels
 	global bombs
-	if lvl < 0:
-		this = cutScenes[lvl]
+	if currLvl < 0:
+		this = cutScenes[currLvl]
 	else:
-		this = levels[lvl]
+		this = levels[currLvl]
 	
 	movingblocks = []
 	grates = []
@@ -2267,13 +2267,13 @@ for i in range(len(levels)):
 		y += 1
 		netSize += 74
 		x = 0
-	lvl = levels[i]
+	this = levels[i]
 	rand = DispObj(no_thing, (x*112, y*74), True, (112, 74))
 	if unlocked[i]:
-		rand.img.blit(lvl["Imgs"][1], (24, 10))
+		rand.img.blit(this["Imgs"][1], (24, 10))
 	else:
-		rand.img.blit(lvl["Imgs"][0], (24, 10))
-	for n in range(lvl["difficulty"]):
+		rand.img.blit(this["Imgs"][0], (24, 10))
+	for n in range(this["difficulty"]):
 		rand.img.blit(rateImg, ((14*n)+23, 57))
 	rand.img.blit(font.render(str(i+1), False, BLACK), (3, 15))
 		
@@ -2461,6 +2461,7 @@ while Running:
 		clock.tick(fps)
 
 		
+	mouseImg = AimImg
 	while inGame and Running:
 		mousepos = pygame.mouse.get_pos()
 		if debugon:
