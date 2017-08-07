@@ -364,7 +364,7 @@ class Person(object):
 		if hit(i.coords, i.size, self.coords, self.size):  # UP
 
 			p1 = center(self)
-			if self.vel[1] > i.vel[1] and self.coords[1] <= i.coords[1]: #FLOOR
+			if (self.vel[1] > i.vel[1] or self.collided[1] == 1) and self.coords[1] <= i.coords[1]: #FLOOR
 				self.coords[1] = i.coords[1] - self.size[1]
 				if self.vel[1] > 0:
 					self.vel[1] = 0
@@ -396,10 +396,10 @@ class Person(object):
 					else:
 						self.collided[0] = 1
 			p1 = center(self)
-			if self.vel[1] < i.vel[1] and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1]: #CEILING
+			if (self.vel[1] < i.vel[1]) and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1]: #CEILING
 				self.coords[1] = i.coords[1] + i.size[1]
 				self.vel[1] = 0
-				pygame.draw.line(debugOverlay, GREEN, p1, center(self))
+				pygame.draw.line(debugOverlay, GREEN, (self.coords[0]-1, self.coords[1]), (p1[0]-1, p1[1]))
 				if self.dualColliding and self.collided[1] == -1:
 					print "Cieling crush"
 					self.Kill()
@@ -1252,7 +1252,8 @@ def loadUnlocks():
 			unlocked.append(False)
 	print unlocked
 
-
+cutScenes = []
+	
 def saveLevel(difficulty, links = []): #links: list of tuples, ("sensor", 1)
 	global bricks
 	global movingblocks
@@ -1290,7 +1291,11 @@ def saveLevel(difficulty, links = []): #links: list of tuples, ("sensor", 1)
 		rand.blit(pygame.transform.scale(Mgrate, i.sixteens), (i.coords[0]/16, i.coords[1]/16))
 		rand2.blit(pygame.transform.scale(Mhollow, i.sixteens), (i.coords[0]/16, i.coords[1]/16))
 	
-	levels.append({"bricks":bricks[:], "movingblocks":movingblocks[:], "sensors":sensors[:], "switches":switches[:], "grates":grates[:], "exits":exits[:], "spawn":entrances[0].coords[:], "Det":DetCurrent, "pairs":links, "Imgs":[rand2, rand], "difficulty":difficulty})
+	
+	if difficulty > 0:
+		levels.append({"bricks":bricks[:], "movingblocks":movingblocks[:], "sensors":sensors[:], "switches":switches[:], "grates":grates[:], "exits":exits[:], "spawn":entrances[0].coords[:], "Det":DetCurrent, "pairs":links, "Imgs":[rand2, rand], "difficulty":difficulty})
+	else:
+		cutScenes.append({"bricks":bricks[:], "movingblocks":movingblocks[:], "sensors":sensors[:], "switches":switches[:], "grates":grates[:], "exits":exits[:], "spawn":entrances[0].coords[:], "Det":DetCurrent, "pairs":links, "Imgs":[rand2, rand], "difficulty":difficulty})
 	unlocked.append(False)
 	
 	wipeFloor()
@@ -1304,7 +1309,10 @@ def loadSaved(lvl):
 	global sensors
 	global DetCurrent
 	wipeFloor()
-	this = levels[lvl]
+	if lvl < 0:
+		this = cutScenes[lvl]
+	else:
+		this = levels[lvl]
 	bricks = this["bricks"]
 	
 	for i in this["movingblocks"]:
@@ -1342,7 +1350,10 @@ def ResetLevel():
 	global currLvl
 	global levels
 	global bombs
-	this = levels[currLvl]
+	if lvl < 0:
+		this = cutScenes[lvl]
+	else:
+		this = levels[lvl]
 	
 	movingblocks = []
 	grates = []
