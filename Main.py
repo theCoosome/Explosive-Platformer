@@ -1716,7 +1716,7 @@ DCont = DispObj([], (50, 50), False, (900, 900))
 DCont.all = wraptext("W, A, S, D or Arrow keys for Movement&E or LALT to defuse all bombs&Space to detonate&X to reset level&Q to exit level or game&Right click to go to previous screen", 500, smallfont, True)
 DCont.refresh()
 
-Ddevs = DispObj(wraptext("Lead developer: Colton&Brett&Harrison&Sarah", 1000, smallfont, True), (50, 560), False, (900, 900))
+Ddevs = DispObj(wraptext("Lead developer: Colton&Person manager: Brett&Intro and support: Harrison&Level and aesthetic: Sarah", 1000, smallfont, True), (50, 560), False, (900, 900))
 
 Don = smallfont.render("On", False, BLACK)
 Doff = smallfont.render("Off", False, BLACK)
