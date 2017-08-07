@@ -1472,6 +1472,7 @@ saveLevel()
 '''
 
 #Dest intro
+#Colton
 createFloor(0, 256, 29, 22)
 createFloor(352, 592, 8, 42)
 createFloor(448, 0, 31, 15)
@@ -1490,6 +1491,7 @@ saveLevel(1)
 unlocked[0] = True
 
 #jump intro
+#Colton
 createFloor(0, 544, 11, 64)
 createFloor(64, 256, 18, 5)
 createFloor(720, 352, 12, 15)
@@ -1503,6 +1505,7 @@ DetCurrent = DetKB
 saveLevel(1)
 
 #Moving block intro
+#Colton
 createFloor(0, 560, 10, 64)
 createFloor(0, 0, 7, 64)
 createFloor(0, 112, 28, 3)
@@ -1515,6 +1518,7 @@ DetCurrent = DetNorm
 saveLevel(1)
 
 #Sensors and player grate
+#Colton
 createFloor(0, 528, 12, 64)
 createFloor(0, 0, 29, 18)
 entrances = [Entrance(4, [int(416), int(512)], [int(16), int(16)], entranceImg)]
@@ -1529,6 +1533,7 @@ DetCurrent = DetNorm
 saveLevel(1, [("sensor", 0)])
 
 #Moving block grates
+#Colton
 createFloor(0, 512, 13, 28)
 grates.append(Grate([int(448), int(512)], [int(320), int(64)], ["moving"]))
 createFloor(768, 384, 21, 16)
@@ -1542,6 +1547,7 @@ DetCurrent = DetNorm
 saveLevel(1)
 
 #Multi intro
+#Colton
 createFloor(0, 560, 10, 46)
 createMovingBlock(224, 512, 6, 3, 2, 1000)
 createFloor(736, 592, 8, 7)
@@ -1558,6 +1564,21 @@ DetCurrent = DetNorm
 saveLevel(2, [("sensor", 0)])
 
 #Intro to bomb grates
+#Sarah
+createFloor(16, 0, 1, 63)
+createFloor(0, 560, 10, 64)
+createFloor(1008, 16, 34, 1)
+createFloor(0, 0, 35, 1)
+gyah = grates.append(Grate([int(16), int(432)], [int(176), int(128)], ["guy"]))
+createExit(4, [int(96), int(528)], [int(16), int(16)], exitImg)
+grates.append(Grate([int(592), int(16)], [int(128), int(544)], ["bomb"]))
+entrances = [Entrance(4, [int(352), int(544)], [int(16), int(16)], entranceImg)]
+createMovingBlock(744, 48, 15, 11, 0) #blue
+createMovingBlock(720, 384, 18, 3, 1) #yellow
+createSensor(792, 448, 9, 5, 0, ["guy"], gyah)
+saveLevel(2, [("sensor",0)])
+
+#BUT COLTON I FIXED IT THOUGH
 createFloor(0, 0, 11, 64)
 createFloor(0, 544, 11, 64)
 createFloor(928, 176, 23, 6)
@@ -1573,7 +1594,89 @@ createSensor(816, 480, 7, 4, 0, ["guy"])
 DetCurrent = DetNorm
 saveLevel(2, [("sensor", 0) ])
 
+#will break
+#sarah
+# createMovingBlock(224, 240, 10, 6, 2)
+# createMovingBlock(320, 144, 12, 6, 2)
+# createMovingBlock(432, 48, 14, 6, 2)
+# createMovingBlock(576, 144, 12, 6, 2)
+# createMovingBlock(656, 240, 13, 7, 2)
+# createMovingBlock(288, 336, 9, 4, 2)
+# createMovingBlock(640, 384, 2, 1, 2)
+# createMovingBlock(640, 352, 1, 1, 2)
+# createMovingBlock(592, 352, 1, 1, 2)
+# createMovingBlock(560, 336, 1, 2, 2)
+# createMovingBlock(560, 336, 1, 1, 2)
+# createMovingBlock(512, 272, 1, 1, 2)
+# createMovingBlock(496, 256, 1, 2, 2)
+# createMovingBlock(528, 208, 1, 1, 2)
+# createMovingBlock(528, 208, 2, 3, 2)
+# createMovingBlock(544, 240, 1, 2, 2)
+# createMovingBlock(528, 304, 2, 2, 2)
+# createMovingBlock(480, 304, 2, 1, 2)
+# createMovingBlock(464, 288, 1, 1, 2)
+# createMovingBlock(464, 272, 1, 1, 2)
+# createMovingBlock(512, 240, 1, 1, 2)
+# createMovingBlock(512, 240, 2, 2, 2)
+# createMovingBlock(544, 272, 2, 2, 2)
+# createMovingBlock(560, 288, 1, 1, 2)
+# createMovingBlock(560, 272, 4, 2, 2)
+# createMovingBlock(608, 240, 1, 1, 2)
+# createMovingBlock(560, 240, 2, 1, 2)
+# createMovingBlock(544, 160, 2, 2, 2)
+# createMovingBlock(480, 224, 1, 1, 2)
+# createMovingBlock(432, 288, 1, 1, 2)
+# createMovingBlock(416, 288, 1, 1, 2)
+# createMovingBlock(416, 240, 1, 1, 2)
+# createMovingBlock(496, 352, 1, 1, 2)
+# createMovingBlock(416, 336, 1, 1, 2)
+# createMovingBlock(432, 336, 3, 1, 2)
+# createMovingBlock(432, 320, 1, 1, 2)
+# createMovingBlock(400, 256, 1, 1, 2)
+# createMovingBlock(432, 288, 1, 1, 2)
+# createMovingBlock(432, 256, 1, 1, 2)
+# createFloor(0, 400, 20, 64)
+# createMovingBlock(768, 352, 9, 3, 2)
+# entrances = [Entrance(4, [int(112), int(384)], [int(16), int(16)], entranceImg)]
+# createExit(4, [int(544), int(384)], [int(16), int(16)], exitImg)
+# createFloor(928, 0, 25, 6)
+# createFloor(0, 0, 25, 7)
+# createFloor(112, 0, 3, 51)
+# createFloor(112, 48, 21, 7)
+# createFloor(224, 48, 6, 13)
+# createFloor(224, 144, 6, 6)
+# createFloor(656, 48, 6, 17)
+# createFloor(768, 144, 6, 10)
+# createFloor(864, 240, 7, 4)
+# createFloor(912, 352, 3, 1)
+# createMovingBlock(704, 352, 3, 3, 2)
+# createMovingBlock(608, 352, 2, 3, 2)
+# createMovingBlock(448, 336, 4, 4, 2)
+# createMovingBlock(464, 208, 2, 3, 2)
+# createMovingBlock(416, 192, 1, 2, 2)
+# createMovingBlock(384, 192, 2, 2, 2)
+# createMovingBlock(352, 208, 1, 1, 2)
+# createMovingBlock(352, 176, 1, 1, 2)
+# createMovingBlock(416, 160, 2, 1, 2)
+# createMovingBlock(496, 112, 1, 1, 2)
+# createMovingBlock(512, 80, 1, 1, 2)
+# createMovingBlock(528, 80, 1, 1, 2)
+# createMovingBlock(576, 112, 1, 1, 2)
+# createMovingBlock(528, 144, 2, 2, 2)
+# createMovingBlock(528, 176, 1, 1, 2)
+# createMovingBlock(464, 192, 1, 1, 2)
+# createMovingBlock(480, 160, 1, 2, 2)
+# createMovingBlock(496, 208, 1, 1, 2)
+# createMovingBlock(384, 352, 1, 1, 2)
+# createMovingBlock(352, 304, 1, 1, 2)
+# createMovingBlock(400, 304, 1, 1, 2)
+# createMovingBlock(480, 352, 1, 2, 2)
+# createMovingBlock(400, 368, 4, 1, 2)
+# createMovingBlock(464, 320, 1, 2, 2)
+# saveLevel(2)
+
 #easy stairs
+#sarah meilinger
 createFloor(0, 384, 21, 19)
 entrances = [Entrance(4, [int(48), int(368)], [int(16), int(16)], entranceImg)]
 createExit(4, [int(944), int(128)], [int(16), int(16)], exitImg)
@@ -1589,6 +1692,7 @@ DetCurrent = DetNorm
 saveLevel(2)
 
 #launching a block
+#Colton
 createFloor(0, 560, 10, 64)
 createFloor(0, 0, 12, 64)
 createFloor(624, 192, 18, 12)
@@ -1609,6 +1713,7 @@ saveLevel(2, [("sensor", 0)])
 
 #it's just nice and blue
 #needs a higher bomb limit
+#Sarah
 createFloor(0, 480, 15, 44)
 createFloor(704, 688, 2, 19)
 createFloor(1008, 0, 45, 1)
@@ -1635,6 +1740,7 @@ saveLevel(2)
 
 
 #grate over a pit
+#Colton
 createFloor(0, 0, 9, 64)
 createFloor(960, 144, 36, 4)
 rand1 = Grate([int(80), int(480)], [int(304), int(32)], ["guy"])
@@ -1678,6 +1784,7 @@ DetCurrent = DetKB
 saveLevel(3, [("sensor", 0), ("sensor", 1)])
 
 #fastrun
+#Sarah
 createFloor(864, 384, 1, 10)
 createFloor(32, 688, 1, 7)
 createFloor(832, 688, 1, 12)
@@ -1718,6 +1825,7 @@ detCurrent=DetKB
 saveLevel(3)
 
 #Multi support
+#Colton
 createFloor(0, 624, 6, 64)
 createFloor(0, 0, 6, 64)
 createFloor(0, 96, 33, 3)
@@ -1742,6 +1850,7 @@ DetCurrent = DetNorm
 saveLevel(4, [("sensor", 1)])
 
 #Running under launched
+#Colton
 createFloor(0, 448, 17, 64)
 createFloor(0, 0, 12, 20)
 createFloor(0, 384, 4, 7)
@@ -1759,6 +1868,7 @@ DetCurrent = DetKB
 saveLevel(5)
 		
 #Multi challenge
+#Colton
 createFloor(0, 0, 45, 5)
 createFloor(80, 608, 7, 59)
 createFloor(80, 448, 3, 21)
@@ -1779,6 +1889,7 @@ DetCurrent = DetMulti
 saveLevel(5, [("sensor", 0)])
 		
 #stairs and platforms
+#Sarah
 createFloor(0, 224, 5, 40)
 createFloor(976, 0, 20, 3)
 createFloor(736, 320, 3, 18)
@@ -1811,6 +1922,20 @@ grates.append(great)
 createSensor(672, 576, 6, 2, 0, ["guy"], great)
 DetCurrent = DetKB
 saveLevel(3, [("sensor", 0)])
+
+createFloor(0, 208, 29, 3)
+createFloor(976, 208, 29, 3)
+entrances = [Entrance(4, [int(16), int(192)], [int(16), int(16)], entranceImg)]
+createExit(4, [int(992), int(192)], [int(16), int(16)], exitImg)
+createFloor(48, 384, 2, 14)
+createMovingBlock(64, 368, 13, 1, 0)
+createFloor(528, 384, 2, 14)
+createMovingBlock(560, 368, 12, 1, 0)
+createFloor(960, 384, 1, 1)
+createFloor(912, 288, 1, 2)
+createFloor(912, 272, 1, 1)
+detCurrent = DetNorm
+saveLevel(3)
 
 #destructable heaven
 createFloor(0, 688, 2, 64)
@@ -2958,8 +3083,12 @@ while Running:
 				if i.vel[0] <= -8:
 					i.vel[0] = -8
 
+				if i.vel[0] >= 8:
+					i.vel[0] = 8
+
 				if i.vel[1] <= -8:
 					i.vel[1] = -8
+
 				if i.vel[1] >= 8:
 					i.vel[1] = 8
 					

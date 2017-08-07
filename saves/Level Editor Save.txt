@@ -1,4 +1,17 @@
 <<<<<<< HEAD
+createFloor(0, 208, 29, 3)
+createFloor(976, 208, 29, 3)
+entrances = [Entrance(4, [int(16), int(192)], [int(16), int(16)], entranceImg)]
+createExit(4, [int(992), int(192)], [int(16), int(16)], exitImg)
+createFloor(48, 384, 2, 14)
+createMovingBlock(64, 368, 13, 1, 0)
+createFloor(528, 384, 2, 14)
+createMovingBlock(560, 368, 12, 1, 0)
+createFloor(960, 384, 1, 1)
+createFloor(912, 288, 1, 2)
+createFloor(912, 272, 1, 1)
+=======
+<<<<<<< HEAD
 createFloor(0, 496, 14, 64)
 createMovingBlock(720, 416, 4, 5, 0)
 grates.append(Grate([int(720), int(320)], [int(64), int(32)], []))
@@ -55,3 +68,4 @@ createMovingBlock(368, 256, 3, 3, 1)
 createSensor(912, 128, 3, 3, 0, [])
 >>>>>>> origin/master
 >>>>>>> 32ecd0a87180002ec9b0589dbcf8a2c52b4cd179
+>>>>>>> d7fa9175c81594dca62cdb83d08244b913b47451
