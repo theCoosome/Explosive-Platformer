@@ -22,3 +22,7 @@ True
 True
 True
 True
+<<<<<<< HEAD
+=======
+True
+>>>>>>> 59c5243e4b46c1525d1ff970382186a7ec8850e0
