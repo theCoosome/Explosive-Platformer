@@ -1538,6 +1538,7 @@ createFloor(0, 96, 26, 3)
 entrances = [Entrance(4, [int(96), int(496)], [int(16), int(16)], entranceImg)]
 createExit(4, [int(912), int(368)], [int(16), int(16)], exitImg)
 createFloor(976, 96, 18, 3)
+DetCurrent = DetNorm
 saveLevel(1)
 
 #Multi intro
@@ -1569,6 +1570,7 @@ createMovingBlock(816, 352, 7, 4, 0)
 grates.append(Grate([int(768), int(352)], [int(48), int(192)], ["bomb"]))
 createFloor(768, 176, 11, 10)
 createSensor(816, 480, 7, 4, 0, ["guy"])
+DetCurrent = DetNorm
 saveLevel(2, [("sensor", 0) ])
 
 #easy stairs
@@ -1582,7 +1584,7 @@ createMovingBlock(304, 0, 12, 16, 2, 375)
 createMovingBlock(304, 608, 12, 1, 1) #first yellow step
 createMovingBlock(512, 528, 14, 1, 1)  #second yellow step
 createMovingBlock(752, 452, 16, 1, 1) #third yellow step
-
+DetCurrent = DetNorm
 
 saveLevel(2)
 
@@ -1672,6 +1674,7 @@ createFloor(0, 192, 19, 4)
 entrances = [Entrance(4, [int(176), int(480)], [int(16), int(16)], entranceImg)]
 createSensor(720, 192, 4, 2, 0, ["moving"])
 createSensor(464, 192, 3, 1, 0, ["moving"])
+DetCurrent = DetKB
 saveLevel(3, [("sensor", 0), ("sensor", 1)])
 
 #fastrun
