@@ -1529,7 +1529,7 @@ createFloor(976, 160, 23, 3)
 createMovingBlock(544, 464, 4, 4, 0)
 createFloor(0, 464, 4, 3)
 createSensor(896, 496, 5, 2, 0, ["guy"])
-DetCurrent = DetNorm
+wDetCurrent = DetNorm
 saveLevel(1, [("sensor", 0)])
 
 #Moving block grates
@@ -2468,144 +2468,146 @@ while Running:
 				if scene == 0:
 					acttimer -= 1
 					if act == 0:
-						if isOnTop(player, fal[0]):
-							player.motion[0] = 0
-							player.motion[1] = 0
-							TextObjects[0].dialog = 0
+						if len(fal) > 0:
+							if isOnTop(player, fal[0]):
+								player.motion[0] = 0
+								player.motion[1] = 0
+								TextObjects[0].dialog = 0
 
-							if acttimer <= 0:
-								scene += 1
-								acttimer = 500
-								act = 0
-						else:
-							player.motion[0] = 1
-							player.motion[1] = 0
+								if acttimer <= 0:
+									scene += 1
+									acttimer = 500
+									act = 0
+							else:
+								player.motion[0] = 1
+								player.motion[1] = 0
 
 				if scene == 1:
-					acttimer -= 1
-					if acttimer <= 0:
-						if act == 0:
-							createLevel(101)
-							act += 1
-							acttimer = 100
-						if act == 1:
-							if acttimer <= 0:
-								TextObjects[0].all = wraptext("", 180, font, True)
-								TextObjects[0].refresh()
-
-								if Birds[0].coords[0] != player.coords[0] and Birds[0].coords[0] != player.coords[
-									1]:
-									change = goTo(Birds[0].coords, player.coords)
-									Birds[0].vel[0] = 1
-									Birds[0].vel[1] = change * 1
-								else:
-									Birds[0].vel[0] = 5
-									Birds[0].vel[1] = -change * 5
-
-									act += 1
-									acttimer = 50
-
-
-								# Birds[0].coords[1] -= g
-						if act == 2:
-
-							acttimer -= 1
-							if Birds[0].vel[1] < maxFallSpeed:
-								Birds[0].vel[1] += gravity
-							if acttimer <= 0:
-								Birds[0].vel[0] = 0
-							if isOnTop(fal[0], player):
-								fal[0].vel[0] = 0
+					if len(fal) > 0:
+						acttimer -= 1
+						if acttimer <= 0:
+							if act == 0:
+								createLevel(101)
 								act += 1
-							else:
-								fal[0].vel[0] = -1
-						if act == 3:
-							if isNear(fal[0].coords, player.coords):
-								if len(TextObjects) < 2:
-									TextObjects.append(
-										DispObj(wraptext("", 700, font, True), [10, 10], False,
-												[fal[0].coords[0] - 10, fal[0].coords[1] - 30]))
-									TextObjects.append(
-										DispObj(wraptext("", 700, font, True), [10, 10], False,
-												[player.coords[0] - 50, player.coords[1] - 30]))
-									# TextObjects[0].all = wraptext("", 180, font, True)
-									TextObjects[1].dialog = 0
-								if TextObjects[1].dialog == 2:
-									TextObjects[2].dialog = 0
-								if TextObjects[2].dialog == 3:
-									act += 1
-									acttimer = 100
-						if act == 4:
-
-							if acttimer <= 0:
-								if len(warrios) < 1:
-									warrios.append(warrior(warriorImgL[1], (16, 16), [600, 320]))
-								act += 1
-								acttimer = 400
-						if act == 5:
-
-							if acttimer <= 0:
-								if len(warrios) < 2:
-									warrios.append(warrior(warriorImgL[1], (16, 16), [600, 320]))
-								act += 1
-								acttimer = 400
-						if act == 6:
-							if acttimer <= 0:
-								kings.append(king(kingImgL[1], (16, 16), [600, 320]))
 								acttimer = 100
-								act += 1
-						if act == 7:
+							if act == 1:
+								if acttimer <= 0:
+									TextObjects[0].all = wraptext("", 180, font, True)
+									TextObjects[0].refresh()
 
-							if isOnTop(kings[0], warrios[1]):
-								TextObjects.append(
-									DispObj(wraptext("", 700, font, True), [10, 10], False,
-											[kings[0].coords[0] - 10, kings[0].coords[1] - 30]))
-								act += 1
-						if act == 8:
-							if TextObjects[3].dialog == -1:
-								TextObjects[3].dialog = 1
-								print TextObjects[3].dialog
-							if TextObjects[3].dialog == 5:
-								act += 1
-						if act == 9:
-							stopRight = True
-							if len(kings) == 1:
-								if kings[0].coords != [600, 336]:
-									kings[0].vel = [1, 0]
-								else:
-									kings.remove(kings[0])
-							if len(warrios) == 1:
-								if warrios[0].coords != [600, 336]:
-									warrios[0].vel = [1, 0]
-								else:
+									if Birds[0].coords[0] != player.coords[0] and Birds[0].coords[0] != player.coords[
+										1]:
+										change = goTo(Birds[0].coords, player.coords)
+										Birds[0].vel[0] = 1
+										Birds[0].vel[1] = change * 1
+									else:
+										Birds[0].vel[0] = 5
+										Birds[0].vel[1] = -change * 5
+
+										act += 1
+										acttimer = 50
+
+
+									# Birds[0].coords[1] -= g
+							if act == 2:
+
+								acttimer -= 1
+								if Birds[0].vel[1] < maxFallSpeed:
+									Birds[0].vel[1] += gravity
+								if acttimer <= 0:
+									Birds[0].vel[0] = 0
+								if isOnTop(fal[0], player):
+									fal[0].vel[0] = 0
 									act += 1
-									warrios.remove(warrios[0])
-							if len(warrios) == 2:
-								if warrios[1].coords != [600, 336]:
-									warrios[1].vel = [1, 0]
 								else:
-									warrios.remove(warrios[1])
+									fal[0].vel[0] = -1
+							if act == 3:
+								if isNear(fal[0].coords, player.coords):
+									if len(TextObjects) < 2:
+										TextObjects.append(
+											DispObj(wraptext("", 700, font, True), [10, 10], False,
+													[fal[0].coords[0] - 10, fal[0].coords[1] - 30]))
+										TextObjects.append(
+											DispObj(wraptext("", 700, font, True), [10, 10], False,
+													[player.coords[0] - 50, player.coords[1] - 30]))
+										# TextObjects[0].all = wraptext("", 180, font, True)
+										TextObjects[1].dialog = 0
+									if TextObjects[1].dialog == 2:
+										TextObjects[2].dialog = 0
+									if TextObjects[2].dialog == 3:
+										act += 1
+										acttimer = 100
+							if act == 4:
 
-							if len(fal) == 1:
-								if fal[0].coords != [600, 336]:
-									fal[0].vel = [1, 0]
-								else:
-									papers.append(Paper(paperImg,
-														fal[0].coords, (16, 16)))
-									fal.remove(fal[0])
-									canControl = True
-						if act == 10:
-							if len(TextObjects) == 4:
-								TextObjects.append(DispObj(wraptext("", 700, font, True), [10, 10], False,
-														   [512, 500]))
-								if TextObjects[4].dialog == -1:
-									TextObjects[4].dialog = 0
-						if act == 11:
-							if len(TextObjects) == 4:
-								TextObjects.append(DispObj(wraptext("", 700, font, True), [10, 10], False,
-														   [512, 500]))
-								if TextObjects[5].dialog == -1:
-									TextObjects[5].dialog = 0
+								if acttimer <= 0:
+									if len(warrios) < 1:
+										warrios.append(warrior(warriorImgL[1], (16, 16), [600, 320]))
+									act += 1
+									acttimer = 400
+							if act == 5:
+
+								if acttimer <= 0:
+									if len(warrios) < 2:
+										warrios.append(warrior(warriorImgL[1], (16, 16), [600, 320]))
+									act += 1
+									acttimer = 400
+							if act == 6:
+								if acttimer <= 0:
+									kings.append(king(kingImgL[1], (16, 16), [600, 320]))
+									acttimer = 100
+									act += 1
+							if act == 7:
+
+								if isOnTop(kings[0], warrios[1]):
+									TextObjects.append(
+										DispObj(wraptext("", 700, font, True), [10, 10], False,
+												[kings[0].coords[0] - 10, kings[0].coords[1] - 30]))
+									act += 1
+							if act == 8:
+								if TextObjects[3].dialog == -1:
+									TextObjects[3].dialog = 1
+									print TextObjects[3].dialog
+								if TextObjects[3].dialog == 5:
+									act += 1
+							if act == 9:
+								stopRight = True
+								if len(kings) == 1:
+									if kings[0].coords != [600, 336]:
+										kings[0].vel = [1, 0]
+									else:
+										kings.remove(kings[0])
+								if len(warrios) == 1:
+									if warrios[0].coords != [600, 336]:
+										warrios[0].vel = [1, 0]
+									else:
+										act += 1
+										warrios.remove(warrios[0])
+								if len(warrios) == 2:
+									if warrios[1].coords != [600, 336]:
+										warrios[1].vel = [1, 0]
+									else:
+										warrios.remove(warrios[1])
+
+								if len(fal) == 1:
+									if fal[0].coords != [600, 336]:
+										fal[0].vel = [1, 0]
+									else:
+										papers.append(Paper(paperImg,
+															fal[0].coords, (16, 16)))
+										fal.remove(fal[0])
+										canControl = True
+							if act == 10:
+								if len(TextObjects) == 4:
+									TextObjects.append(DispObj(wraptext("", 700, font, True), [10, 10], False,
+															   [512, 500]))
+									if TextObjects[4].dialog == -1:
+										TextObjects[4].dialog = 0
+							if act == 11:
+								if len(TextObjects) == 4:
+									TextObjects.append(DispObj(wraptext("", 700, font, True), [10, 10], False,
+															   [512, 500]))
+									if TextObjects[5].dialog == -1:
+										TextObjects[5].dialog = 0
 
 									
 		# user input
