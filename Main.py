@@ -23,9 +23,11 @@ PURPLE = pygame.Color(255, 0, 255)
 
 pygame.mouse.set_visible(False)
 font = pygame.font.SysFont('couriernew', 13)
-fontComp = pygame.font.SysFont('couriernew', 26, True)
+
+fontComp = pygame.font.SysFont('couriernew', 26, True)#16
 smallfont = pygame.font.SysFont('couriernew', 18)
 massive = pygame.font.SysFont('couriernew', 50, True)
+
 
 # sizes so nothing is hardcoded
 size = (1024, 720)
@@ -106,8 +108,27 @@ right = [getImg("Dereks/anim1r"),getImg("Dereks/anim2r")]
 '''left = [getImg("Dereks/anim1l"),getImg("Dereks/anim2l"),getImg("Dereks/anim3l")]
 right = [getImg("Dereks/anim1r"),getImg("Dereks/Derek"),getImg("Dereks/anim2r")]'''
 
+fals = [getImg("Falicia/faliciaL"),getImg("Falicia/faliciaR")]
+falR = [getImg("Falicia/animF1r"),getImg("Falicia/faliciaR"),getImg("Falicia/animF2r")]
+falL = [getImg("Falicia/animF1l"),getImg("Falicia/faliciaL"),getImg("Falicia/animF2l")]
+birdImages = [getImg("StupidBird/stupidbird (1)"),getImg("StupidBird/stupidbird (2)"),getImg("StupidBird/stupidbird (3)"),getImg("StupidBird/stupidbird (4)")]
 crouchImg = [getImg("Dereks/DerekCrouch"),getImg("Dereks/derekcrouchl")]
 
+#Warrior
+warriorImgL = [getImg("Warrior/warrior2l"),getImg("Warrior/warrior3l"),getImg("Warrior/warrior1l")]
+warriorImgR = [getImg("Warrior/warrior1r"),getImg("Warrior/warrior2r"),getImg("Warrior/warrior3r")]
+
+#King
+kingImgL = [getImg("King/king2l"),getImg("King/kingl3"),getImg("King/king1l")]
+kingImgR = [getImg("King/king"),getImg("King/king2r"),getImg("King/king1r")]
+#Paper
+paperImg = getImg("paper")
+
+class Paper(object):
+	def __init__(self,img,coords,size):
+		self.coords = coords
+		self.img = img
+		self.size = size
 class DispObj(object):
 	def refresh(self):
 		if self.simple:
@@ -126,6 +147,9 @@ class DispObj(object):
 		self.simple = simple
 		self.size = size
 		self.refresh()
+		self.time = 100
+		self.dialog = -1
+	
 
 #takes single string, max width, font used, and color of text. returns list of dispObj
 def wraptext(text, fullline, Font, render = False, color = (0,0,0)):  #need way to force indent in string
@@ -181,7 +205,7 @@ def wraptext(text, fullline, Font, render = False, color = (0,0,0)):  #need way 
 	
 TM1 = DispObj(wraptext("", 900, font, True), (10, 10), False, (900, 120)) #main room desc
 TM2 = DispObj(wraptext("", 900, font, True), (10, 130), False, (900, 119)) #room responses
-
+TextObjects = []
 
 DB = DispObj(no_thing, (0, 0), True, size)
 
@@ -290,12 +314,17 @@ def isNear(p1, p2, dist = 32):
 	else:
 		return False
 def isOnTop(p1,p2):
-	distance = abs(p1.coords[1] - p2.coords[1])
+	distance = abs(p1.coords[0] - p2.coords[0])
 	if distance <= 32:
 		return True
 	else:
 		return False
-
+def lookAt(p1,p2):
+	distance = p1.coords[0] - p2.coords[0]
+	if distance >=0:
+		return  True
+	if distance <= 0:
+		return False
 class Platform(object):
 	def __init__(self,coords,size,img):
 		self.coords = coords
@@ -328,7 +357,9 @@ class Person(object):
 
 	def Kill(self):
 		print "Ded"
+		soundEffect(6)
 		ResetLevel()
+
 	def Collide(self, i):
 		if hit(i.coords, i.size, self.coords, self.size):  # UP
 
@@ -382,7 +413,8 @@ class Person(object):
 		if hit(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
 			self.floor = True
 
-player = Person([50, 250], (standardSize),False)
+player = Person([512, 336], (standardSize),False)
+
 
 #input object, output list of tuples: [top left, top right, bottom left, bottom right]
 def getCorners(it):
@@ -646,8 +678,50 @@ class Grate(object):
 			else:
 				self.blocked.append(x)
 		self.refresh()
-		
-				
+class Bird(object):
+	def __init__(self,img,coords,size):
+		self.img = img
+		self.coords = coords
+		self.size = size
+		self.index = 0
+		self.vel = [0, 0]
+
+	def Collide(self, i):
+		if collide(i.coords, i.size, self.coords, self.size):  # UP
+			p1 = center(self)
+			if self.vel[1] > 0 and self.coords[1] <= i.coords[1]:  # FLOOR
+				self.coords[1] = i.coords[1] - self.size[1]
+				if self.vel[1] > 0:
+					self.vel[1] = 0
+				self.floor = True
+				pygame.draw.line(debugOverlay, BLUE, p1, center(self))
+
+			if collide(self.coords, self.size, i.coords, i.size):  # LEFT / RIGHT
+				p1 = center(self)
+				if self.coords[0] <= i.coords[0]:
+					self.coords[0] = i.coords[0] - self.size[0]
+					self.vel[0] = 0
+					pygame.draw.line(debugOverlay, YELLOW, p1, center(self))
+
+				if self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
+					self.coords[0] = i.coords[0] + i.size[0]
+					self.vel[0] = 0
+					p2 = center(self)
+					pygame.draw.line(debugOverlay, RED, (p1[0], p1[1] - 1), (p2[0], p2[1] - 1))
+
+				# if collide(i.coords, i.size, self.coords, self.size):  # UP
+				if self.vel[1] < 0 and self.coords[1] + 16 >= i.coords[1] + i.size[1]:  # CEILING
+					p1 = center(self)
+					self.coords[1] = i.coords[1] + i.size[1]
+					self.vel[1] = 0
+					p2 = center(self)
+					pygame.draw.line(debugOverlay, GREEN, (p1[0] - 1, p1[1]), (p2[0] - 1, p2[1]))
+
+		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
+			self.floor = True
+
+
+
 grates = []
 
 class Exit():
@@ -797,6 +871,12 @@ class bomb(object):
 									if DualLine(cm, cs, c):
 										sight = False
 										pygame.draw.line(debugOverlay, PURPLE, cm, cs)
+							for c in grates:
+								if "bomb" in c.blocked:
+									if hit(c.coords, c.size, square[0:2], square[2:4]):
+										if DualLine(cm, cs, c):
+											sight = False
+											pygame.draw.line(debugOverlay, PURPLE, cm, cs)
 							if sight or mob == self.stuckOn:
 								pow = ((self.detRange - td) / self.detRange)
 								netforce[0] += (xd / td) * pow
@@ -846,28 +926,196 @@ class detonator(object):
 		return bomb(self.type, [coords[0]+4, coords[1]+4], vel, (8, 8), self.kbP, self.kbB, self.dmg, self.arm, self.bomb, self.armImg)
 
 
-DetGod = detonator(0, 16, 16, 5, 0, 99999, getImg("UI/DetGod"), bombImg, getImg("Bombs/ArmNorm/ArmBlipBomb (1)"))
-DetNorm = detonator(1, 2, 8, 3, 30, 4, getImg("UI/DetDefault"), bombImg, getImg("Bombs/ArmNorm/ArmBlipBomb (1)"))
-DetKB = detonator(2, 16, 30, 1, 20, 2, getImg("UI/DetJumper"), getImg("Bombs/Tosser"), getImg("Bombs/ArmTosser/ArmBlipTosser (1)"))
-DetMulti = detonator(3, 1, 10, 2, 80, 10, getImg("UI/DetMulti"), getImg("Bombs/Multi"), getImg("Bombs/ArmMulti/ArmBlipMulti (1)"))
-DetDest = detonator(4, 1, 1, 20, 30, 4, getImg("UI/DetDestructive"), getImg("Bombs/Dest"), getImg("Bombs/ArmDest/ArmBlipDest (1)"))
-
 DetGod = detonator(0, 16, 16, 5, 0, 99999, getImg("UI/DetGod"), bombImg, getImg("Bombs/ArmNorm/ArmBlipBomb (3)"))
 DetNorm = detonator(1, 2, 8, 3, 30, 4, getImg("UI/DetDefault"), bombImg, getImg("Bombs/ArmNorm/ArmBlipBomb (3)"))
 DetKB = detonator(2, 16, 30, 1, 20, 2, getImg("UI/DetJumper"), getImg("Bombs/tosser"), getImg("Bombs/ArmTosser/ArmBlipTosser (4)"))
 DetMulti = detonator(3, 1, 10, 2, 80, 10, getImg("UI/DetMulti"), getImg("Bombs/Multi"), getImg("Bombs/ArmMulti/ArmBlipMulti (4)"))
 DetDest = detonator(4, 1, 1, 20, 30, 4, getImg("UI/DetDestructive"), getImg("Bombs/Dest"), getImg("Bombs/ArmDest/ArmBlipDest (3)"))
 
+
+
+class lud(object):
+	def __init__(self,img,size,coords):
+		self.img = img
+		self.size = size
+		self.coords = coords
+		self.vel = [0,0]
+		self.dualColliding = False
+		self.index = -1
+	def Collide(self, i):
+		if collide(i.coords, i.size, self.coords, self.size):  # UP
+
+			if self.dualColliding:
+				self.Kill()
+			if type(i) == movingBlock:
+				if i.vel[1] > 5 and center(player)[1] > center(i)[1]:
+					self.Kill()
+				self.dualColliding = True
+
+			p1 = center(self)
+			if self.vel[1] > 0 and self.coords[1] <= i.coords[1]: #FLOOR
+				self.coords[1] = i.coords[1] - self.size[1]
+				if self.vel[1] > 0:
+					self.vel[1] = 0
+				self.floor = True
+				pygame.draw.line(debugOverlay, BLUE, p1, center(self))
+			if collide(self.coords, self.size, (i.coords[0], i.coords[1] + 3), (i.size[0], i.size[1] - 3)):  # LEFT / RIGHT
+				p1 = center(self)
+				if self.coords[0] <= i.coords[0]:
+					self.coords[0] = i.coords[0] - self.size[0]
+					self.vel[0] = 0
+					pygame.draw.line(debugOverlay, YELLOW, p1, center(self))
+				if self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
+					self.coords[0] = i.coords[0] + i.size[0]
+					self.vel[0] = 0
+					pygame.draw.line(debugOverlay, RED, p1, center(self))
+			p1 = center(self)
+			if self.vel[1] < 0 and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1]: #CEILING
+				self.coords[1] = i.coords[1] + i.size[1]
+				self.vel[1] = 0
+				pygame.draw.line(debugOverlay, GREEN, p1, center(self))
+		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
+			self.floor = True
+
+class warrior(object):
+	def __init__(self,img,size,coords):
+		self.img = img
+		self.size = size
+		self.coords = coords
+		self.vel = [0,0]
+		self.dualColliding = False
+		self.index = -1
+	def Collide(self, i):
+		if collide(i.coords, i.size, self.coords, self.size):  # UP
+
+			if self.dualColliding:
+				self.Kill()
+			if type(i) == movingBlock:
+				if i.vel[1] > 5 and center(player)[1] > center(i)[1]:
+					self.Kill()
+				self.dualColliding = True
+
+			p1 = center(self)
+			if self.vel[1] > 0 and self.coords[1] <= i.coords[1]: #FLOOR
+				self.coords[1] = i.coords[1] - self.size[1]
+				if self.vel[1] > 0:
+					self.vel[1] = 0
+				self.floor = True
+				pygame.draw.line(debugOverlay, BLUE, p1, center(self))
+			if collide(self.coords, self.size, (i.coords[0], i.coords[1] + 3), (i.size[0], i.size[1] - 3)):  # LEFT / RIGHT
+				p1 = center(self)
+				if self.coords[0] <= i.coords[0]:
+					self.coords[0] = i.coords[0] - self.size[0]
+					self.vel[0] = 0
+					pygame.draw.line(debugOverlay, YELLOW, p1, center(self))
+				if self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
+					self.coords[0] = i.coords[0] + i.size[0]
+					self.vel[0] = 0
+					pygame.draw.line(debugOverlay, RED, p1, center(self))
+			p1 = center(self)
+			if self.vel[1] < 0 and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1]: #CEILING
+				self.coords[1] = i.coords[1] + i.size[1]
+				self.vel[1] = 0
+				pygame.draw.line(debugOverlay, GREEN, p1, center(self))
+		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
+			self.floor = True
+class king(object):
+	def __init__(self,img,size,coords):
+		self.img = img
+		self.size = size
+		self.coords = coords
+		self.vel = [0,0]
+		self.dualColliding = False
+		self.index = -1
+	def Collide(self, i):
+		if collide(i.coords, i.size, self.coords, self.size):  # UP
+
+			if self.dualColliding:
+				self.Kill()
+			if type(i) == movingBlock:
+				if i.vel[1] > 5 and center(player)[1] > center(i)[1]:
+					self.Kill()
+				self.dualColliding = True
+
+			p1 = center(self)
+			if self.vel[1] > 0 and self.coords[1] <= i.coords[1]: #FLOOR
+				self.coords[1] = i.coords[1] - self.size[1]
+				if self.vel[1] > 0:
+					self.vel[1] = 0
+				self.floor = True
+				pygame.draw.line(debugOverlay, BLUE, p1, center(self))
+			if collide(self.coords, self.size, (i.coords[0], i.coords[1] + 3), (i.size[0], i.size[1] - 3)):  # LEFT / RIGHT
+				p1 = center(self)
+				if self.coords[0] <= i.coords[0]:
+					self.coords[0] = i.coords[0] - self.size[0]
+					self.vel[0] = 0
+					pygame.draw.line(debugOverlay, YELLOW, p1, center(self))
+				if self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
+					self.coords[0] = i.coords[0] + i.size[0]
+					self.vel[0] = 0
+					pygame.draw.line(debugOverlay, RED, p1, center(self))
+			p1 = center(self)
+			if self.vel[1] < 0 and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1]: #CEILING
+				self.coords[1] = i.coords[1] + i.size[1]
+				self.vel[1] = 0
+				pygame.draw.line(debugOverlay, GREEN, p1, center(self))
+		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
+			self.floor = True
+class lud(object):
+	def __init__(self,img,size,coords):
+		self.img = img
+		self.size = size
+		self.coords = coords
+		self.vel = [0,0]
+		self.dualColliding = False
+		self.index = -1
+	def Collide(self, i):
+		if collide(i.coords, i.size, self.coords, self.size):  # UP
+
+			if self.dualColliding:
+				self.Kill()
+			if type(i) == movingBlock:
+				if i.vel[1] > 5 and center(player)[1] > center(i)[1]:
+					self.Kill()
+				self.dualColliding = True
+
+			p1 = center(self)
+			if self.vel[1] > 0 and self.coords[1] <= i.coords[1]: #FLOOR
+				self.coords[1] = i.coords[1] - self.size[1]
+				if self.vel[1] > 0:
+					self.vel[1] = 0
+				self.floor = True
+				pygame.draw.line(debugOverlay, BLUE, p1, center(self))
+			if collide(self.coords, self.size, (i.coords[0], i.coords[1] + 3), (i.size[0], i.size[1] - 3)):  # LEFT / RIGHT
+				p1 = center(self)
+				if self.coords[0] <= i.coords[0]:
+					self.coords[0] = i.coords[0] - self.size[0]
+					self.vel[0] = 0
+					pygame.draw.line(debugOverlay, YELLOW, p1, center(self))
+				if self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
+					self.coords[0] = i.coords[0] + i.size[0]
+					self.vel[0] = 0
+					pygame.draw.line(debugOverlay, RED, p1, center(self))
+			p1 = center(self)
+			if self.vel[1] < 0 and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1]: #CEILING
+				self.coords[1] = i.coords[1] + i.size[1]
+				self.vel[1] = 0
+				pygame.draw.line(debugOverlay, GREEN, p1, center(self))
+		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
+			self.floor = True
+
 DetCurrent = DetGod
 
 bombs = []
 
 bricks = []
-
-
+warrios = []
+kings = []
+papers = []
+cutsecnetimer = 50
 
 def spawnChar(entrance):
-	player.coords = [100,250]
+	player.coords = [512, 320]
 	player.coords = entrance.coords
 
 	'''
@@ -880,9 +1128,12 @@ def spawnChar(entrance):
 	else:
 		player.coords = [50, 250]
 	'''
+	if currLvl == 100:
+		player.coords = [216, 320]
+	if currLvl == 101:
+		player.coords = [216, 320]
 	print currLvl
-	player.vel[1] = 0
-	player.vel[0] = 0
+
 
 def createFloor(coordx, coordy, ry, rx, type=0):
 	bricks.append(Brick(type, [coordx, coordy], (rx * 16, ry * 16), brickImg))
@@ -897,6 +1148,9 @@ def wipeFloor():
 	global gates
 	global platforms
 	global crates
+	global fal
+	global TextObjects
+	global Birds
 	global keys
 	global exits
 	keys = []
@@ -905,7 +1159,9 @@ def wipeFloor():
 	global sensors
 	sensors = []
 	grates = []
-
+	fal = []
+	Birds = []
+	TextObjects = []
 	bricks = []
 	bombs = []
 	movingblocks = []
@@ -1143,6 +1399,51 @@ def ResetLevel():
 				createMovingBlock(int(x), int(y), int(int(xs) / 16), int(int(ys) / 16), int(type))
 	spawnChar(entrances[0])'''
 
+
+currLvl = 100
+totalLvls = 5	#CHANGE THIS WHEN ADDING LVLS
+fal = []
+Birds = []
+def createLevel(lvl):	#Almost all refrences of this should be written createLevel(currLvl). Only use an int for bugtesting.
+	wipeFloor()
+	if (lvl == -1):
+		openReadFile("saves/Level Editor Save.txt")
+	elif (lvl == 0):
+		borderedLevel()
+		openReadFile("saves/Level0.txt")
+
+		#platforms.append(Platform((896, 626), (64, 64), platformImg))
+		switches.append(Switch("Switch", (256, 288), (32, 32), switchImg, False))
+		crates.append(Crate((432, 160), (16, 16), crateImg))
+		gates.append(Gate((896, 626), (64, 64), lockImg, False))
+
+	elif (lvl == 1):
+		openReadFile("saves/Level0.txt")
+		
+	elif lvl == 2:
+		openReadFile("saves/LevelMotion.txt")
+	elif lvl == 3:
+		openReadFile("saves/LevelDestroy.txt")
+	elif lvl == 4:
+		openReadFile("saves/LevelFast.txt")
+	elif lvl == 100:
+		openReadFile("saves/LevelCutscene1.txt")
+		fal.append(lud(fals[0], (16, 16), [512, 320]))
+		TextObjects.append(DispObj(wraptext("", 70, font, True), fal[0].coords, False, [fal[0].coords[0] - 30,fal[0].coords[1] - 30]))
+
+	elif lvl == 101:
+		#TextObjects.remove(0)
+		openReadFile("saves/LevelCutscene2.txt")
+		TextObjects.append(DispObj(wraptext("Later that day...", 700, bigfont, True), [10, 10], False,
+								   [512, 360]))
+
+		fal.append(lud(fals[0], (16, 16), [512, 336]))
+		Birds.append(Bird(birdImages[0], [-100, 128], (16, 16)))
+	else:
+		createFloor(0, 688, 2, 64)
+
+#switches.append(Switch("Switch",(256,)))
+
 currLvl = 0
 '''
 #covered destructables
@@ -1167,7 +1468,7 @@ createFloor(112, 512, 4, 1)
 createMovingBlock(64, 528, 3, 3, 1)
 
 saveLevel()
-=======
+
 '''
 
 #Dest intro
@@ -1242,6 +1543,7 @@ createFloor(0, 96, 26, 3)
 entrances = [Entrance(4, [int(96), int(496)], [int(16), int(16)], entranceImg)]
 createExit(4, [int(912), int(368)], [int(16), int(16)], exitImg)
 createFloor(976, 96, 18, 3)
+DetCurrent = DetNorm
 saveLevel(1)
 
 #Multi intro
@@ -1251,7 +1553,7 @@ createMovingBlock(224, 512, 6, 3, 2, 1000)
 createFloor(736, 592, 8, 7)
 createFloor(848, 496, 14, 11)
 rand = Grate([int(848), int(432)], [int(128), int(64)], ["guy"])
-createSensor(736, 560, 7, 2, 2, ["guy"], rand)
+createSensor(736, 544, 7, 3, 2, ["guy"], rand)
 grates.append(rand)
 createExit(4, [int(912), int(480)], [int(16), int(16)], exitImg)
 entrances = [Entrance(4, [int(96), int(544)], [int(16), int(16)], entranceImg)]
@@ -1269,13 +1571,42 @@ createFloor(1008, 16, 34, 1)
 createFloor(0, 0, 35, 1)
 gyah = grates.append(Grate([int(16), int(432)], [int(176), int(128)], ["guy"]))
 createExit(4, [int(96), int(528)], [int(16), int(16)], exitImg)
-grates.append(Grate([int(528), int(16)], [int(128), int(544)], ["bomb"]))
+grates.append(Grate([int(592), int(16)], [int(128), int(544)], ["bomb"]))
 entrances = [Entrance(4, [int(352), int(544)], [int(16), int(16)], entranceImg)]
-createMovingBlock(768, 48, 15, 11, 0)
-createMovingBlock(720, 384, 18, 3, 1)
-createSensor(816, 448, 9, 5, 0, ["guy"], gyah)
+createMovingBlock(744, 48, 15, 11, 0) #blue
+createMovingBlock(720, 384, 18, 3, 1) #yellow
+createSensor(792, 448, 9, 5, 0, ["guy"], gyah)
+
+createFloor(0, 0, 11, 64)
+createFloor(0, 544, 11, 64)
+createFloor(928, 176, 23, 6)
+createFloor(0, 176, 23, 7)
+grates.append(Grate([int(112), int(464)], [int(80), int(80)], ["guy"]))
+createExit(4, [int(144), int(528)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(256), int(528)], [int(16), int(16)], entranceImg)]
+createMovingBlock(816, 416, 7, 4, 1, 300)
+createMovingBlock(816, 352, 7, 4, 0)
+grates.append(Grate([int(768), int(352)], [int(48), int(192)], ["bomb"]))
+createFloor(768, 176, 11, 10)
+createSensor(816, 480, 7, 4, 0, ["guy"])
+DetCurrent = DetNorm
 saveLevel(2, [("sensor", 0) ])
 
+#easy stairs
+#sarah meilinger
+createFloor(0, 384, 21, 19)
+entrances = [Entrance(4, [int(48), int(368)], [int(16), int(16)], entranceImg)]
+createExit(4, [int(944), int(128)], [int(16), int(16)], exitImg)
+createMovingBlock(288, 256, 46, 3, 1) #to break yellow
+createMovingBlock(752, 0, 16, 16, 2, 375) #purples
+createMovingBlock(496, 0, 16, 16, 2, 375)
+createMovingBlock(304, 0, 12, 16, 2, 375)
+createMovingBlock(304, 608, 12, 1, 1) #first yellow step
+createMovingBlock(512, 528, 14, 1, 1)  #second yellow step
+createMovingBlock(752, 452, 16, 1, 1) #third yellow step
+DetCurrent = DetNorm
+
+saveLevel(2)
 
 #launching a block
 #Colton
@@ -1347,6 +1678,27 @@ exits = [Exit(4, [int(864), int(624)], [int(16), int(16)], exitImg)]
 createExit(4, [int(864), int(640)], [int(16), int(16)], exitImg)
 DetCurrent = DetKB
 saveLevel(2, [("sensor", 0), ("sensor", 1)])
+
+#Lesser launching
+createFloor(0, 496, 14, 64)
+createMovingBlock(720, 416, 4, 5, 0)
+grates.append(Grate([int(720), int(320)], [int(64), int(32)], []))
+createExit(4, [int(912), int(480)], [int(16), int(16)], exitImg)
+createFloor(784, 48, 24, 15)
+createFloor(960, 432, 4, 4)
+createMovingBlock(720, 224, 4, 6, 1, 100)
+createFloor(512, 192, 15, 13)
+createMovingBlock(464, 416, 3, 5, 0)
+grates.append(Grate([int(464), int(272)], [int(48), int(16)], []))
+grates.append(Grate([int(432), int(192)], [int(32), int(304)], ["moving"]))
+createFloor(0, 0, 12, 29)
+createFloor(464, 0, 3, 35)
+createFloor(0, 192, 19, 4)
+entrances = [Entrance(4, [int(176), int(480)], [int(16), int(16)], entranceImg)]
+createSensor(720, 192, 4, 2, 0, ["moving"])
+createSensor(464, 192, 3, 1, 0, ["moving"])
+DetCurrent = DetKB
+saveLevel(3, [("sensor", 0), ("sensor", 1)])
 
 #fastrun
 #Sarah
@@ -1662,6 +2014,19 @@ switches.append(Switch('Switch', [int(992), int(352)], [int(16), int(16)], switc
 DetCurrent = DetMulti
 saveLevel(6)
 
+createMovingBlock(16, 400, 10, 2, 1)
+createMovingBlock(96, 256, 6, 2, 1)
+createMovingBlock(320, 176, 11, 2, 1)
+createMovingBlock(480, 320, 7, 2, 1)
+createMovingBlock(656, 160, 2, 12, 1)
+createMovingBlock(688, 320, 8, 2, 1)
+createMovingBlock(784, 624, 13, 3, 1)
+createExit(4, [int(960), int(608)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
+DetCurrent = DetKB
+saveLevel(4)
+
+
 def soundEffect(sfxkey):
 	if not muteon:
 		if sfxkey == 1:
@@ -1679,6 +2044,9 @@ def soundEffect(sfxkey):
 		if sfxkey == 5:
 			effect = pygame.mixer.Sound("assets/Sounds/throw.wav")
 			effect.play()
+		if sfxkey == 6:
+			effect = pygame.mixer.Sound("assets/Sounds/hurt.wav")
+			effect.play()
 
 
 # Current main screen, basic level.
@@ -1695,7 +2063,7 @@ throwPower = 10
 maxFallSpeed = 16
 gravity = 0.5  # pixels per frame
 friction = 0.25  # pixels per frame
-
+animBird = 0
 
 def Zero(num, rate, goal = 0.0):
 	if num > goal:
@@ -1719,17 +2087,25 @@ isCrouching = False
 counter = 0
 movingbA = 10
 loadSaved(currLvl)
-isCutsecne = True
-if isCutsecne == True:
-	#loadSaved(100)
-	pass
+isCutsecne = False
+stopRight = False
+
+def goTo(p1,p2):
+
+	xChng = p1[0] - p2[0]
+	yChng = p1[1] - p2[1]
+
+	slope = yChng / xChng
+
+
+	return slope
+
 
 	
 def changeSwitch():
 	for s in switches:
 		s.img = switchImages[0]
 timer = 10
-
 Screen = 0
 netSize = 0
 mouse_down = False
@@ -1759,6 +2135,20 @@ Dbacking = DispObj(no_thing, [-100, 0], True, (112, 74))
 Dbacking.img.fill((80, 225, 225))
 
 loadUnlocks()
+
+act = 0
+cutscenetimer = 100
+acttimer = 50
+falCount = 0
+warriorCount = 0
+warriorCount2 = 0
+kingCount = 0
+papers = []
+canControl = False
+paper = False
+scene = 0
+inGame = True
+
 
 x, y = 0, -1
 for i in range(len(levels)):
@@ -1866,7 +2256,9 @@ while Running:
 			if pointCollide((100, 200), (200, 28), mousepos): #story
 				mouseImg = OnImg
 				if mouse_down:
-					#Screen = 1
+					isCutsecne = True
+					Title = False
+					inGame = True
 					pass
 			if pointCollide((100, 300), (200, 28), mousepos): #levels
 				mouseImg = OnImg
@@ -1956,6 +2348,7 @@ while Running:
 		screen.blit(mouseImg, (mousepos[0]-3, mousepos[1]-3))
 		pygame.display.update()
 		clock.tick(fps)
+
 		
 	while inGame and Running:
 		mousepos = pygame.mouse.get_pos()
@@ -1970,6 +2363,152 @@ while Running:
 		screen.fill(WHITE)
 		startTimer = False
 
+		if isCutsecne:
+			cutsecnetimer -= 1
+			if cutsecnetimer <= 0:
+				if scene == 0:
+					acttimer -= 1
+					if act == 0:
+						if isOnTop(player, fal[0]):
+							player.motion[0] = 0
+							player.motion[1] = 0
+							TextObjects[0].dialog = 0
+
+							if acttimer <= 0:
+								scene += 1
+								acttimer = 500
+								act = 0
+						else:
+							player.motion[0] = 1
+							player.motion[1] = 0
+
+				if scene == 1:
+					acttimer -= 1
+					if acttimer <= 0:
+						if act == 0:
+							createLevel(101)
+							act += 1
+							acttimer = 100
+						if act == 1:
+							if acttimer <= 0:
+								TextObjects[0].all = wraptext("", 180, font, True)
+								TextObjects[0].refresh()
+
+								if Birds[0].coords[0] != player.coords[0] and Birds[0].coords[0] != player.coords[
+									1]:
+									change = goTo(Birds[0].coords, player.coords)
+									Birds[0].vel[0] = 1
+									Birds[0].vel[1] = change * 1
+								else:
+									Birds[0].vel[0] = 5
+									Birds[0].vel[1] = -change * 5
+
+									act += 1
+									acttimer = 50
+
+
+								# Birds[0].coords[1] -= g
+						if act == 2:
+
+							acttimer -= 1
+							if Birds[0].vel[1] < maxFallSpeed:
+								Birds[0].vel[1] += gravity
+							if acttimer <= 0:
+								Birds[0].vel[0] = 0
+							if isOnTop(fal[0], player):
+								fal[0].vel[0] = 0
+								act += 1
+							else:
+								fal[0].vel[0] = -1
+						if act == 3:
+							if isNear(fal[0].coords, player.coords):
+								if len(TextObjects) < 2:
+									TextObjects.append(
+										DispObj(wraptext("", 700, font, True), [10, 10], False,
+												[fal[0].coords[0] - 10, fal[0].coords[1] - 30]))
+									TextObjects.append(
+										DispObj(wraptext("", 700, font, True), [10, 10], False,
+												[player.coords[0] - 50, player.coords[1] - 30]))
+									# TextObjects[0].all = wraptext("", 180, font, True)
+									TextObjects[1].dialog = 0
+								if TextObjects[1].dialog == 2:
+									TextObjects[2].dialog = 0
+								if TextObjects[2].dialog == 3:
+									act += 1
+									acttimer = 100
+						if act == 4:
+
+							if acttimer <= 0:
+								if len(warrios) < 1:
+									warrios.append(warrior(warriorImgL[1], (16, 16), [600, 320]))
+								act += 1
+								acttimer = 400
+						if act == 5:
+
+							if acttimer <= 0:
+								if len(warrios) < 2:
+									warrios.append(warrior(warriorImgL[1], (16, 16), [600, 320]))
+								act += 1
+								acttimer = 400
+						if act == 6:
+							if acttimer <= 0:
+								kings.append(king(kingImgL[1], (16, 16), [600, 320]))
+								acttimer = 100
+								act += 1
+						if act == 7:
+
+							if isOnTop(kings[0], warrios[1]):
+								TextObjects.append(
+									DispObj(wraptext("", 700, font, True), [10, 10], False,
+											[kings[0].coords[0] - 10, kings[0].coords[1] - 30]))
+								act += 1
+						if act == 8:
+							if TextObjects[3].dialog == -1:
+								TextObjects[3].dialog = 1
+								print TextObjects[3].dialog
+							if TextObjects[3].dialog == 5:
+								act += 1
+						if act == 9:
+							stopRight = True
+							if len(kings) == 1:
+								if kings[0].coords != [600, 336]:
+									kings[0].vel = [1, 0]
+								else:
+									kings.remove(kings[0])
+							if len(warrios) == 1:
+								if warrios[0].coords != [600, 336]:
+									warrios[0].vel = [1, 0]
+								else:
+									act += 1
+									warrios.remove(warrios[0])
+							if len(warrios) == 2:
+								if warrios[1].coords != [600, 336]:
+									warrios[1].vel = [1, 0]
+								else:
+									warrios.remove(warrios[1])
+
+							if len(fal) == 1:
+								if fal[0].coords != [600, 336]:
+									fal[0].vel = [1, 0]
+								else:
+									papers.append(Paper(paperImg,
+														fal[0].coords, (16, 16)))
+									fal.remove(fal[0])
+									canControl = True
+						if act == 10:
+							if len(TextObjects) == 4:
+								TextObjects.append(DispObj(wraptext("", 700, font, True), [10, 10], False,
+														   [512, 500]))
+								if TextObjects[4].dialog == -1:
+									TextObjects[4].dialog = 0
+						if act == 11:
+							if len(TextObjects) == 4:
+								TextObjects.append(DispObj(wraptext("", 700, font, True), [10, 10], False,
+														   [512, 500]))
+								if TextObjects[5].dialog == -1:
+									TextObjects[5].dialog = 0
+
+									
 		# user input
 		for event in pygame.event.get():
 
@@ -2112,7 +2651,6 @@ while Running:
 				player.vel[0] += player.motion[0] / 4
 			elif player.vel[0] > -.5 and player.motion[0] < 0:
 				player.vel[0] += player.motion[0] / 4
-
 		else:
 			if player.motion[0] != 0:
 				if player.crouch:
@@ -2125,6 +2663,7 @@ while Running:
 						player.vel[0] -= 0.5
 					elif player.vel[0] < player.motion[0]:
 						player.vel[0] += 0.5
+
 
 		if player.vel[0]  <=-16:
 			player.vel[0] = -16
@@ -2145,6 +2684,7 @@ while Running:
 		if debugon:
 			pygame.draw.line(debugOverlay, PURPLE, p1, center(player))
 			pygame.draw.rect(debugOverlay, PURPLE, (player.coords[0], player.coords[1], player.size[0], player.size[1]), 1)
+
 
 		if not hit(player.coords, player.size, (0, 0), size):
 			player.Kill()
@@ -2275,6 +2815,8 @@ while Running:
 				
 		for p in platforms:
 			player.Collide(p)
+
+
 		'''for mb in movingblocks:
 			if isOnTop(p, mb) and isNear(center(p), center(mb)):
 				print "you won!"
@@ -2282,6 +2824,14 @@ while Running:
 		for i in bricks:
 			#screen.blit(i.img, i.coords)
 			player.Collide(i)
+			if len(fal) == 1:
+				fal[0].Collide(i)
+			for a in warrios:
+				a.Collide(i)
+			for a in kings:
+				a.Collide(i)
+			if len(Birds) > 0:
+				Birds[0].Collide(i)
 		for i in grates:
 			if "guy" in i.blocked:
 				player.Collide(i)
@@ -2292,7 +2842,143 @@ while Running:
 				for p in movingblocks:
 					if (p.type == 0) or ("dest" in i.blocked and p.type == 2):
 						p.Collide(i)
+		
+		for i in kings:
+			if stopRight == False:
+				if isOnTop(i, warrios[1]):
+					i.vel = [0, 0]
+				else:
+					i.vel = [-1, 0]
 
+			i.floor = False
+			if i.vel[1] < maxFallSpeed:
+				i.vel[1] += gravity
+
+			i.coords[0] += i.vel[0]
+			i.coords[1] += i.vel[1]
+
+			if i.vel[0] > 0:
+				falCount += 1
+				if falCount == 10:
+					i.index += 1
+					i.img = kingImgR[i.index]
+					falCount = 0
+				if i.index == 2:
+					i.index = 0
+
+			if i.vel[0] < 0:
+				falCount += 1
+				if falCount == 10:
+					i.index += 1
+					i.img = kingImgL[i.index]
+					falCount = 0
+				if i.index == 2:
+					i.index = 0
+
+		if len(warrios) == 1:
+			if stopRight == False:
+				if isOnTop(warrios[0], fal[0]):
+					warrios[0].vel = [0, 0]
+				else:
+					warrios[0].vel = [-1, 0]
+
+			warrios[0].floor = False
+			if warrios[0].vel[1] < maxFallSpeed:
+				warrios[0].vel[1] += gravity
+
+			warrios[0].coords[0] += warrios[0].vel[0]
+			warrios[0].coords[1] += warrios[0].vel[1]
+
+			if warrios[0].vel[0] > 0:
+				warriorCount += 1
+				if warriorCount == 10:
+					warrios[0].index += 1
+					warrios[0].img = warriorImgR[warrios[0].index]
+					warriorCount = 0
+				if warrios[0].index == 2:
+					warrios[0].index = 0
+
+			if warrios[0].vel[0] < 0:
+				warriorCount += 1
+				if warriorCount == 10:
+					warrios[0].index += 1
+					warrios[0].img = warriorImgL[warrios[0].index]
+					warriorCount = 0
+				if warrios[0].index == 2:
+					warrios[0].index = 0
+		
+		if len(warrios) == 2:
+			if stopRight == False:
+				if isOnTop(warrios[1], warrios[0]):
+					warrios[1].vel = [0, 0]
+				else:
+					warrios[1].vel = [-1, 0]
+
+			warrios[1].floor = False
+			if warrios[1].vel[1] < maxFallSpeed:
+				warrios[1].vel[1] += gravity
+
+			warrios[1].coords[0] += warrios[1].vel[0]
+			warrios[1].coords[1] += warrios[1].vel[1]
+
+			if warrios[1].vel[0] > 0:
+				warriorCount2 += 1
+				if warriorCount2 == 10:
+					warrios[1].index += 1
+					warrios[1].img = warriorImgR[warrios[1].index]
+					warriorCount2 = 0
+				if warrios[1].index == 2:
+					warrios[1].index = 0
+
+			if warrios[1].vel[0] < 0:
+				warriorCount2 += 1
+				if warriorCount2 == 10:
+					warrios[1].index += 1
+					warrios[1].img = warriorImgL[warrios[1].index]
+					warriorCount2 = 0
+				if warrios[1].index == 2:
+					warrios[1].index = 0
+		
+		if len(fal) == 1:
+			if fal[0].vel[1] < maxFallSpeed:
+				fal[0].vel[1] += gravity
+
+				fal[0].coords[0] += fal[0].vel[0]
+				fal[0].coords[1] += fal[0].vel[1]
+
+			if fal[0].vel[0] > 0:
+				falCount += 1
+				if falCount == 10:
+					fal[0].index += 1
+					fal[0].img = falR[fal[0].index]
+					falCount = 0
+				if fal[0].index == 2:
+					fal[0].index = 0
+
+			if fal[0].vel[0] < 0:
+				falCount += 1
+				if falCount == 10:
+					fal[0].index += 1
+					fal[0].img = falL[fal[0].index]
+					print fal[0].index
+					falCount = 0
+				if fal[0].index == 2:
+					fal[0].index = -1
+
+		for b in Birds:
+			b.coords[0] += b.vel[0]
+			b.coords[1] += b.vel[1]
+			if b.vel[0] == 1:
+				animBird += 1
+				print animBird
+				if animBird == 10:
+					b.index += 1
+					animBird = 0
+				if b.index == 4:
+					b.index = 0
+					animBird = 0
+		
+		
 		for i in bombs:
 			if i.isExploding:
 				i.explodeTime -= 1
@@ -2316,10 +3002,6 @@ while Running:
 
 				if i.vel[1] <= -8:
 					i.vel[1] = -8
-
-				if i.vel[0] >= 8:
-					i.vel[0] = 8
-
 				if i.vel[1] >= 8:
 					i.vel[1] = 8
 					
@@ -2351,6 +3033,7 @@ while Running:
 				else:
 					i.stuck = False
 					i.stuckOn = None
+
 
 			if not i.stuck:
 				for p in bricks:
@@ -2406,6 +3089,151 @@ while Running:
 			screen.blit(i.img.img, i.coords)
 		for c in crates:
 			screen.blit(c.img, c.coords)
+		if len(fal) != 0:
+			screen.blit(fal[0].img, fal[0].coords)
+		for i in warrios:
+			screen.blit(i.img, i.coords)
+		for i in kings:
+			screen.blit(i.img, i.coords)
+		for b in Birds:
+			screen.blit(birdImages[b.index], b.coords)
+		for p in papers:
+			if isOnTop(player, p):
+				papers.remove(p)
+				paper = True
+				canControl = False
+			screen.blit(p.img, p.coords)
+		
+		if isCutsecne:
+			if TextObjects[0].dialog >= 0:
+				if TextObjects[0].time >= 0:
+					TextObjects[0].time -= 1
+				if TextObjects[0].time <= 0:
+					if TextObjects[0].dialog == 0:
+						TextObjects[0].all = wraptext("I was wondering where you have been!", 180, font, True)
+					elif TextObjects[0].dialog == 1:
+						TextObjects[0].all = wraptext("What do you want for dinner dear?", 180, font, True)
+					elif TextObjects[0].dialog == 2:
+						TextObjects[0].all = wraptext("TahkoBombs sound really good. Great choice!", 220, font, True)
+					elif TextObjects[0].dialog == 3:
+						TextObjects[0].all = wraptext("I was thinking we could maybe explode and chill, later tonight.", 260, font, True)
+					elif TextObjects[0].dialog == 4:
+						TextObjects[0].all = wraptext("I like when you explode stuff", 180, font, True)
+					elif TextObjects[0].dialog == 5:
+						TextObjects[0].all = wraptext("Derek!!!", 180, font, True)
+					elif TextObjects[0].dialog == 6:
+						TextObjects[0].all = wraptext("Are you okay?!?!", 180, font, True)
+					TextObjects[0].dialog += 1
+					TextObjects[0].time = 100
+					TextObjects[0].refresh()
+			if len(TextObjects) >=2:
+				if TextObjects[1].dialog >= 0:
+					if TextObjects[1].time >= 0:
+						TextObjects[1].time -= 1
+					if TextObjects[1].time <= 0:
+						if TextObjects[1].dialog == 0:
+							TextObjects[1].all = wraptext("Derek!", 180, font, True)
+						elif TextObjects[1].dialog == 1:
+							TextObjects[1].all = wraptext("Are you okay?!?!", 180, font, True)
+						elif TextObjects[1].dialog == 2:
+							TextObjects[1].all = wraptext("...", 180, font, True)
+						elif TextObjects[1].dialog == 3:
+							TextObjects[1].all = wraptext("", 180, font, True)
+
+						TextObjects[1].dialog += 1
+						TextObjects[1].time = 100
+						TextObjects[1].refresh()
+			if len(TextObjects) >=3:
+				if TextObjects[1].dialog >= 2:
+					if TextObjects[2].dialog >= 0:
+						if TextObjects[2].time >= 0:
+							TextObjects[2].time -= 1
+						if TextObjects[2].time <= 0:
+							if TextObjects[2].dialog == 0:
+								TextObjects[2].all = wraptext("Hello?", 180, font, True)
+							elif TextObjects[2].dialog == 1:
+								TextObjects[2].all = wraptext("Where am I?", 180, font, True)
+							elif TextObjects[2].dialog == 2:
+								TextObjects[2].all = wraptext("Falicia is that you?", 180, font, True)
+							elif TextObjects[2].dialog == 3:
+								TextObjects[2].all = wraptext("...", 180, font, True)
+
+							TextObjects[2].dialog += 1
+							TextObjects[2].time = 100
+							TextObjects[2].refresh()
+			if len(TextObjects) >=4:
+				if TextObjects[3].dialog >= 0:
+					if TextObjects[3].time >=0:
+
+						TextObjects[3].time -= 1
+					if TextObjects[3].time <= 0:
+
+
+						if TextObjects[3].dialog == 1:
+							TextObjects[3].all = wraptext("HAHAHAHA", 180, font, True)
+
+
+						if TextObjects[3].dialog == 2:
+							TextObjects[3].all = wraptext("Take this girl away!", 180, font, True)
+
+
+						if TextObjects[3].dialog == 3:
+							TextObjects[3].all = wraptext("Goodbye Derek", 180, font, True)
+
+
+						if TextObjects[3].dialog == 5:
+							TextObjects[3].all = wraptext("", 180, font, True)
+
+
+						if TextObjects[3].dialog == 4:
+							TextObjects[2].all = wraptext("Curse you Perry the King!", 180, font, True)
+						if TextObjects[3].dialog == 5:
+							TextObjects[2].all = wraptext("", 180, font, True)
+
+						TextObjects[3].dialog += 1
+
+						TextObjects[3].time = 100
+						TextObjects[3].refresh()
+			if len(TextObjects) >=5:
+				if TextObjects[4].dialog >= 0:
+					if TextObjects[4].time >=0:
+
+						TextObjects[4].time -= 1
+					if TextObjects[4].time <= 0:
+
+
+						if TextObjects[4].dialog == 1:
+							TextObjects[4].all = wraptext("USE D to move forwad", 180, font, True)
+
+
+						if TextObjects[4].dialog == 2:
+							TextObjects[4].all = wraptext("USE A to move backward", 180, font, True)
+
+
+						if TextObjects[4].dialog == 3:
+							TextObjects[4].all = wraptext("USE S to crouch", 180, font, True)
+
+
+						if TextObjects[4].dialog == 5:
+							TextObjects[4].all = wraptext("USE W to jump", 180, font, True)
+						if TextObjects[4].dialog == 6:
+							TextObjects[4].all = wraptext("Pick up the paper!", 180, font, True)
+							if TextObjects[4].dialog == 7:
+								if paper == True:
+									TextObjects[4].all = wraptext("Paper: Use 1,2,3,4 to cycle through bombs...", 180, font, True)
+									TextObjects[4].all = wraptext("Paper: Use left click to throw bomb", 180, font, True)
+									TextObjects[4].all = wraptext("Paper: Use spacebar to explode bombs!", 180, font, True)
+
+
+
+						TextObjects[4].dialog += 1
+						TextObjects[4].time = 100
+						TextObjects[4].refresh()
+
+
+		
+		for o in TextObjects:
+			screen.blit(o.img, o.size)
 		#UI display
 		
 		screen.blit(personimg, player.coords)
@@ -2424,3 +3252,4 @@ while Running:
 		pygame.display.update()
 		clock.tick(fps)
 saveUnlocks()
+
