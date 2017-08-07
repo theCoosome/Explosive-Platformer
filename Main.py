@@ -914,7 +914,6 @@ def wipeFloor():
 	platforms = []
 	exits = []
 
-
 def createExit(type, coords, size, img):
 	exits.append(Exit(type, coords, size, img))
 
@@ -963,6 +962,39 @@ levels = []
 entrances = []
 
 unlocked = []
+
+def saveUnlocks():
+	file = open("Unlocks.txt", "w")
+	file.truncate
+	for i in unlocked:
+		file.write(str(i) + "\n")
+
+def emptyUnlocks():
+	file = open("Unlocks.txt", "w")
+	file.truncate
+
+def loadUnlocks():
+	global unlocked
+	print unlocked
+	file = open("Unlocks.txt", "r")
+	fileLines = file.readlines()
+	print fileLines
+	length = len(unlocked)
+	unlocked = []
+	for i in fileLines:
+		if fileLines.index(i) == 0:
+			unlocked.append(True)
+		else:
+			unlocked.append(i.lower() == "true\n")
+			if i.lower() == "true\n":
+				print "found true"
+	if (length - len(unlocked)) != 0:
+		print "Differing Length!"
+		unlocked.append(True)
+		for i in range(0, length - 1):
+			unlocked.append(False)
+	print unlocked
+
 
 def saveLevel(difficulty, links = []): #links: list of tuples, ("sensor", 1)
 	global bricks
@@ -1274,8 +1306,14 @@ createMovingBlock(96, 64, 19, 13, 0)
 grates.append(Grate([int(752), int(224)], [int(48), int(48)], ["guy"]))
 grates.append(Grate([int(800), int(176)], [int(80), int(96)], ["guy"]))
 
+DetCurrent = detonator(2, 16, 30, 1, 20, 10,getImg("UI/DetJumper"), getImg("Bombs/Tosser"), getImg("Bombs/ArmTosser/ArmBlipTosser (1)"))
+#saveLevel()
+
 DetCurrent = detonator(2, 16, 30, 1, 20, 10, getImg("UI/DetJumper"), getImg("Bombs/tosser"), getImg("Bombs/ArmTosser/ArmBlipTosser(2)"))
-saveLevel(2)
+#saveLevel(2)
+
+DetCurrent = detonator(2, 16, 30, 1, 20, 10, getImg("UI/DetJumper"), getImg("Bombs/tosser"), getImg("Bombs/ArmTosser/ArmBlipTosser(2)"))
+#saveLevel(2)
 
 
 #grate over a pit
@@ -1557,7 +1595,7 @@ createSensor(912, 128, 3, 3, 0, ["guy"])
 
 DetCurrent = DetNorm
 
-saveLevel(3, [("sensor", 9)])
+saveLevel(3, [("sensor", 8)])
 
 #Dropping movables down
 createFloor(0, 688, 2, 64)
@@ -1596,7 +1634,6 @@ createExit(4, [int(960), int(608)], [int(16), int(16)], exitImg)
 entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
 DetCurrent = DetKB
 saveLevel(4)
-
 
 def soundEffect(sfxkey):
 	if not muteon:
@@ -1694,6 +1731,8 @@ Dlevels = DispObj([], [0, 0], False, (896, 10000))
 Dbacking = DispObj(no_thing, [-100, 0], True, (112, 74))
 Dbacking.img.fill((80, 225, 225))
 
+loadUnlocks()
+
 x, y = 0, -1
 for i in range(len(levels)):
 	if ((x) % 8 == 0):
@@ -1716,6 +1755,9 @@ Dlevels.refresh()
 DlevelCap.all = [Dlevels]
 DlevelCap.refresh()
 
+
+
+
 while Running:
 	
 	Title = True
@@ -1729,7 +1771,6 @@ while Running:
 			DlevelCap.all[0].all[i].img.blit(lvl["Imgs"][0], (24, 10))
 	DlevelCap.all[0].refresh()
 	DlevelCap.refresh()
-	fps = 60
 	
 	while Title:
 		mouseImg = AimImg
@@ -1889,7 +1930,6 @@ while Running:
 		pygame.display.update()
 		clock.tick(fps)
 		
-	mouseImg = AimImg
 	while inGame and Running:
 		mousepos = pygame.mouse.get_pos()
 		if debugon:
@@ -2356,3 +2396,4 @@ while Running:
 			screen.blit(debugOverlay, (0, 0))
 		pygame.display.update()
 		clock.tick(fps)
+saveUnlocks()
