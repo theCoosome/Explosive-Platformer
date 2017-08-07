@@ -11,6 +11,7 @@ fps = 60
 debugon = False
 sfxkey=0
 muteon=True
+fullscreen = False
 
 WHITE = pygame.Color(255, 255, 255)
 BLACK = pygame.Color(0, 0, 0)
@@ -23,7 +24,7 @@ PURPLE = pygame.Color(255, 0, 255)
 pygame.mouse.set_visible(False)
 font = pygame.font.SysFont('couriernew', 13)
 fontComp = pygame.font.SysFont('couriernew', 26, True)
-smallfont = pygame.font.SysFont('couriernew', 12)
+smallfont = pygame.font.SysFont('couriernew', 18)
 massive = pygame.font.SysFont('couriernew', 50, True)
 
 # sizes so nothing is hardcoded
@@ -109,16 +110,16 @@ crouchImg = [getImg("Dereks/DerekCrouch"),getImg("Dereks/derekcrouchl")]
 
 class DispObj(object):
 	def refresh(self):
-		if not self.simple:
+		if self.simple:
+			self.img = pygame.Surface(self.size, pygame.SRCALPHA, 32).convert_alpha()
+			self.img.blit(self.all, (0, 0))
+		else:
 			final = pygame.Surface(self.size, pygame.SRCALPHA, 32).convert_alpha()
 			for i in self.all:
 				final.blit(i.img, i.coords)
 			self.img = final
-		else:
-			self.img = pygame.Surface(self.size, pygame.SRCALPHA, 32).convert_alpha()
-			self.img.blit(self.all, (0, 0))
 	#coords, img is blitable object or list of DispObj. simple is wether or not is list. size is needed if not simple.
-	def __init__(self, img, coords = (0, 0), simple = True, size = (0, 0)):
+	def __init__(self, img, coords = (0, 0), simple = True, size = (1000, 1000)):
 		self.coords = coords
 		self.img = img #Final image, use this to blit to screen
 		self.all = img #List of display objects, used if not simple
@@ -133,18 +134,26 @@ def wraptext(text, fullline, Font, render = False, color = (0,0,0)):  #need way 
 	size = Font.size(text)
 	outtext = []
 	while Denting:
-		if Font.size(text)[0] > max:
-			#Search for ammount of charachters that can fit in set fullline size
+		if Font.size(text)[0] > max or "&" in text:
+			#Search for ammount of characters that can fit in set fullline size
 			thistext = ""
 			for i in range(len(text)):
-				if Font.size(thistext + text[i])[0] > max:
+				if Font.size(thistext + text[i])[0] > max or text[i] == "&":
+					if text[i] == "&":
+						thistext += text[i]
 					count = len(thistext)
 					break
 				else:
 					thistext += text[i]
 			thistext = text[:count]
-			#is it indentable
-			if " " in thistext:
+			#Forced newline
+			if "&" in thistext:
+				text = text[len(thistext):]
+				thistext = thistext[:len(thistext)-1] #Remove the &
+				outtext.append(thistext)
+				max = fullline
+			#is it wrappable?
+			elif " " in thistext:
 				for i in range(len(thistext)):
 					#find first space from end
 					if thistext[len(thistext)-(i+1)] == " ":
@@ -156,6 +165,7 @@ def wraptext(text, fullline, Font, render = False, color = (0,0,0)):  #need way 
 			#unindentable, skip to next
 			else:
 				max += fullline
+		
 		else:
 			#exit denting, add remaining to outtext, return
 			Denting = False
@@ -1664,8 +1674,20 @@ scrollMom, scrollMod = 0, 0
 DTitle = massive.render("Explosive Platformer", True, BLACK)
 Dstory = fontComp.render("Story Mode", False, BLACK)
 Dselect = fontComp.render("Level Select", False, BLACK)
-Dcontrols = fontComp.render("Controls", False, BLACK)
+Dcontrols = fontComp.render("Controls & Options", False, BLACK)
 Dback = fontComp.render("Back", False, BLACK)
+
+DCont = DispObj([], (50, 50), False, (900, 900))
+DCont.all = wraptext("W, A, S, D or Arrow keys for Movement&E or LALT to defuse all bombs&Space to detonate&X to reset level&Q to exit level or game&Right click to go to previous screen", 500, smallfont, True)
+DCont.refresh()
+
+Ddevs = DispObj(wraptext("Lead developer: Colton&Brett&Harrison&Sarah", 1000, smallfont, True), (50, 560), False, (900, 900))
+
+Don = smallfont.render("On", False, BLACK)
+Doff = smallfont.render("Off", False, BLACK)
+DopS = smallfont.render("Mute: ", False, BLACK)
+DopF = smallfont.render("Fullscreen: ", False, BLACK)
+
 #level display, goes within size limiter display (896, 592)
 DlevelCap = DispObj([], (64, 64), False, (896, 592))
 Dlevels = DispObj([], [0, 0], False, (896, 10000))
@@ -1787,8 +1809,15 @@ while Running:
 				if mouse_down:
 						Screen = 2
 		
-		if Screen == 1:   #Level select
+		if Screen in [1, 2, 3]:   #Back
 			screen.blit(Dback, (10, 5))
+			
+			if pointCollide((0, 0), (90, 40), mousepos):
+				mouseImg = OnImg
+				if mouse_down:
+					Screen = 0
+					
+		if Screen == 1:   #Level select
 			Dbacking.coords = (-400, 0)
 			for n in range(len(DlevelCap.all[0].all)):
 				i = DlevelCap.all[0].all[n]
@@ -1800,23 +1829,41 @@ while Running:
 						loadSaved(n)
 						Title = False
 						inGame = True
-			
-			if pointCollide((0, 0), (90, 40), mousepos): #back
-				mouseImg = OnImg
-				if mouse_down:
-					Screen = 0
 				
 			screen.blit(Dbacking.img, Dbacking.coords)
 			screen.blit(DlevelCap.img, DlevelCap.coords)
 		
-		if Screen == 2:   #Options
-			screen.blit(Dback, (10, 5))
+		if Screen == 2:   #Controls
+			screen.blit(DCont.img, DCont.coords)
+			screen.blit(DopS, (50, 224))
+			screen.blit(DopF, (50, 260))
+			screen.blit(Ddevs.img, Ddevs.coords)
 			
-			if pointCollide((0, 0), (90, 40), mousepos):
+			if pointCollide((50, 224), (200, 28), mousepos): #Sound
 				mouseImg = OnImg
 				if mouse_down:
-					Screen = 0
-		
+					mouse_down = False
+					muteon = toggle(muteon)
+			if pointCollide((50, 260), (200, 28), mousepos): #Fullscreen
+				mouseImg = OnImg
+				if mouse_down:
+					mouse_down = False
+					if fullscreen:
+						fullscreen = False
+						screen = pygame.display.set_mode(size)
+					else:
+						fullscreen = True
+						screen = pygame.display.set_mode(size, FULLSCREEN)
+			
+			if muteon:
+				screen.blit(Don, (140, 224))
+			else:
+				screen.blit(Doff, (140, 224))
+			if fullscreen:
+				screen.blit(Don, (200, 260))
+			else:
+				screen.blit(Doff, (200, 260))
+				
 		if scrollMom != 0:
 			if scrollMom < -20:
 				scrollMom = -20
@@ -1915,7 +1962,7 @@ while Running:
 						muteon = False
 					else:
 						muteon = True
-				if event.key == K_k:
+				if event.key == K_x:
 					player.Kill()
 				if event.key == K_z:
 					print "Coords: ", player.coords[0], player.coords[1]
