@@ -797,6 +797,12 @@ class bomb(object):
 									if DualLine(cm, cs, c):
 										sight = False
 										pygame.draw.line(debugOverlay, PURPLE, cm, cs)
+							for c in grates:
+								if "bomb" in c.blocked:
+									if hit(c.coords, c.size, square[0:2], square[2:4]):
+										if DualLine(cm, cs, c):
+											sight = False
+											pygame.draw.line(debugOverlay, PURPLE, cm, cs)
 							if sight or mob == self.stuckOn:
 								pow = ((self.detRange - td) / self.detRange)
 								netforce[0] += (xd / td) * pow
@@ -1256,17 +1262,19 @@ DetCurrent = DetNorm
 saveLevel(2, [("sensor", 0)])
 
 #Intro to bomb grates
-createFloor(16, 0, 1, 63)
-createFloor(0, 560, 10, 64)
-createFloor(1008, 16, 34, 1)
-createFloor(0, 0, 35, 1)
-gyah = grates.append(Grate([int(16), int(432)], [int(176), int(128)], ["guy"]))
-createExit(4, [int(96), int(528)], [int(16), int(16)], exitImg)
-grates.append(Grate([int(528), int(16)], [int(128), int(544)], ["bomb"]))
-entrances = [Entrance(4, [int(352), int(544)], [int(16), int(16)], entranceImg)]
-createMovingBlock(768, 48, 15, 11, 0)
-createMovingBlock(720, 384, 18, 3, 1)
-createSensor(816, 448, 9, 5, 0, ["guy"], gyah)
+createFloor(0, 0, 11, 64)
+createFloor(0, 544, 11, 64)
+createFloor(928, 176, 23, 6)
+createFloor(0, 176, 23, 7)
+grates.append(Grate([int(112), int(464)], [int(80), int(80)], ["guy"]))
+createExit(4, [int(144), int(528)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(256), int(528)], [int(16), int(16)], entranceImg)]
+createMovingBlock(816, 416, 7, 4, 1, 300)
+createMovingBlock(816, 352, 7, 4, 0)
+grates.append(Grate([int(768), int(352)], [int(48), int(192)], ["bomb"]))
+createFloor(768, 176, 11, 10)
+createSensor(816, 480, 7, 4, 0, ["guy"])
+
 saveLevel(2, [("sensor", 0) ])
 
 
@@ -1337,6 +1345,26 @@ exits = [Exit(4, [int(864), int(624)], [int(16), int(16)], exitImg)]
 createExit(4, [int(864), int(640)], [int(16), int(16)], exitImg)
 DetCurrent = DetKB
 saveLevel(2, [("sensor", 0), ("sensor", 1)])
+
+#Lesser launching
+createFloor(0, 496, 14, 64)
+createMovingBlock(720, 416, 4, 5, 0)
+grates.append(Grate([int(720), int(320)], [int(64), int(32)], []))
+createExit(4, [int(912), int(480)], [int(16), int(16)], exitImg)
+createFloor(784, 48, 24, 15)
+createFloor(960, 432, 4, 4)
+createMovingBlock(720, 224, 4, 6, 1, 100)
+createFloor(512, 192, 15, 13)
+createMovingBlock(464, 416, 3, 5, 0)
+grates.append(Grate([int(464), int(272)], [int(48), int(16)], []))
+grates.append(Grate([int(432), int(192)], [int(32), int(304)], ["moving"]))
+createFloor(0, 0, 12, 29)
+createFloor(464, 0, 3, 35)
+createFloor(0, 192, 19, 4)
+entrances = [Entrance(4, [int(176), int(480)], [int(16), int(16)], entranceImg)]
+createSensor(720, 192, 4, 2, 0, ["moving"])
+createSensor(464, 192, 3, 1, 0, ["moving"])
+saveLevel(3, [("sensor", 0), ("sensor", 1)])
 
 #fastrun
 createFloor(864, 384, 1, 10)
