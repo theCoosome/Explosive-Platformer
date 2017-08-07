@@ -1866,7 +1866,23 @@ entrances = [Entrance(4, [int(192), int(416)], [int(16), int(16)], entranceImg)]
 createExit(4, [int(768), int(432)], [int(16), int(16)], exitImg)
 DetCurrent = DetKB
 saveLevel(5)
-		
+
+#death jump
+#sarah
+createFloor(0, 64, 12, 15)
+createFloor(320, 0, 16, 44)
+createMovingBlock(240, 0, 5, 16, 1)
+createMovingBlock(208, 704, 9, 1, 1)
+createMovingBlock(128, 544, 5, 2, 1)
+createMovingBlock(352, 544, 5, 2, 1)
+createFloor(240, 336, 2, 5)
+entrances = [Entrance(4, [int(80), int(48)], [int(16), int(16)], entranceImg)]
+createExit(4, [int(272), int(368)], [int(16), int(16)], exitImg)
+createFloor(0, 0, 4, 1)
+createFloor(16, 0, 1, 14)
+saveLevel(4)
+
+
 #Multi challenge
 #Colton
 createFloor(0, 0, 45, 5)
