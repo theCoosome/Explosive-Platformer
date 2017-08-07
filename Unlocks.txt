@@ -7,27 +7,17 @@ True
 True
 True
 True
-<<<<<<< HEAD
 True
 True
 True
 True
 True
-False
 True
 True
-=======
-False
-False
-False
-False
-False
-False
-False
-False
-False
-False
-False
->>>>>>> d7fa9175c81594dca62cdb83d08244b913b47451
-False
-False
+True
+True
+True
+True
+True
+True
+True

@@ -1908,6 +1908,9 @@ createSensor(672, 576, 6, 2, 0, ["guy"], great)
 DetCurrent = DetKB
 saveLevel(3, [("sensor", 0)])
 
+
+#Planks over a chasm
+#Brett
 createFloor(0, 208, 29, 3)
 createFloor(976, 208, 29, 3)
 entrances = [Entrance(4, [int(16), int(192)], [int(16), int(16)], entranceImg)]
@@ -1923,6 +1926,7 @@ detCurrent = DetNorm
 saveLevel(3)
 
 #destructable heaven
+#Brett
 createFloor(0, 688, 2, 64)
 createFloor(992, 32, 41, 2)
 createFloor(0, 0, 2, 64)
@@ -2008,6 +2012,7 @@ DetCurrent = DetDest
 saveLevel(2)
 
 #Movables and grates. What more could a guy ask for?
+#Brett
 createFloor(0, 688, 2, 64)
 createMovingBlock(256, 640, 8, 3, 0)
 createMovingBlock(64, 576, 10, 3, 0)
@@ -2046,19 +2051,8 @@ DetCurrent = DetNorm
 
 saveLevel(3, [("sensor", 9)])
 
-createMovingBlock(16, 400, 10, 2, 1)
-createMovingBlock(96, 256, 6, 2, 1)
-createMovingBlock(320, 176, 11, 2, 1)
-createMovingBlock(480, 320, 7, 2, 1)
-createMovingBlock(656, 160, 2, 12, 1)
-createMovingBlock(688, 320, 8, 2, 1)
-createMovingBlock(784, 624, 13, 3, 1)
-createExit(4, [int(960), int(608)], [int(16), int(16)], exitImg)
-entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
-DetCurrent = DetKB
-saveLevel(4)
-
-#Dropping movables down
+#Dropping movables down AKA DISTILLED HELL
+#Brett
 createFloor(0, 688, 2, 64)
 createFloor(960, 368, 20, 4)
 createMovingBlock(240, 0, 2, 15, 0)
@@ -2082,6 +2076,9 @@ switches.append(Switch('Switch', [int(992), int(352)], [int(16), int(16)], switc
 DetCurrent = DetMulti
 saveLevel(6)
 
+
+#'The hopper'
+#Brett
 createMovingBlock(16, 400, 10, 2, 1)
 createMovingBlock(96, 256, 6, 2, 1)
 createMovingBlock(320, 176, 11, 2, 1)
