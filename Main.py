@@ -1251,7 +1251,7 @@ createMovingBlock(224, 512, 6, 3, 2, 1000)
 createFloor(736, 592, 8, 7)
 createFloor(848, 496, 14, 11)
 rand = Grate([int(848), int(432)], [int(128), int(64)], ["guy"])
-createSensor(736, 560, 7, 2, 2, ["guy"], rand)
+createSensor(736, 544, 7, 3, 2, ["guy"], rand)
 grates.append(rand)
 createExit(4, [int(912), int(480)], [int(16), int(16)], exitImg)
 entrances = [Entrance(4, [int(96), int(544)], [int(16), int(16)], entranceImg)]
@@ -1274,9 +1274,22 @@ createMovingBlock(816, 352, 7, 4, 0)
 grates.append(Grate([int(768), int(352)], [int(48), int(192)], ["bomb"]))
 createFloor(768, 176, 11, 10)
 createSensor(816, 480, 7, 4, 0, ["guy"])
-
 saveLevel(2, [("sensor", 0) ])
 
+#easy stairs
+createFloor(0, 384, 21, 19)
+entrances = [Entrance(4, [int(48), int(368)], [int(16), int(16)], entranceImg)]
+createExit(4, [int(944), int(128)], [int(16), int(16)], exitImg)
+createMovingBlock(288, 256, 46, 3, 1) #to break yellow
+createMovingBlock(752, 0, 16, 16, 2, 375) #purples
+createMovingBlock(496, 0, 16, 16, 2, 375)
+createMovingBlock(304, 0, 12, 16, 2, 375)
+createMovingBlock(304, 608, 12, 1, 1) #first yellow step
+createMovingBlock(512, 528, 14, 1, 1)  #second yellow step
+createMovingBlock(752, 452, 16, 1, 1) #third yellow step
+
+
+saveLevel(2)
 
 #launching a block
 createFloor(0, 560, 10, 64)
@@ -1623,7 +1636,19 @@ createSensor(912, 128, 3, 3, 0, ["guy"])
 
 DetCurrent = DetNorm
 
-saveLevel(3, [("sensor", 8)])
+saveLevel(3, [("sensor", 9)])
+
+createMovingBlock(16, 400, 10, 2, 1)
+createMovingBlock(96, 256, 6, 2, 1)
+createMovingBlock(320, 176, 11, 2, 1)
+createMovingBlock(480, 320, 7, 2, 1)
+createMovingBlock(656, 160, 2, 12, 1)
+createMovingBlock(688, 320, 8, 2, 1)
+createMovingBlock(784, 624, 13, 3, 1)
+createExit(4, [int(960), int(608)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
+DetCurrent = DetKB
+saveLevel(4)
 
 #Dropping movables down
 createFloor(0, 688, 2, 64)
@@ -1640,8 +1665,6 @@ createMovingBlock(512, 0, 2, 15, 0)
 createFloor(176, 0, 14, 4)
 createExit(4, [int(624), int(16)], [int(16), int(16)], exitImg)
 entrances = [Entrance(4, [int(64), int(640)], [int(16), int(16)], entranceImg)]
-grates.append(Grate([int(608), int(208)], [int(128), int(32)], []))
-grates.append(Grate([int(704), int(0)], [int(32), int(208)], []))
 createFloor(608, 240, 2, 2)
 createFloor(448, 0, 15, 2)
 createMovingBlock(480, 0, 2, 15, 0)
@@ -1650,18 +1673,6 @@ switches.append(Switch('Switch', [int(992), int(352)], [int(16), int(16)], switc
 
 DetCurrent = DetMulti
 saveLevel(6)
-
-createMovingBlock(16, 400, 10, 2, 1)
-createMovingBlock(96, 256, 6, 2, 1)
-createMovingBlock(320, 176, 11, 2, 1)
-createMovingBlock(480, 320, 7, 2, 1)
-createMovingBlock(656, 160, 2, 12, 1)
-createMovingBlock(688, 320, 8, 2, 1)
-createMovingBlock(784, 624, 13, 3, 1)
-createExit(4, [int(960), int(608)], [int(16), int(16)], exitImg)
-entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
-DetCurrent = DetKB
-saveLevel(4)
 
 def soundEffect(sfxkey):
 	if not muteon:
