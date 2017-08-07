@@ -1,4 +1,23 @@
 <<<<<<< HEAD
+createFloor(0, 496, 14, 64)
+createMovingBlock(720, 416, 4, 5, 0)
+grates.append(Grate([int(720), int(320)], [int(64), int(32)], []))
+createExit(4, [int(912), int(480)], [int(16), int(16)], exitImg)
+createFloor(784, 48, 24, 15)
+createFloor(960, 432, 4, 4)
+createMovingBlock(720, 224, 4, 6, 1)
+createFloor(512, 192, 15, 13)
+createMovingBlock(464, 416, 3, 5, 0)
+grates.append(Grate([int(464), int(272)], [int(48), int(16)], []))
+grates.append(Grate([int(432), int(192)], [int(32), int(304)], []))
+createFloor(0, 0, 12, 29)
+createFloor(464, 0, 3, 35)
+createFloor(0, 192, 19, 4)
+entrances = [Entrance(4, [int(176), int(480)], [int(16), int(16)], entranceImg)]
+createSensor(720, 192, 4, 2, 0, [])
+createSensor(464, 192, 3, 1, 0, [])
+=======
+<<<<<<< HEAD
 $*-1*208*352*608*16
 =======
 createFloor(0, 688, 2, 64)
@@ -35,3 +54,4 @@ createMovingBlock(784, 320, 3, 3, 1)
 createMovingBlock(368, 256, 3, 3, 1)
 createSensor(912, 128, 3, 3, 0, [])
 >>>>>>> origin/master
+>>>>>>> 32ecd0a87180002ec9b0589dbcf8a2c52b4cd179
