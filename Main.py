@@ -1245,7 +1245,7 @@ createMovingBlock(224, 512, 6, 3, 2, 1000)
 createFloor(736, 592, 8, 7)
 createFloor(848, 496, 14, 11)
 rand = Grate([int(848), int(432)], [int(128), int(64)], ["guy"])
-createSensor(736, 560, 7, 2, 2, ["guy"], rand)
+createSensor(736, 544, 7, 3, 2, ["guy"], rand)
 grates.append(rand)
 createExit(4, [int(912), int(480)], [int(16), int(16)], exitImg)
 entrances = [Entrance(4, [int(96), int(544)], [int(16), int(16)], entranceImg)]
@@ -1262,11 +1262,11 @@ createFloor(1008, 16, 34, 1)
 createFloor(0, 0, 35, 1)
 gyah = grates.append(Grate([int(16), int(432)], [int(176), int(128)], ["guy"]))
 createExit(4, [int(96), int(528)], [int(16), int(16)], exitImg)
-grates.append(Grate([int(528), int(16)], [int(128), int(544)], ["bomb"]))
+grates.append(Grate([int(592), int(16)], [int(128), int(544)], ["bomb"]))
 entrances = [Entrance(4, [int(352), int(544)], [int(16), int(16)], entranceImg)]
-createMovingBlock(768, 48, 15, 11, 0)
-createMovingBlock(720, 384, 18, 3, 1)
-createSensor(816, 448, 9, 5, 0, ["guy"], gyah)
+createMovingBlock(744, 48, 15, 11, 0) #blue
+createMovingBlock(720, 384, 18, 3, 1) #yellow
+createSensor(792, 448, 9, 5, 0, ["guy"], gyah)
 saveLevel(2, [("sensor", 0) ])
 
 #easy stairs
