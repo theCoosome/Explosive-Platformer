@@ -1551,6 +1551,7 @@ DetCurrent = DetNorm
 saveLevel(2, [("sensor", 0)])
 
 #Intro to bomb grates
+#sarah
 createFloor(16, 0, 1, 63)
 createFloor(0, 560, 10, 64)
 createFloor(1008, 16, 34, 1)
@@ -1565,6 +1566,7 @@ createSensor(792, 448, 9, 5, 0, ["guy"], gyah)
 saveLevel(2, [("sensor", 0) ])
 
 #easy stairs
+#sarah meilinger
 createFloor(0, 384, 21, 19)
 entrances = [Entrance(4, [int(48), int(368)], [int(16), int(16)], entranceImg)]
 createExit(4, [int(944), int(128)], [int(16), int(16)], exitImg)
@@ -1599,7 +1601,7 @@ DetCurrent = DetKB
 saveLevel(2, [("sensor", 0)])
 
 #it's just nice and blue
-#needs a higher bomb limit
+#sarah
 createFloor(0, 480, 15, 44)
 createFloor(704, 688, 2, 19)
 createFloor(1008, 0, 45, 1)
@@ -1648,6 +1650,7 @@ DetCurrent = DetKB
 saveLevel(2, [("sensor", 0), ("sensor", 1)])
 
 #fastrun
+#sarah
 createFloor(864, 384, 1, 10)
 createFloor(32, 688, 1, 7)
 createFloor(832, 688, 1, 12)
@@ -1749,6 +1752,7 @@ DetCurrent = DetMulti
 saveLevel(5, [("sensor", 0)])
 		
 #stairs and platforms
+#Sarah
 createFloor(0, 224, 5, 40)
 createFloor(976, 0, 20, 3)
 createFloor(736, 320, 3, 18)
@@ -1942,7 +1946,6 @@ switches.append(Switch('Switch', [int(992), int(352)], [int(16), int(16)], switc
 DetCurrent = DetMulti
 saveLevel(6)
 
-<<<<<<< HEAD
 createMovingBlock(16, 400, 10, 2, 1)
 createMovingBlock(96, 256, 6, 2, 1)
 createMovingBlock(320, 176, 11, 2, 1)
@@ -1956,8 +1959,6 @@ DetCurrent = DetKB
 saveLevel(4)
 
 
-=======
->>>>>>> origin/master
 def soundEffect(sfxkey):
 	if not muteon:
 		if sfxkey == 1:
