@@ -4,7 +4,6 @@ import math
 from decimal import *
 import time
 import copy
-import random
 
 pygame.mixer.pre_init(44100, -16, 2, 2048)
 pygame.init()
@@ -189,7 +188,6 @@ platformImg = getImg("platform")
 
 normalBombImgs = []
 squareExplodeImgs = []
-blueBombImgs = []
 i = 0
 while i < 6:
 	squareExplodeImgs.append(getImg("Square Explosion/square_explosion_" + str(i)))
@@ -201,16 +199,6 @@ while i < 10:
 while i < 17:
 	normalBombImgs.append(getImg("Explosion_Normal/sprite_" + str(i)))
 	i+=1
-
-i = 0
-while i < 10:
-	blueBombImgs.append(getImg("Blue Explosion/blue_explosion_0" + str(i)))
-	i+=1
-while i < 15:
-	blueBombImgs.append(getImg("Blue Explosion/blue_explosion_" + str(i)))
-	i+=1
-
-
 normalExplode = [getImg("")]
 
 
@@ -698,23 +686,13 @@ class bomb(object):
 		self.defaultImg = img
 		self.stuckOn = None
 		self.relative = (0, 0)
-		self.blue = False
-
-		if random.randint(0,100) == 7:
-			self.blue = True
-			self.explodeTime = 14
 
 		self.vel = vel
 		self.detRange = 72
 
 	def incrementSprite(self, number, curr):
-		if not self.blue:
-			curr = 16 - curr
-			self.img = normalBombImgs[curr]
-		else:
-			curr = 14 - curr
-			print curr, len(blueBombImgs)
-			self.img = blueBombImgs[curr]
+		curr = 16 - curr
+		self.img = normalBombImgs[curr]
 
 	def Collide(self, i):
 		if hit(i.coords, i.size, self.coords, self.size):
@@ -1315,8 +1293,14 @@ createMovingBlock(96, 64, 19, 13, 0)
 grates.append(Grate([int(752), int(224)], [int(48), int(48)], ["guy"]))
 grates.append(Grate([int(800), int(176)], [int(80), int(96)], ["guy"]))
 
-DetCurrent = detonator(2, 16, 30, 1, 20, 10, getImg("UI/DetJumper"), getImg("Bombs/tosser"), getImg("Bombs/ArmTosser/ArmBlipTosser (2)"))
-saveLevel(2)
+DetCurrent = detonator(2, 16, 30, 1, 20, 10,getImg("UI/DetJumper"), getImg("Bombs/Tosser"), getImg("Bombs/ArmTosser/ArmBlipTosser (1)"))
+#saveLevel()
+
+DetCurrent = detonator(2, 16, 30, 1, 20, 10, getImg("UI/DetJumper"), getImg("Bombs/tosser"), getImg("Bombs/ArmTosser/ArmBlipTosser(2)"))
+#saveLevel(2)
+
+DetCurrent = detonator(2, 16, 30, 1, 20, 10, getImg("UI/DetJumper"), getImg("Bombs/tosser"), getImg("Bombs/ArmTosser/ArmBlipTosser(2)"))
+#saveLevel(2)
 
 
 #grate over a pit
@@ -1598,7 +1582,7 @@ createSensor(912, 128, 3, 3, 0, ["guy"])
 
 DetCurrent = DetNorm
 
-saveLevel(3, [("sensor", 9)])
+saveLevel(3, [("sensor", 8)])
 
 #Dropping movables down
 createFloor(0, 688, 2, 64)
@@ -1762,7 +1746,6 @@ while Running:
 			DlevelCap.all[0].all[i].img.blit(lvl["Imgs"][0], (24, 10))
 	DlevelCap.all[0].refresh()
 	DlevelCap.refresh()
-	fps = 60
 	
 	while Title:
 		mouseImg = AimImg
@@ -1897,7 +1880,6 @@ while Running:
 		pygame.display.update()
 		clock.tick(fps)
 		
-	mouseImg = AimImg
 	while inGame and Running:
 		mousepos = pygame.mouse.get_pos()
 		if debugon:
@@ -2307,10 +2289,7 @@ while Running:
 				if i.armed:
 					if (i.type != 3) or (isNear(center(i), mousepos, 32)) or (isNear(center(i), center(player), 20)):
 						i.isExploding = True
-						if not i.blue:
-							i.img = normalBombImgs[0]
-						else:
-							i.img = blueBombImgs[0]
+						i.img = normalBombImgs[0]
 						i.Detonate(player)
 						for p in movingblocks:
 							i.Detonate(p)
