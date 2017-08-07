@@ -1268,6 +1268,20 @@ createMovingBlock(720, 384, 18, 3, 1)
 createSensor(816, 448, 9, 5, 0, ["guy"], gyah)
 saveLevel(2, [("sensor", 0) ])
 
+#easy stairs
+createFloor(0, 384, 21, 19)
+entrances = [Entrance(4, [int(48), int(368)], [int(16), int(16)], entranceImg)]
+createExit(4, [int(944), int(128)], [int(16), int(16)], exitImg)
+createMovingBlock(288, 256, 46, 3, 1) #to break yellow
+createMovingBlock(752, 0, 16, 16, 2, 375) #purples
+createMovingBlock(496, 0, 16, 16, 2, 375)
+createMovingBlock(304, 0, 12, 16, 2, 375)
+createMovingBlock(304, 608, 12, 1, 1) #first yellow step
+createMovingBlock(512, 528, 14, 1, 1)  #second yellow step
+createMovingBlock(752, 452, 16, 1, 1) #third yellow step
+
+
+saveLevel(2)
 
 #launching a block
 createFloor(0, 560, 10, 64)
