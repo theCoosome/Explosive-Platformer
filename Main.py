@@ -1558,7 +1558,6 @@ DetCurrent = DetNorm
 saveLevel(2, [("sensor", 0)])
 
 #Intro to bomb grates
-<<<<<<< HEAD
 #sarah
 createFloor(16, 0, 1, 63)
 createFloor(0, 560, 10, 64)
@@ -1571,7 +1570,7 @@ entrances = [Entrance(4, [int(352), int(544)], [int(16), int(16)], entranceImg)]
 createMovingBlock(744, 48, 15, 11, 0) #blue
 createMovingBlock(720, 384, 18, 3, 1) #yellow
 createSensor(792, 448, 9, 5, 0, ["guy"], gyah)
-=======
+
 createFloor(0, 0, 11, 64)
 createFloor(0, 544, 11, 64)
 createFloor(928, 176, 23, 6)
@@ -1585,7 +1584,6 @@ grates.append(Grate([int(768), int(352)], [int(48), int(192)], ["bomb"]))
 createFloor(768, 176, 11, 10)
 createSensor(816, 480, 7, 4, 0, ["guy"])
 DetCurrent = DetNorm
->>>>>>> 4389d29213398618bc05aa9539b40cd127633a58
 saveLevel(2, [("sensor", 0) ])
 
 #easy stairs
