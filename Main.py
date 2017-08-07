@@ -1609,7 +1609,19 @@ createSensor(912, 128, 3, 3, 0, ["guy"])
 
 DetCurrent = DetNorm
 
-saveLevel(3, [("sensor", 8)])
+saveLevel(3, [("sensor", 9)])
+
+createMovingBlock(16, 400, 10, 2, 1)
+createMovingBlock(96, 256, 6, 2, 1)
+createMovingBlock(320, 176, 11, 2, 1)
+createMovingBlock(480, 320, 7, 2, 1)
+createMovingBlock(656, 160, 2, 12, 1)
+createMovingBlock(688, 320, 8, 2, 1)
+createMovingBlock(784, 624, 13, 3, 1)
+createExit(4, [int(960), int(608)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
+DetCurrent = DetKB
+saveLevel(4)
 
 #Dropping movables down
 createFloor(0, 688, 2, 64)
@@ -1626,8 +1638,6 @@ createMovingBlock(512, 0, 2, 15, 0)
 createFloor(176, 0, 14, 4)
 createExit(4, [int(624), int(16)], [int(16), int(16)], exitImg)
 entrances = [Entrance(4, [int(64), int(640)], [int(16), int(16)], entranceImg)]
-grates.append(Grate([int(608), int(208)], [int(128), int(32)], []))
-grates.append(Grate([int(704), int(0)], [int(32), int(208)], []))
 createFloor(608, 240, 2, 2)
 createFloor(448, 0, 15, 2)
 createMovingBlock(480, 0, 2, 15, 0)
@@ -1636,18 +1646,6 @@ switches.append(Switch('Switch', [int(992), int(352)], [int(16), int(16)], switc
 
 DetCurrent = DetMulti
 saveLevel(6)
-
-createMovingBlock(16, 400, 10, 2, 1)
-createMovingBlock(96, 256, 6, 2, 1)
-createMovingBlock(320, 176, 11, 2, 1)
-createMovingBlock(480, 320, 7, 2, 1)
-createMovingBlock(656, 160, 2, 12, 1)
-createMovingBlock(688, 320, 8, 2, 1)
-createMovingBlock(784, 624, 13, 3, 1)
-createExit(4, [int(960), int(608)], [int(16), int(16)], exitImg)
-entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
-DetCurrent = DetKB
-saveLevel(4)
 
 def soundEffect(sfxkey):
 	if not muteon:
