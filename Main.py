@@ -1337,7 +1337,7 @@ def loadSaved(lvl):
 	
 	exits = this["exits"]
 	DetCurrent = this["Det"]
-	
+	player.vel = [0, 0]
 	print "Loaded level: ", lvl
 	DB.refresh()
 	for i in bricks:
