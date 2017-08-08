@@ -687,6 +687,7 @@ class Bird(object):
 		self.size = size
 		self.index = 0
 		self.vel = [0, 0]
+		self.flying = True
 
 	def Collide(self, i):
 		if collide(i.coords, i.size, self.coords, self.size):  # UP
@@ -2577,18 +2578,19 @@ while Running:
 									TextObjects[0].refresh()
 
 									if hit(Birds[0].coords, Birds[0].size, player.coords, player.size):
-										Birds[0].vel[0] = 2
-										Birds[0].vel[1] = -5
+										Birds[0].vel[0] = 3
+										Birds[0].vel[1] = -10
 										act += 1
 										acttimer = 50
+										Birds[0].flying = False
 									else:
 										if Birds[0].coords[1] < player.coords[1]:
 											Birds[0].vel[1] = 1
 										if Birds[0].coords[1] > player.coords[1]:
 											Birds[0].vel[1] = -1
-										if Birds[0].coords[0] < player.coords[0]:
+										if Birds[0].coords[0] < player.coords[0] and Birds[0].vel[0] < 10:
 											Birds[0].vel[0] += 1
-										if Birds[0].coords[0] > player.coords[0]:
+										if Birds[0].coords[0] > player.coords[0] and Birds[0].vel[0] > -10:
 											Birds[0].vel[0] -= 1
 
 
@@ -2596,10 +2598,6 @@ while Running:
 							if act == 2:
 
 								acttimer -= 1
-								print Birds[0].vel
-								if Birds[0].vel[1] < maxFallSpeed:
-									Birds[0].vel[1] += gravity
-									print "GRAV"
 								'''if acttimer <= 0:
 									Birds[0].vel[0] = 0'''
 								if isOnTop(fal[0], player):
@@ -3186,6 +3184,8 @@ while Running:
 				if b.index == 4:
 					b.index = 0
 					animBird = 0
+			if b.vel[1] < maxFallSpeed and not b.flying:
+				b.vel[1] += gravity
 		
 		
 		for i in bombs:
