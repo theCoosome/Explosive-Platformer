@@ -2412,10 +2412,12 @@ while Running:
 					currLvl = -1
 					loadSaved(currLvl)
 					act = 0
-					scene = 0
+					scene = 1
 					fal.append(lud(fals[0], (16, 16), [512, 320]))
 					TextObjects.append(DispObj(wraptext("", 70, font, True), fal[0].coords, False, [fal[0].coords[0] - 30,fal[0].coords[1] - 30]))
-					
+					TextObjects.append(DispObj(wraptext("", 700, massive, True), [10, 10], False,
+											   [512, 360]))
+
 					pass
 			if pointCollide((100, 300), (200, 28), mousepos): #levels
 				mouseImg = OnImg
@@ -2554,19 +2556,18 @@ while Running:
 								act += 1
 								acttimer = 100
 							if act == 1:
+
 								if acttimer <= 0:
 									TextObjects[0].all = wraptext("", 180, font, True)
 									TextObjects[0].refresh()
 
-									if Birds[0].coords[0] != player.coords[0] and Birds[0].coords[0] != player.coords[
-										1]:
+									if not isOnTop(Birds[0],player):
 										change = goTo(Birds[0].coords, player.coords)
 										Birds[0].vel[0] = 1
 										Birds[0].vel[1] = change * 1
 									else:
 										Birds[0].vel[0] = 5
 										Birds[0].vel[1] = -change * 5
-
 										act += 1
 										acttimer = 50
 
@@ -2584,6 +2585,7 @@ while Running:
 									act += 1
 								else:
 									fal[0].vel[0] = -1
+
 							if act == 3:
 								if isNear(fal[0].coords, player.coords):
 									if len(TextObjects) < 2:
@@ -3144,7 +3146,6 @@ while Running:
 			b.coords[1] += b.vel[1]
 			if b.vel[0] == 1:
 				animBird += 1
-				print animBird
 				if animBird == 10:
 					b.index += 1
 					animBird = 0
