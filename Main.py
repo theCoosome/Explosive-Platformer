@@ -606,8 +606,10 @@ class Sensor(object):
 sensors = []
 
 class Switch(object):
-	def __init__(self,type,coords,size,img,on):
+	def __init__(self,type, coords,size,img,on):
 		self.type = type
+		self.sixteens = (size[0]/16, size[1]/16)
+		self.actions = []
 		self.coords = coords
 		self.size = size
 		self.img = img
@@ -1580,6 +1582,16 @@ createExit(4, [int(912), int(368)], [int(16), int(16)], exitImg)
 createFloor(976, 96, 18, 3)
 DetCurrent = DetNorm
 saveLevel(1)
+#jumping down
+#sarah
+createMovingBlock(320, 512, 8, 3, 1)
+createMovingBlock(512, 336, 6, 3, 1)
+createMovingBlock(720, 208, 4, 3, 1)
+createMovingBlock(832, 48, 12, 4, 1)
+createMovingBlock(0, 688, 11, 2, 1)
+entrances = [Entrance(4, [int(960), int(32)], [int(16), int(16)], entranceImg)]
+createExit(4, [int(64), int(672)], [int(16), int(16)], exitImg)
+saveLevel(1)
 
 #Multi intro
 #Colton
@@ -1988,6 +2000,18 @@ createFloor(912, 288, 1, 2)
 createFloor(912, 272, 1, 1)
 DetCurrent = DetNorm
 saveLevel(3)
+
+#large multi and many blue
+#sarah
+# createFloor(0, 704, 1, 64)
+# createFloor(0, 0, 44, 1)
+# createFloor(16, 0, 1, 63)
+# createMovingBlock(784, 112, 15, 37, 2)
+# createFloor(1008, 16, 6, 1)
+# createExit(4, [int(896), int(96)], [int(16), int(16)], exitImg)
+# entrances = [Entrance(4, [int(64), int(688)], [int(16), int(16)], entranceImg)]
+# switches.append(Switch('Switch', [int(96), int(688)], [int(16), int(16)], switchImg, False))
+# saveLevel(3, [("switch", 0)])
 
 #destructable heaven
 createFloor(0, 688, 2, 64)
@@ -2595,9 +2619,11 @@ while Running:
 								loadSaved(currLvl)
 								canControl = True
 								isCutsecne = False
+								
 							
 							if act == 5 and currLvl == 5:
-
+								canControl = False
+								isCutsecne = True
 								if acttimer <= 0:
 									if len(warrios) < 1:
 										warrios.append(warrior(warriorImgL[1], (16, 16), [600, 320]))
@@ -2735,6 +2761,7 @@ while Running:
 					print "Velocity: ", player.vel[0], player.vel[1]
 					print "Motion: ", player.motion[0], player.motion[1]
 					print "Floored: ", player.floor
+					print "Act, Scene: ", act, scene
 				if event.key == K_g:  # defunct?gravty on and off
 					for i in bombs:
 						i.floor = toggle(player.floor)
