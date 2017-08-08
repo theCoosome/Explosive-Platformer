@@ -1481,6 +1481,11 @@ createMovingBlock(64, 528, 3, 3, 1)
 saveLevel()
 
 '''
+createFloor(208, 352, 38, 1)
+createExit(4, [int(912), int(448)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(128), int(240)], [int(16), int(16)], entranceImg)]
+DetCurrent = DetNorm
+saveLevel(-1)
 
 #Dest intro
 #Colton
@@ -2259,6 +2264,7 @@ canControl = False
 paper = False
 scene = 0
 inGame = True
+Story = False
 
 
 x, y = 0, -1
