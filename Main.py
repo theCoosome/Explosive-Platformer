@@ -3052,8 +3052,13 @@ while Running:
 					p.Collide(i)
 			if "moving" in i.blocked:
 				for p in movingblocks:
-					if (p.type == 0) or ("dest" in i.blocked and p.type == 2):
+					if p.type == 0:
 						p.Collide(i)
+			if "dest" in i.blocked:
+				for p in movingblocks:
+					if p.type == 2:
+						p.Collide(i)
+				
 		
 		for i in kings:
 			if stopRight == False:
