@@ -2279,7 +2279,7 @@ warriorCount = 0
 warriorCount2 = 0
 kingCount = 0
 papers = []
-canControl = False
+canControl = True
 paper = False
 scene = 0
 inGame = True
@@ -2397,6 +2397,7 @@ while Running:
 					Title = False
 					inGame = True
 					Story = True
+					canControl = False
 					currLvl = -1
 					loadSaved(currLvl)
 					act = 0
