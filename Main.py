@@ -1310,7 +1310,7 @@ def loadSaved(lvl):
 	global DetCurrent
 	wipeFloor()
 	if lvl < 0:
-		this = cutScenes[lvl]
+		this = cutScenes[abs(lvl)-1]
 	else:
 		this = levels[lvl]
 	bricks = this["bricks"]
@@ -1439,17 +1439,10 @@ def createLevel(lvl):	#Almost all refrences of this should be written createLeve
 		openReadFile("saves/LevelFast.txt")
 	elif lvl == 100:
 		openReadFile("saves/LevelCutscene1.txt")
-		fal.append(lud(fals[0], (16, 16), [512, 320]))
-		TextObjects.append(DispObj(wraptext("", 70, font, True), fal[0].coords, False, [fal[0].coords[0] - 30,fal[0].coords[1] - 30]))
 
 	elif lvl == 101:
 		#TextObjects.remove(0)
 		openReadFile("saves/LevelCutscene2.txt")
-		TextObjects.append(DispObj(wraptext("Later that day...", 700, bigfont, True), [10, 10], False,
-								   [512, 360]))
-
-		fal.append(lud(fals[0], (16, 16), [512, 336]))
-		Birds.append(Bird(birdImages[0], [-100, 128], (16, 16)))
 	else:
 		createFloor(0, 688, 2, 64)
 
@@ -1481,8 +1474,8 @@ createMovingBlock(64, 528, 3, 3, 1)
 saveLevel()
 
 '''
-createFloor(208, 352, 38, 1)
-createExit(4, [int(912), int(448)], [int(16), int(16)], exitImg)
+createFloor(0, 352, 1, 64)
+createExit(4, [int(-20), int(448)], [int(16), int(16)], exitImg)
 entrances = [Entrance(4, [int(128), int(240)], [int(16), int(16)], entranceImg)]
 DetCurrent = DetNorm
 saveLevel(-1)
@@ -2311,6 +2304,7 @@ while Running:
 		mousepos = pygame.mouse.get_pos()
 		screen.fill(WHITE)
 		
+		
 		for event in pygame.event.get():
 			if event.type == pygame.KEYDOWN:
 				if event.key == K_q:
@@ -2376,6 +2370,14 @@ while Running:
 					isCutsecne = True
 					Title = False
 					inGame = True
+					Story = True
+					currLvl = -1
+					loadSaved(currLvl)
+					act = 0
+					scene = 0
+					fal.append(lud(fals[0], (16, 16), [512, 320]))
+					TextObjects.append(DispObj(wraptext("", 70, font, True), fal[0].coords, False, [fal[0].coords[0] - 30,fal[0].coords[1] - 30]))
+					
 					pass
 			if pointCollide((100, 300), (200, 28), mousepos): #levels
 				mouseImg = OnImg
@@ -2506,7 +2508,11 @@ while Running:
 						acttimer -= 1
 						if acttimer <= 0:
 							if act == 0:
-								createLevel(101)
+								TextObjects.append(DispObj(wraptext("Later that day...", 700, massive, True), [10, 10], False,
+														   [512, 360]))
+
+								fal.append(lud(fals[0], (16, 16), [512, 336]))
+								Birds.append(Bird(birdImages[0], [-100, 128], (16, 16)))
 								act += 1
 								acttimer = 100
 							if act == 1:
@@ -2632,7 +2638,7 @@ while Running:
 		# user input
 		for event in pygame.event.get():
 
-			if event.type == pygame.KEYDOWN:
+			if event.type == pygame.KEYDOWN and canControl:
 			#Switches and Interactable Objects
 				if(len(switches) > 0):
 					if (isNear(center(switches[0]), center(player))):
@@ -2736,7 +2742,7 @@ while Running:
 					bombs = []
 					DetCurrent = DetDest
 
-			if event.type == pygame.KEYUP:
+			if event.type == pygame.KEYUP and canControl:
 				if event.key in [K_LEFT, K_a]:
 					player.motion[0] += 2.0
 				if event.key in [K_RIGHT, K_d]:
@@ -2745,7 +2751,7 @@ while Running:
 					player.motion[1] -= 0.5
 					player.unCrouch()
 
-			if event.type == pygame.MOUSEBUTTONDOWN:
+			if event.type == pygame.MOUSEBUTTONDOWN and canControl:
 				if bombWaitTime == 0 and len(bombs) < DetCurrent.max:
 					x, y = pygame.mouse.get_pos()
 
