@@ -2811,6 +2811,11 @@ while Running:
 							if currLvl > len(levels)-1:
 								currLvl = 0
 							loadSaved(currLvl)
+					else:
+						currLvl += 1
+						if currLvl > len(levels)-1:
+							currLvl = 0
+						loadSaved(currLvl)
 				if event.key == K_o:
 					if currLvl > 0:
 						if (debugon or unlocked[currLvl-1]):
@@ -2818,6 +2823,10 @@ while Running:
 							if currLvl < 0:
 								currLvl = len(levels) - 1
 							loadSaved(currLvl)
+					elif currLvl == 0 and unlocked[len(levels)-1]:
+							currLvl = len(levels) - 1
+							loadSaved(currLvl)
+						
 				if event.key == pygame.K_SPACE and canControl:  # exploding
 					bombsExplode = True
 				if event.key == pygame.K_t:  # print cursor location, useful for putting stuff in the right spot
