@@ -3321,6 +3321,15 @@ while Running:
 				canControl = False
 			screen.blit(p.img, p.coords)
 		
+		if Story:
+			if currLvl == 7:
+				isCutsecne = True
+				canControl = False
+				player.motion = [0, 0]
+				currLvl = -1
+				loadSaved(currLvl)
+				act = 5
+		
 		if isCutsecne:
 			if len(TextObjects) > 0:
 				if TextObjects[0].dialog >= 0:
