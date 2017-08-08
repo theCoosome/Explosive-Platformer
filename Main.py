@@ -2426,10 +2426,6 @@ while Running:
 					loadSaved(currLvl)
 					act = 0
 					scene = 1
-					fal.append(lud(fals[0], (16, 16), [512, 320]))
-					TextObjects.append(DispObj(wraptext("", 70, font, True), fal[0].coords, False, [fal[0].coords[0] - 30,fal[0].coords[1] - 30]))
-					TextObjects.append(DispObj(wraptext("", 700, massive, True), [10, 10], False,
-											   [512, 360]))
 
 					pass
 			if pointCollide((100, 300), (200, 28), mousepos): #levels
@@ -2563,10 +2559,14 @@ while Running:
 						acttimer -= 1
 						if acttimer <= 0:
 							if act == 0: #Prep for act 1
+								fal.append(lud(fals[0], (16, 16), [512, 320]))
+								TextObjects.append(DispObj(wraptext("", 70, font, True), fal[0].coords, False,
+														   [fal[0].coords[0] - 30, fal[0].coords[1] - 30]))
+								TextObjects.append(DispObj(wraptext("", 700, massive, True), [10, 10], False,
+														   [512, 360]))
 								TextObjects.append(DispObj(wraptext("Later that day...", 700, massive, True), [10, 10], False,
 														   [512, 360]))
 
-								fal.append(lud(fals[0], (16, 16), [512, 336]))
 								Birds.append(Bird(birdImages[0], [-100, 128], (16, 16)))
 								act += 1
 								acttimer = 100
@@ -2597,9 +2597,12 @@ while Running:
 									Birds[0].vel[0] = 0
 								if isOnTop(fal[0], player):
 									fal[0].vel[0] = 0
+									print "yes"
 									act += 1
 								else:
 									fal[0].vel[0] = -1
+									print "no"
+
 
 							if act == 3:
 								if isNear(fal[0].coords, player.coords):
@@ -2867,6 +2870,9 @@ while Running:
 		p1 = center(player)
 		player.coords[0] += player.vel[0]
 		player.coords[1] += player.vel[1]
+
+
+
 		if debugon:
 			pygame.draw.line(debugOverlay, PURPLE, p1, center(player))
 			pygame.draw.rect(debugOverlay, PURPLE, (player.coords[0], player.coords[1], player.size[0], player.size[1]), 1)
@@ -3138,12 +3144,11 @@ while Running:
 				if warrios[1].index == 2:
 					warrios[1].index = 0
 		
-		if len(fal) == 1:
+		if len(fal) != 0:
 			if fal[0].vel[1] < maxFallSpeed:
 				fal[0].vel[1] += gravity
 
-				fal[0].coords[0] += fal[0].vel[0]
-				fal[0].coords[1] += fal[0].vel[1]
+
 
 			if fal[0].vel[0] > 0:
 				falCount += 1
@@ -3163,7 +3168,8 @@ while Running:
 					falCount = 0
 				if fal[0].index == 2:
 					fal[0].index = -1
-
+			fal[0].coords[0] += fal[0].vel[0]
+			fal[0].coords[1] += fal[0].vel[1]
 		for b in Birds:
 			b.coords[0] += b.vel[0]
 			b.coords[1] += b.vel[1]
