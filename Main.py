@@ -2932,23 +2932,23 @@ while Running:
 					fal.append(lud(fals[0], (16, 16), [512, 320]))
 					if currLvl == 1:
 						fal[0].coords = [112, 240]
-						fal[0].text = DispObj(wraptext("If you jump while you detonate, you can go a bit higher than either alone.", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
+						fal[0].text = DispObj(wraptext("If you jump while you detonate, you can go a bit higher than either alone.&You can get up here if you try!", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 
 					if currLvl == 2:
 						fal[0].coords = [112, 384]
-						fal[0].text = DispObj(wraptext("First", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
+						fal[0].text = DispObj(wraptext("For future reference:&If you press E or LALT you can disarm your bombs.", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 					if currLvl == 3:
-						fal[0].coords = [176, 544]
-						fal[0].text = DispObj(wraptext("Placing bombs towards the bottom of blocks makes them go further by throwing them in the air.", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
+						fal[0].coords = [832, 320]
+						fal[0].text = DispObj(wraptext("Placing many bombs in one spot is more effective than one at a time.", 150, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 					if currLvl == 4:
 						fal[0].coords = [368, 512]
-						fal[0].text = DispObj(wraptext("Second", 70, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
+						fal[0].text = DispObj(wraptext("These are grates. They can block your way, and the path of other things as well. You will get used to what blocks what.", 300, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 					if currLvl == 5:
 						fal[0].coords = [128, 496]
-						fal[0].text = DispObj(wraptext("Third", 70, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
+						fal[0].text = DispObj(wraptext("Placing bombs towards the bottom of blocks makes them go further by tossing them in the air.", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 					if currLvl == 6:
 						fal[0].coords = [128, 544]
-						fal[0].text = DispObj(wraptext("Purple blocks are mobile, but not so durable.", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
+						fal[0].text = DispObj(wraptext("Purple blocks are mobile, but not so durable.&Remember how placement effects damage and knockback!", 350, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 
 		if player.vel[0] == 0 and player.vel[1] == 0:
 			movingLeft = False
