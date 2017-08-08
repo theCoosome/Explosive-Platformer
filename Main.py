@@ -2159,7 +2159,7 @@ entrances = [Entrance(4, [int(64), int(560)], [int(16), int(16)], entranceImg)]
 createMovingBlock(656, 96, 5, 8, 2, 6000) #large purple #triggered by bf #pixels from side, pixels from top, length in blocks, width in blocks
 createSensor(272, 592, 1, 1, 0, ["guy", "bomb"], stepOn1) #blue first
 createSensor(800, 528, 1, 1, 2, ["guy", "bomb"], stepOn2) #purple middle
-createSensor(176, 240, 1, 1, 2, ["guy", "bomb"]) #purple last
+createSensor(192, 192, 4, 4, 2, ["guy", "bomb"]) #purple last
 saveLevel(3, [("sensor", 0), ("sensor", 1), ("sensor", 2) ]) #[("sensor", 0), ("sensor", 1)])
 
 createMovingBlock(16, 400, 10, 2, 1)
