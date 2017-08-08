@@ -1297,9 +1297,10 @@ def saveLevel(difficulty, links = []): #links: list of tuples, ("sensor", 1)
 	
 	if difficulty > 0:
 		levels.append({"bricks":bricks[:], "movingblocks":movingblocks[:], "sensors":sensors[:], "switches":switches[:], "grates":grates[:], "exits":exits[:], "spawn":entrances[0].coords[:], "Det":DetCurrent, "pairs":links, "Imgs":[rand2, rand], "difficulty":difficulty})
+		unlocked.append(False)
 	else:
 		cutScenes.append({"bricks":bricks[:], "movingblocks":movingblocks[:], "sensors":sensors[:], "switches":switches[:], "grates":grates[:], "exits":exits[:], "spawn":entrances[0].coords[:], "Det":DetCurrent, "pairs":links, "Imgs":[rand2, rand], "difficulty":difficulty})
-	unlocked.append(False)
+	
 	
 	wipeFloor()
 	
@@ -2803,16 +2804,20 @@ while Running:
 					print "Act, Scene: ", act, scene
 				if event.key == pygame.K_q:  # quitting
 					inGame = False
-				if event.key == K_p and debugon:  # Increment level by 1
-					currLvl += 1
-					if currLvl > len(levels)-1:
-						currLvl = 0
-					loadSaved(currLvl)
-				if event.key == K_o and debugon:
-					currLvl -= 1
-					if currLvl < 0:
-						currLvl = len(levels) - 1
-					loadSaved(currLvl)
+				if event.key == K_p:
+					if False in unlocked:
+						if (debugon or unlocked[currLvl+1]):  # Increment level by 1
+							currLvl += 1
+							if currLvl > len(levels)-1:
+								currLvl = 0
+							loadSaved(currLvl)
+				if event.key == K_o:
+					if currLvl > 0:
+						if (debugon or unlocked[currLvl-1]):
+							currLvl -= 1
+							if currLvl < 0:
+								currLvl = len(levels) - 1
+							loadSaved(currLvl)
 				if event.key == pygame.K_SPACE and canControl:  # exploding
 					bombsExplode = True
 				if event.key == pygame.K_t:  # print cursor location, useful for putting stuff in the right spot
