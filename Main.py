@@ -938,13 +938,14 @@ DetDest = detonator(4, 1, 1, 20, 30, 4, getImg("UI/DetDestructive"), getImg("Bom
 
 
 class lud(object):
-	def __init__(self,img,size,coords):
+	def __init__(self,img,size,coords,textObject = None):
 		self.img = img
 		self.size = size
 		self.coords = coords
 		self.vel = [0,0]
 		self.dualColliding = False
 		self.index = -1
+		self.text = textObject
 	def Collide(self, i):
 		if collide(i.coords, i.size, self.coords, self.size):  # UP
 
@@ -1064,48 +1065,7 @@ class king(object):
 				pygame.draw.line(debugOverlay, GREEN, p1, center(self))
 		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
 			self.floor = True
-class lud(object):
-	def __init__(self,img,size,coords):
-		self.img = img
-		self.size = size
-		self.coords = coords
-		self.vel = [0,0]
-		self.dualColliding = False
-		self.index = -1
-	def Collide(self, i):
-		if collide(i.coords, i.size, self.coords, self.size):  # UP
 
-			if self.dualColliding:
-				self.Kill()
-			if type(i) == movingBlock:
-				if i.vel[1] > 5 and center(player)[1] > center(i)[1]:
-					self.Kill()
-				self.dualColliding = True
-
-			p1 = center(self)
-			if self.vel[1] > 0 and self.coords[1] <= i.coords[1]: #FLOOR
-				self.coords[1] = i.coords[1] - self.size[1]
-				if self.vel[1] > 0:
-					self.vel[1] = 0
-				self.floor = True
-				pygame.draw.line(debugOverlay, BLUE, p1, center(self))
-			if collide(self.coords, self.size, (i.coords[0], i.coords[1] + 3), (i.size[0], i.size[1] - 3)):  # LEFT / RIGHT
-				p1 = center(self)
-				if self.coords[0] <= i.coords[0]:
-					self.coords[0] = i.coords[0] - self.size[0]
-					self.vel[0] = 0
-					pygame.draw.line(debugOverlay, YELLOW, p1, center(self))
-				if self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
-					self.coords[0] = i.coords[0] + i.size[0]
-					self.vel[0] = 0
-					pygame.draw.line(debugOverlay, RED, p1, center(self))
-			p1 = center(self)
-			if self.vel[1] < 0 and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1]: #CEILING
-				self.coords[1] = i.coords[1] + i.size[1]
-				self.vel[1] = 0
-				pygame.draw.line(debugOverlay, GREEN, p1, center(self))
-		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
-			self.floor = True
 
 DetCurrent = DetGod
 
@@ -2637,7 +2597,7 @@ while Running:
 										Birds[0].vel[0] = 3
 										Birds[0].vel[1] = -10
 										act += 1
-										acttimer = 50
+										acttimer = 300
 										Birds[0].flying = False
 									else:
 										if Birds[0].coords[1] < player.coords[1]:
@@ -2690,13 +2650,19 @@ while Running:
 								canControl = True
 								isCutsecne = False
 								fal.append(lud(fals[0],(16,16),[224, 224]))
+								fal[0].text = DispObj(wraptext("Remember that bombs do more damage the closer they are to the center of an object.&Press space to detonate!", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
+
 
 								
 							
-							if act == 5 and currLvl == 5:
+							if act == 5:
+								print "YES ITS WORKING"
 								canControl = False
 								isCutsecne = True
+								acttimer -= 1
+
 								if acttimer <= 0:
+									print acttimer
 									if len(warrios) < 1:
 										warrios.append(warrior(warriorImgL[1], (16, 16), [600, 320]))
 									act += 1
@@ -2721,7 +2687,7 @@ while Running:
 												[kings[0].coords[0] - 10, kings[0].coords[1] - 30]))
 									act += 1
 							if act == 9:
-								if TextObjects[3].dialog == -1:
+								if TextObjects[3].dialog == 0:
 									TextObjects[3].dialog = 1
 									print TextObjects[3].dialog
 								if TextObjects[3].dialog == 5:
@@ -2998,16 +2964,23 @@ while Running:
 					fal.append(lud(fals[0], (16, 16), [512, 320]))
 					if currLvl == 1:
 						fal[0].coords = [112, 240]
+						fal[0].text = DispObj(wraptext("If you jump while you detonate, you can go a bit higher than either alone.&You can get up here if you try!", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
+
 					if currLvl == 2:
 						fal[0].coords = [112, 384]
+						fal[0].text = DispObj(wraptext("For future reference:&If you press E or LALT you can disarm your bombs.", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 					if currLvl == 3:
-						fal[0].coords = [176, 544]
+						fal[0].coords = [832, 320]
+						fal[0].text = DispObj(wraptext("Placing many bombs in one spot is more effective than one at a time.", 150, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 					if currLvl == 4:
 						fal[0].coords = [368, 512]
+						fal[0].text = DispObj(wraptext("These are grates. They can block your way, and the path of other things as well. You will get used to what blocks what.", 300, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 					if currLvl == 5:
 						fal[0].coords = [128, 496]
+						fal[0].text = DispObj(wraptext("Placing bombs towards the bottom of blocks makes them go further by tossing them in the air.", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 					if currLvl == 6:
 						fal[0].coords = [128, 544]
+						fal[0].text = DispObj(wraptext("Purple blocks are mobile, but not so durable.&Remember how placement effects damage and knockback!", 350, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 
 		if player.vel[0] == 0 and player.vel[1] == 0:
 			movingLeft = False
@@ -3400,10 +3373,12 @@ while Running:
 				isCutsecne = True
 				canControl = False
 				player.motion = [0, 0]
+				act = 5
+				acttimer = 100
 				currLvl = -1
 				loadSaved(currLvl)
-				act = 5
-		
+				fal.append(lud(fals[0], (16, 16), [224, 224]))
+
 		if isCutsecne:
 			if len(TextObjects) > 0:
 				if TextObjects[0].dialog >= 0:
@@ -3535,6 +3510,10 @@ while Running:
 		
 		for o in TextObjects:
 			screen.blit(o.img, o.size)
+
+		for f in fal:
+			if f.text != None:
+				screen.blit(f.text.img,f.text.coords)
 		#UI display
 		
 		screen.blit(personimg, player.coords)
