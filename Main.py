@@ -1614,13 +1614,13 @@ saveLevel(1)
 #Brett
 createFloor(0, 0, 45, 2)
 createFloor(992, 0, 45, 2)
-createMovingBlock(32, 688, 8, 2, 1, 300)
-createMovingBlock(160, 640, 3, 3, 1, 300)
-createMovingBlock(208, 576, 4, 4, 1, 300)
-createMovingBlock(272, 496, 5, 5, 1, 300)
-createMovingBlock(352, 400, 6, 6, 1, 300)
-createMovingBlock(448, 288, 7, 7, 1, 300)
-createMovingBlock(560, 160, 8, 8, 1, 300)
+createMovingBlock(32, 688, 8, 2, 1, 320)
+createMovingBlock(160, 640, 3, 3, 1, 320)
+createMovingBlock(208, 576, 4, 4, 1, 320)
+createMovingBlock(272, 496, 5, 5, 1, 320)
+createMovingBlock(352, 400, 6, 6, 1, 320)
+createMovingBlock(448, 288, 7, 7, 1, 320)
+createMovingBlock(560, 160, 8, 8, 1, 320)
 createExit(4, [int(656), int(144)], [int(16), int(16)], exitImg)
 entrances = [Entrance(4, [int(64), int(624)], [int(16), int(16)], entranceImg)]
 DetCurrent = DetNorm
@@ -2186,7 +2186,6 @@ switches.append(Switch('Switch', [int(992), int(352)], [int(16), int(16)], switc
 DetCurrent = DetMulti
 saveLevel(6)
 
-
 def soundEffect(sfxkey):
 	if not muteon:
 		if sfxkey == 1:
@@ -2426,10 +2425,12 @@ while Running:
 					currLvl = -1
 					loadSaved(currLvl)
 					act = 0
-					scene = 0
+					scene = 1
 					fal.append(lud(fals[0], (16, 16), [512, 320]))
 					TextObjects.append(DispObj(wraptext("", 70, font, True), fal[0].coords, False, [fal[0].coords[0] - 30,fal[0].coords[1] - 30]))
-					
+					TextObjects.append(DispObj(wraptext("", 700, massive, True), [10, 10], False,
+											   [512, 360]))
+
 					pass
 			if pointCollide((100, 300), (200, 28), mousepos): #levels
 				mouseImg = OnImg
@@ -2570,19 +2571,18 @@ while Running:
 								act += 1
 								acttimer = 100
 							if act == 1:
+
 								if acttimer <= 0:
 									TextObjects[0].all = wraptext("", 180, font, True)
 									TextObjects[0].refresh()
 
-									if Birds[0].coords[0] != player.coords[0] and Birds[0].coords[0] != player.coords[
-										1]:
+									if not isOnTop(Birds[0],player):
 										change = goTo(Birds[0].coords, player.coords)
 										Birds[0].vel[0] = 1
 										Birds[0].vel[1] = change * 1
 									else:
 										Birds[0].vel[0] = 5
 										Birds[0].vel[1] = -change * 5
-
 										act += 1
 										acttimer = 50
 
@@ -2600,6 +2600,7 @@ while Running:
 									act += 1
 								else:
 									fal[0].vel[0] = -1
+
 							if act == 3:
 								if isNear(fal[0].coords, player.coords):
 									if len(TextObjects) < 2:
@@ -3168,7 +3169,6 @@ while Running:
 			b.coords[1] += b.vel[1]
 			if b.vel[0] == 1:
 				animBird += 1
-				print animBird
 				if animBird == 10:
 					b.index += 1
 					animBird = 0
