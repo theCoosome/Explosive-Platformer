@@ -2925,9 +2925,8 @@ while Running:
 					currLvl = 0
 				unlocked[currLvl] = True
 				loadSaved(currLvl)
-				fal.append(lud(fals[0], (16, 16), [512, 320]))
-
 				if Story:
+					fal.append(lud(fals[0], (16, 16), [512, 320]))
 					if currLvl == 1:
 						fal[0].coords = [112, 240]
 					if currLvl == 2:
