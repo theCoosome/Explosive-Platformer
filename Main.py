@@ -2564,8 +2564,7 @@ while Running:
 							if act == 0: #Prep for act 1
 								TextObjects.append(DispObj(wraptext("", 70, font, True), fal[0].coords, False,
 														   [fal[0].coords[0] - 30, fal[0].coords[1] - 30]))
-								TextObjects.append(DispObj(wraptext("", 700, massive, True), [10, 10], False,
-														   [512, 360]))
+
 								TextObjects.append(DispObj(wraptext("Later that day...", 700, massive, True), [10, 10], False,
 														   [512, 360]))
 
@@ -2611,7 +2610,8 @@ while Running:
 
 							if act == 3:
 								if isOnTop(fal[0], player):
-									if len(TextObjects) < 2:
+									print len(TextObjects)
+									if len(TextObjects) < 3:
 										TextObjects.append(
 											DispObj(wraptext("", 700, font, True), [10, 10], False,
 													[fal[0].coords[0] - 10, fal[0].coords[1] - 30]))
@@ -2633,7 +2633,8 @@ while Running:
 								loadSaved(currLvl)
 								canControl = True
 								isCutsecne = False
-								fel[0].coords = [224, 224]
+								fal.append(lud(fals[0],(16,16),[224, 224]))
+
 								
 							
 							if act == 5 and currLvl == 5:
@@ -2924,19 +2925,21 @@ while Running:
 					currLvl = 0
 				unlocked[currLvl] = True
 				loadSaved(currLvl)
+				fal.append(lud(fals[0], (16, 16), [512, 320]))
+
 				if Story:
 					if currLvl == 1:
-						fel[0].coords = [112, 240]
+						fal[0].coords = [112, 240]
 					if currLvl == 2:
-						fel[0].coords = [112, 384]
+						fal[0].coords = [112, 384]
 					if currLvl == 3:
-						fel[0].coords = [176, 544]
+						fal[0].coords = [176, 544]
 					if currLvl == 4:
-						fel[0].coords = [368, 512]
+						fal[0].coords = [368, 512]
 					if currLvl == 5:
-						fel[0].coords = [128, 496]
+						fal[0].coords = [128, 496]
 					if currLvl == 6:
-						fel[0].coords = [128, 544]
+						fal[0].coords = [128, 544]
 
 		if player.vel[0] == 0 and player.vel[1] == 0:
 			movingLeft = False
