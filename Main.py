@@ -1474,6 +1474,7 @@ createMovingBlock(64, 528, 3, 3, 1)
 saveLevel()
 
 '''
+
 createFloor(0, 352, 1, 64)
 createExit(4, [int(-20), int(448)], [int(16), int(16)], exitImg)
 entrances = [Entrance(4, [int(128), int(240)], [int(16), int(16)], entranceImg)]
@@ -2507,7 +2508,7 @@ while Running:
 					if len(fal) > 0:
 						acttimer -= 1
 						if acttimer <= 0:
-							if act == 0:
+							if act == 0: #Prep for act 1
 								TextObjects.append(DispObj(wraptext("Later that day...", 700, massive, True), [10, 10], False,
 														   [512, 360]))
 
@@ -2562,39 +2563,46 @@ while Running:
 									if TextObjects[2].dialog == 3:
 										act += 1
 										acttimer = 100
+							
 							if act == 4:
+								currLvl = 0
+								loadSaved(currLvl)
+								canControl = True
+								isCutsecne = False
+							
+							if act == 5 and currLvl == 5:
 
 								if acttimer <= 0:
 									if len(warrios) < 1:
 										warrios.append(warrior(warriorImgL[1], (16, 16), [600, 320]))
 									act += 1
 									acttimer = 400
-							if act == 5:
+							if act == 6:
 
 								if acttimer <= 0:
 									if len(warrios) < 2:
 										warrios.append(warrior(warriorImgL[1], (16, 16), [600, 320]))
 									act += 1
 									acttimer = 400
-							if act == 6:
+							if act == 7:
 								if acttimer <= 0:
 									kings.append(king(kingImgL[1], (16, 16), [600, 320]))
 									acttimer = 100
 									act += 1
-							if act == 7:
+							if act == 8:
 
 								if isOnTop(kings[0], warrios[1]):
 									TextObjects.append(
 										DispObj(wraptext("", 700, font, True), [10, 10], False,
 												[kings[0].coords[0] - 10, kings[0].coords[1] - 30]))
 									act += 1
-							if act == 8:
+							if act == 9:
 								if TextObjects[3].dialog == -1:
 									TextObjects[3].dialog = 1
 									print TextObjects[3].dialog
 								if TextObjects[3].dialog == 5:
 									act += 1
-							if act == 9:
+							if act == 10:
 								stopRight = True
 								if len(kings) == 1:
 									if kings[0].coords != [600, 336]:
@@ -2621,13 +2629,13 @@ while Running:
 															fal[0].coords, (16, 16)))
 										fal.remove(fal[0])
 										canControl = True
-							if act == 10:
+							if act == 11:
 								if len(TextObjects) == 4:
 									TextObjects.append(DispObj(wraptext("", 700, font, True), [10, 10], False,
 															   [512, 500]))
 									if TextObjects[4].dialog == -1:
 										TextObjects[4].dialog = 0
-							if act == 11:
+							if act == 12:
 								if len(TextObjects) == 4:
 									TextObjects.append(DispObj(wraptext("", 700, font, True), [10, 10], False,
 															   [512, 500]))
