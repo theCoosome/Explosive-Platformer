@@ -2436,6 +2436,7 @@ while Running:
 					Screen = 1
 					Story = False
 					canControl = True
+					mouse_down = False
 			if pointCollide((100, 400), (200, 28), mousepos): #controls
 				mouseImg = OnImg
 				if mouse_down:
