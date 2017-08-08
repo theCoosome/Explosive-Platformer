@@ -2602,15 +2602,14 @@ while Running:
 									Birds[0].vel[0] = 0'''
 								if isOnTop(fal[0], player):
 									fal[0].vel[0] = 0
-									print "yes"
 									act += 1
+									print "Yes"
 								else:
 									fal[0].vel[0] = -1
-									print "no"
 
 
 							if act == 3:
-								if isNear(fal[0].coords, player.coords):
+								if isOnTop(fal[0], player):
 									if len(TextObjects) < 2:
 										TextObjects.append(
 											DispObj(wraptext("", 700, font, True), [10, 10], False,
@@ -2625,6 +2624,8 @@ while Running:
 									if TextObjects[2].dialog == 3:
 										act += 1
 										acttimer = 100
+								else:
+									print "SOMETHING OFF"
 							
 							if act == 4:
 								currLvl = 0
