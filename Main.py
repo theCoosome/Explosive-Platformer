@@ -1740,6 +1740,38 @@ createMovingBlock(752, 452, 16, 1, 1) #third yellow step
 DetCurrent = DetNorm
 
 saveLevel(2)
+#swimming pool
+#sarah
+createFloor(32, 656, 4, 1)
+createFloor(48, 608, 7, 1)
+createFloor(64, 560, 10, 1)
+createFloor(80, 512, 13, 1)
+createFloor(96, 464, 16, 1)
+createFloor(112, 416, 19, 1)
+createFloor(128, 368, 22, 1)
+createFloor(144, 320, 25, 1)
+createFloor(160, 272, 28, 1)
+createFloor(176, 224, 31, 1)
+createFloor(192, 176, 34, 1)
+createFloor(208, 128, 37, 1)
+createFloor(224, 80, 40, 1)
+createFloor(0, 0, 4, 64)
+createFloor(896, 64, 41, 8)
+createFloor(0, 64, 41, 2)
+entrances = [Entrance(4, [int(32), int(640)], [int(16), int(16)], entranceImg)]
+grates.append(Grate([int(240), int(704)], [int(656), int(16)], ["moving"]))
+createExit(4, [int(560), int(432)], [int(16), int(16)], exitImg)
+createFloor(240, 192, 1, 4)
+createMovingBlock(288, 576, 11, 2, 0)
+createMovingBlock(480, 432, 4, 16, 0)
+createMovingBlock(384, 432, 4, 5, 0)
+
+createMovingBlock(528, 432, 2, 3, 1, 100)
+createMovingBlock(528, 400, 3, 2, 1, 100)
+createMovingBlock(576, 400, 2, 3, 1, 100)
+createMovingBlock(560, 448, 3, 2, 1, 100)
+
+saveLevel(2)
 
 #launching a block
 #Colton
