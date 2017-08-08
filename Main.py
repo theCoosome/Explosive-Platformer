@@ -1525,22 +1525,6 @@ createExit(4, [int(960), int(384)], [int(16), int(16)], exitImg)
 DetCurrent = DetKB
 saveLevel(1)
 
-#Intro to destructables over chasms
-#Brett
-createFloor(0, 0, 45, 2)
-createFloor(992, 0, 45, 2)
-createMovingBlock(32, 688, 8, 2, 1, 300)
-createMovingBlock(160, 640, 3, 3, 1, 300)
-createMovingBlock(208, 576, 4, 4, 1, 300)
-createMovingBlock(272, 496, 5, 5, 1, 300)
-createMovingBlock(352, 400, 6, 6, 1, 300)
-createMovingBlock(448, 288, 7, 7, 1, 300)
-createMovingBlock(560, 160, 8, 8, 1, 300)
-createExit(4, [int(656), int(144)], [int(16), int(16)], exitImg)
-entrances = [Entrance(4, [int(64), int(624)], [int(16), int(16)], entranceImg)]
-DetCurrent = DetNorm
-saveLevel(2)
-
 #Moving block intro
 #Colton
 createFloor(0, 560, 10, 64)
@@ -1582,16 +1566,6 @@ createExit(4, [int(912), int(368)], [int(16), int(16)], exitImg)
 createFloor(976, 96, 18, 3)
 DetCurrent = DetNorm
 saveLevel(1)
-#jumping down
-#sarah
-createMovingBlock(320, 512, 8, 3, 1)
-createMovingBlock(512, 336, 6, 3, 1)
-createMovingBlock(720, 208, 4, 3, 1)
-createMovingBlock(832, 48, 12, 4, 1)
-createMovingBlock(0, 688, 11, 2, 1)
-entrances = [Entrance(4, [int(960), int(32)], [int(16), int(16)], entranceImg)]
-createExit(4, [int(64), int(672)], [int(16), int(16)], exitImg)
-saveLevel(1)
 
 #Multi intro
 #Colton
@@ -1624,6 +1598,33 @@ createMovingBlock(744, 48, 15, 11, 0) #blue
 createMovingBlock(720, 384, 18, 3, 1) #yellow
 createSensor(792, 448, 9, 5, 0, ["guy"], gyah)
 saveLevel(2, [("sensor",0)])
+
+#jumping down
+#sarah
+createMovingBlock(320, 512, 8, 3, 1)
+createMovingBlock(512, 336, 6, 3, 1)
+createMovingBlock(720, 208, 4, 3, 1)
+createMovingBlock(832, 48, 12, 4, 1)
+createMovingBlock(0, 688, 11, 2, 1)
+entrances = [Entrance(4, [int(960), int(32)], [int(16), int(16)], entranceImg)]
+createExit(4, [int(64), int(672)], [int(16), int(16)], exitImg)
+saveLevel(1)
+
+#Intro to destructables over chasms
+#Brett
+createFloor(0, 0, 45, 2)
+createFloor(992, 0, 45, 2)
+createMovingBlock(32, 688, 8, 2, 1, 300)
+createMovingBlock(160, 640, 3, 3, 1, 300)
+createMovingBlock(208, 576, 4, 4, 1, 300)
+createMovingBlock(272, 496, 5, 5, 1, 300)
+createMovingBlock(352, 400, 6, 6, 1, 300)
+createMovingBlock(448, 288, 7, 7, 1, 300)
+createMovingBlock(560, 160, 8, 8, 1, 300)
+createExit(4, [int(656), int(144)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(64), int(624)], [int(16), int(16)], entranceImg)]
+DetCurrent = DetNorm
+saveLevel(2)
 
 #BUT COLTON I FIXED IT THOUGH
 createFloor(0, 0, 11, 64)
@@ -2149,6 +2150,18 @@ entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
 DetCurrent = DetKB
 saveLevel(4)
 
+createMovingBlock(16, 400, 10, 2, 1)
+createMovingBlock(96, 256, 6, 2, 1)
+createMovingBlock(320, 176, 11, 2, 1)
+createMovingBlock(480, 320, 7, 2, 1)
+createMovingBlock(656, 160, 2, 12, 1)
+createMovingBlock(688, 320, 8, 2, 1)
+createMovingBlock(784, 624, 13, 3, 1)
+createExit(4, [int(960), int(608)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
+DetCurrent = DetKB
+saveLevel(4)
+
 #Dropping movables down
 createFloor(0, 688, 2, 64)
 createFloor(960, 368, 20, 4)
@@ -2172,18 +2185,6 @@ switches.append(Switch('Switch', [int(992), int(352)], [int(16), int(16)], switc
 
 DetCurrent = DetMulti
 saveLevel(6)
-
-createMovingBlock(16, 400, 10, 2, 1)
-createMovingBlock(96, 256, 6, 2, 1)
-createMovingBlock(320, 176, 11, 2, 1)
-createMovingBlock(480, 320, 7, 2, 1)
-createMovingBlock(656, 160, 2, 12, 1)
-createMovingBlock(688, 320, 8, 2, 1)
-createMovingBlock(784, 624, 13, 3, 1)
-createExit(4, [int(960), int(608)], [int(16), int(16)], exitImg)
-entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
-DetCurrent = DetKB
-saveLevel(4)
 
 
 def soundEffect(sfxkey):
@@ -2433,7 +2434,9 @@ while Running:
 			if pointCollide((100, 300), (200, 28), mousepos): #levels
 				mouseImg = OnImg
 				if mouse_down:
-						Screen = 1
+					Screen = 1
+					Story = False
+					canControl = True
 			if pointCollide((100, 400), (200, 28), mousepos): #controls
 				mouseImg = OnImg
 				if mouse_down:
@@ -2619,6 +2622,7 @@ while Running:
 								loadSaved(currLvl)
 								canControl = True
 								isCutsecne = False
+								fel[0].coords = [224, 224]
 								
 							
 							if act == 5 and currLvl == 5:
@@ -2698,7 +2702,7 @@ while Running:
 		# user input
 		for event in pygame.event.get():
 
-			if event.type == pygame.KEYDOWN and canControl:
+			if event.type == pygame.KEYDOWN:
 			#Switches and Interactable Objects
 				if(len(switches) > 0):
 					if (isNear(center(switches[0]), center(player))):
@@ -2713,31 +2717,31 @@ while Running:
 											s.img = switchImages[1]
 
 				# movement
-				if event.key in [K_RIGHT, K_d]:  # move ->
+				if event.key in [K_RIGHT, K_d] and canControl:  # move ->
 					player.motion[0] += 2.0
 					gR = 0
 					personimg = right[player.index]
 					movingRight = True
 					movingLeft = False
-				if event.key in [K_LEFT, K_a]:  # move <-
+				if event.key in [K_LEFT, K_a] and canControl:  # move <-
 					player.motion[0] -= 2.0
 					gL =0
 					time.sleep(.02)
 					personimg = left[player.index]
 					movingLeft = True
 					movingRight = False
-				if event.key in [K_RIGHT and K_a, K_LEFT and K_d]:  # move ->
+				if event.key in [K_RIGHT and K_a, K_LEFT and K_d] and canControl:  # move ->
 					movingRight = False
 					movingLeft = False
-				if event.key in [K_DOWN, K_s]:  # v
+				if event.key in [K_DOWN, K_s] and canControl:  # v
 					player.motion[1] += 0.5
 					player.Crouch()
-				if event.key in [K_UP, K_w] and player.floor:  # ^
+				if event.key in [K_UP, K_w] and player.floor and canControl:  # ^
 					player.vel[1] = -8
 					sfxkey = 1
 					soundEffect(sfxkey)
 					player.floor = False
-				if event.key in [K_LALT, K_e]:
+				if event.key in [K_LALT, K_e] and canControl:
 					bombs = []
 					
 				if event.key == K_r:  # slow down
@@ -2754,7 +2758,7 @@ while Running:
 						muteon = False
 					else:
 						muteon = True
-				if event.key == K_x:
+				if event.key == K_x and canControl:
 					player.Kill()
 				if event.key == K_z:
 					print "Coords: ", player.coords[0], player.coords[1]
@@ -2762,25 +2766,19 @@ while Running:
 					print "Motion: ", player.motion[0], player.motion[1]
 					print "Floored: ", player.floor
 					print "Act, Scene: ", act, scene
-				if event.key == K_g:  # defunct?gravty on and off
-					for i in bombs:
-						i.floor = toggle(player.floor)
-						i.vel[1] = 0
-					player.floor = toggle(player.floor)
-					player.vel[1] = 0
 				if event.key == pygame.K_q:  # quitting
 					inGame = False
-				if event.key == K_p:  # Increment level by 1
+				if event.key == K_p and debugon:  # Increment level by 1
 					currLvl += 1
 					if currLvl > len(levels)-1:
 						currLvl = 0
 					loadSaved(currLvl)
-				if event.key == K_o:
+				if event.key == K_o and debugon:
 					currLvl -= 1
 					if currLvl < 0:
 						currLvl = len(levels) - 1
 					loadSaved(currLvl)
-				if event.key == pygame.K_SPACE:  # exploding
+				if event.key == pygame.K_SPACE and canControl:  # exploding
 					bombsExplode = True
 				if event.key == pygame.K_t:  # print cursor location, useful for putting stuff in the right spot
 					x, y = pygame.mouse.get_pos()
@@ -2912,6 +2910,19 @@ while Running:
 					currLvl = 0
 				unlocked[currLvl] = True
 				loadSaved(currLvl)
+				if Story:
+					if currLvl == 1:
+						fel[0].coords = [112, 240]
+					if currLvl == 2:
+						fel[0].coords = [112, 384]
+					if currLvl == 3:
+						fel[0].coords = [176, 544]
+					if currLvl == 4:
+						fel[0].coords = [368, 512]
+					if currLvl == 5:
+						fel[0].coords = [128, 496]
+					if currLvl == 6:
+						fel[0].coords = [128, 544]
 
 		if player.vel[0] == 0 and player.vel[1] == 0:
 			movingLeft = False
