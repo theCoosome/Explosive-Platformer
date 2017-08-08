@@ -2132,10 +2132,33 @@ createMovingBlock(208, 640, 3, 3, 1, 500)
 createMovingBlock(784, 320, 3, 3, 1, 500)
 createMovingBlock(368, 256, 3, 3, 1, 500)
 createSensor(912, 128, 3, 3, 0, ["guy"])
-
 DetCurrent = DetNorm
-
 saveLevel(3, [("sensor", 9)])
+
+#1 square sensors
+#sarah
+createFloor(48, 576, 1, 12)
+createFloor(0, 288, 27, 3)
+createFloor(960, 0, 45, 4)
+createFloor(160, 0, 5, 50)
+#createMovingBlock(0, 576, 15, 1, 1) replaced with floor
+createMovingBlock(192, 544, 3, 2, 0)
+stepOn1 = grates.append(Grate([int(224), int(512)], [int(416), int(16)], []))#triggered by bf #pixels from side, pixels from top, length in pixels, width in pixels
+#createFloor(560, 432, 1, 10)
+createMovingBlock(560, 432, 10, 1, 1, 10) # NOT also replaced with above floor
+createMovingBlock(560, 400, 3, 2, 2, 220)
+stepOn2 = grates.append(Grate([int(640), int(416)], [int(192), int(16)], [])) #triggered by pm
+createFloor(832, 336, 2, 8)
+createFloor(0, 272, 1, 51)
+createFloor(0, 0, 9, 10)
+doAwayWith = grates.append(Grate([int(0), int(144)], [int(160), int(128)], ["guy", "bomb", "dest"])) #be cleared by pl
+createExit(4, [int(64), int(240)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(64), int(560)], [int(16), int(16)], entranceImg)]
+createMovingBlock(656, 96, 5, 8, 2, 6000) #large purple #triggered by bf #pixels from side, pixels from top, length in blocks, width in blocks
+createSensor(272, 592, 1, 1, 0, ["guy", "bomb"], stepOn1) #blue first
+createSensor(800, 528, 1, 1, 2, ["guy", "bomb"], stepOn2) #purple middle
+createSensor(176, 240, 1, 1, 2, ["guy", "bomb"]) #purple last
+saveLevel(3, [("sensor", 0), ("sensor", 1), ("sensor", 2) ]) #[("sensor", 0), ("sensor", 1)])
 
 createMovingBlock(16, 400, 10, 2, 1)
 createMovingBlock(96, 256, 6, 2, 1)
