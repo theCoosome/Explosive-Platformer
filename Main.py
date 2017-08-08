@@ -687,6 +687,7 @@ class Bird(object):
 		self.size = size
 		self.index = 0
 		self.vel = [0, 0]
+		self.flying = True
 
 	def Collide(self, i):
 		if collide(i.coords, i.size, self.coords, self.size):  # UP
@@ -1337,7 +1338,7 @@ def loadSaved(lvl):
 	
 	exits = this["exits"]
 	DetCurrent = this["Det"]
-	
+	player.vel = [0, 0]
 	print "Loaded level: ", lvl
 	DB.refresh()
 	for i in bricks:
@@ -1525,22 +1526,6 @@ createExit(4, [int(960), int(384)], [int(16), int(16)], exitImg)
 DetCurrent = DetKB
 saveLevel(1)
 
-#Intro to destructables over chasms
-#Brett
-createFloor(0, 0, 45, 2)
-createFloor(992, 0, 45, 2)
-createMovingBlock(32, 688, 8, 2, 1, 320)
-createMovingBlock(160, 640, 3, 3, 1, 320)
-createMovingBlock(208, 576, 4, 4, 1, 320)
-createMovingBlock(272, 496, 5, 5, 1, 320)
-createMovingBlock(352, 400, 6, 6, 1, 320)
-createMovingBlock(448, 288, 7, 7, 1, 320)
-createMovingBlock(560, 160, 8, 8, 1, 320)
-createExit(4, [int(656), int(144)], [int(16), int(16)], exitImg)
-entrances = [Entrance(4, [int(64), int(624)], [int(16), int(16)], entranceImg)]
-DetCurrent = DetNorm
-saveLevel(2)
-
 #Moving block intro
 #Colton
 createFloor(0, 560, 10, 64)
@@ -1582,16 +1567,6 @@ createExit(4, [int(912), int(368)], [int(16), int(16)], exitImg)
 createFloor(976, 96, 18, 3)
 DetCurrent = DetNorm
 saveLevel(1)
-#jumping down
-#sarah
-createMovingBlock(320, 512, 8, 3, 1)
-createMovingBlock(512, 336, 6, 3, 1)
-createMovingBlock(720, 208, 4, 3, 1)
-createMovingBlock(832, 48, 12, 4, 1)
-createMovingBlock(0, 688, 11, 2, 1)
-entrances = [Entrance(4, [int(960), int(32)], [int(16), int(16)], entranceImg)]
-createExit(4, [int(64), int(672)], [int(16), int(16)], exitImg)
-saveLevel(1)
 
 #Multi intro
 #Colton
@@ -1624,6 +1599,33 @@ createMovingBlock(744, 48, 15, 11, 0) #blue
 createMovingBlock(720, 384, 18, 3, 1) #yellow
 createSensor(792, 448, 9, 5, 0, ["guy"], gyah)
 saveLevel(2, [("sensor",0)])
+
+#jumping down
+#sarah
+createMovingBlock(320, 512, 8, 3, 1)
+createMovingBlock(512, 336, 6, 3, 1)
+createMovingBlock(720, 208, 4, 3, 1)
+createMovingBlock(832, 48, 12, 4, 1)
+createMovingBlock(0, 688, 11, 2, 1)
+entrances = [Entrance(4, [int(960), int(32)], [int(16), int(16)], entranceImg)]
+createExit(4, [int(64), int(672)], [int(16), int(16)], exitImg)
+saveLevel(1)
+
+#Intro to destructables over chasms
+#Brett
+createFloor(0, 0, 45, 2)
+createFloor(992, 0, 45, 2)
+createMovingBlock(32, 688, 8, 2, 1, 320)
+createMovingBlock(160, 640, 3, 3, 1, 320)
+createMovingBlock(208, 576, 4, 4, 1, 320)
+createMovingBlock(272, 496, 5, 5, 1, 320)
+createMovingBlock(352, 400, 6, 6, 1, 320)
+createMovingBlock(448, 288, 7, 7, 1, 320)
+createMovingBlock(560, 160, 8, 8, 1, 320)
+createExit(4, [int(656), int(144)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(64), int(624)], [int(16), int(16)], entranceImg)]
+DetCurrent = DetNorm
+saveLevel(2)
 
 #BUT COLTON I FIXED IT THOUGH
 createFloor(0, 0, 11, 64)
@@ -2172,6 +2174,18 @@ entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
 DetCurrent = DetKB
 saveLevel(4)
 
+createMovingBlock(16, 400, 10, 2, 1)
+createMovingBlock(96, 256, 6, 2, 1)
+createMovingBlock(320, 176, 11, 2, 1)
+createMovingBlock(480, 320, 7, 2, 1)
+createMovingBlock(656, 160, 2, 12, 1)
+createMovingBlock(688, 320, 8, 2, 1)
+createMovingBlock(784, 624, 13, 3, 1)
+createExit(4, [int(960), int(608)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
+DetCurrent = DetKB
+saveLevel(4)
+
 #Dropping movables down
 createFloor(0, 688, 2, 64)
 createFloor(960, 368, 20, 4)
@@ -2195,19 +2209,6 @@ switches.append(Switch('Switch', [int(992), int(352)], [int(16), int(16)], switc
 
 DetCurrent = DetMulti
 saveLevel(6)
-
-createMovingBlock(16, 400, 10, 2, 1)
-createMovingBlock(96, 256, 6, 2, 1)
-createMovingBlock(320, 176, 11, 2, 1)
-createMovingBlock(480, 320, 7, 2, 1)
-createMovingBlock(656, 160, 2, 12, 1)
-createMovingBlock(688, 320, 8, 2, 1)
-createMovingBlock(784, 624, 13, 3, 1)
-createExit(4, [int(960), int(608)], [int(16), int(16)], exitImg)
-entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
-DetCurrent = DetKB
-saveLevel(4)
-
 
 def soundEffect(sfxkey):
 	if not muteon:
@@ -2447,18 +2448,18 @@ while Running:
 					canControl = False
 					currLvl = -1
 					loadSaved(currLvl)
+					fal.append(lud(fals[0], (16, 16), [512, 320]))
 					act = 0
 					scene = 1
-					fal.append(lud(fals[0], (16, 16), [512, 320]))
-					TextObjects.append(DispObj(wraptext("", 70, font, True), fal[0].coords, False, [fal[0].coords[0] - 30,fal[0].coords[1] - 30]))
-					TextObjects.append(DispObj(wraptext("", 700, massive, True), [10, 10], False,
-											   [512, 360]))
 
 					pass
 			if pointCollide((100, 300), (200, 28), mousepos): #levels
 				mouseImg = OnImg
 				if mouse_down:
-						Screen = 1
+					Screen = 1
+					Story = False
+					canControl = True
+					mouse_down = False
 			if pointCollide((100, 400), (200, 28), mousepos): #controls
 				mouseImg = OnImg
 				if mouse_down:
@@ -2584,10 +2585,12 @@ while Running:
 						acttimer -= 1
 						if acttimer <= 0:
 							if act == 0: #Prep for act 1
+								TextObjects.append(DispObj(wraptext("", 70, font, True), fal[0].coords, False,
+														   [fal[0].coords[0] - 30, fal[0].coords[1] - 30]))
+
 								TextObjects.append(DispObj(wraptext("Later that day...", 700, massive, True), [10, 10], False,
 														   [512, 360]))
 
-								fal.append(lud(fals[0], (16, 16), [512, 336]))
 								Birds.append(Bird(birdImages[0], [-100, 128], (16, 16)))
 								act += 1
 								acttimer = 100
@@ -2597,34 +2600,41 @@ while Running:
 									TextObjects[0].all = wraptext("", 180, font, True)
 									TextObjects[0].refresh()
 
-									if not isOnTop(Birds[0],player):
-										change = goTo(Birds[0].coords, player.coords)
-										Birds[0].vel[0] = 1
-										Birds[0].vel[1] = change * 1
-									else:
-										Birds[0].vel[0] = 5
-										Birds[0].vel[1] = -change * 5
+									if hit(Birds[0].coords, Birds[0].size, player.coords, player.size):
+										Birds[0].vel[0] = 3
+										Birds[0].vel[1] = -10
 										act += 1
 										acttimer = 50
+										Birds[0].flying = False
+									else:
+										if Birds[0].coords[1] < player.coords[1]:
+											Birds[0].vel[1] = 1
+										if Birds[0].coords[1] > player.coords[1]:
+											Birds[0].vel[1] = -1
+										if Birds[0].coords[0] < player.coords[0] and Birds[0].vel[0] < 10:
+											Birds[0].vel[0] += 1
+										if Birds[0].coords[0] > player.coords[0] and Birds[0].vel[0] > -10:
+											Birds[0].vel[0] -= 1
 
 
 									# Birds[0].coords[1] -= g
 							if act == 2:
 
 								acttimer -= 1
-								if Birds[0].vel[1] < maxFallSpeed:
-									Birds[0].vel[1] += gravity
-								if acttimer <= 0:
-									Birds[0].vel[0] = 0
+								'''if acttimer <= 0:
+									Birds[0].vel[0] = 0'''
 								if isOnTop(fal[0], player):
 									fal[0].vel[0] = 0
 									act += 1
+									print "Yes"
 								else:
 									fal[0].vel[0] = -1
 
+
 							if act == 3:
-								if isNear(fal[0].coords, player.coords):
-									if len(TextObjects) < 2:
+								if isOnTop(fal[0], player):
+									print len(TextObjects)
+									if len(TextObjects) < 3:
 										TextObjects.append(
 											DispObj(wraptext("", 700, font, True), [10, 10], False,
 													[fal[0].coords[0] - 10, fal[0].coords[1] - 30]))
@@ -2638,12 +2648,16 @@ while Running:
 									if TextObjects[2].dialog == 3:
 										act += 1
 										acttimer = 100
+								else:
+									print "SOMETHING OFF"
 							
 							if act == 4:
 								currLvl = 0
 								loadSaved(currLvl)
 								canControl = True
 								isCutsecne = False
+								fal.append(lud(fals[0],(16,16),[224, 224]))
+
 								
 							
 							if act == 5 and currLvl == 5:
@@ -2723,7 +2737,7 @@ while Running:
 		# user input
 		for event in pygame.event.get():
 
-			if event.type == pygame.KEYDOWN and canControl:
+			if event.type == pygame.KEYDOWN:
 			#Switches and Interactable Objects
 				if(len(switches) > 0):
 					if (isNear(center(switches[0]), center(player))):
@@ -2738,31 +2752,31 @@ while Running:
 											s.img = switchImages[1]
 
 				# movement
-				if event.key in [K_RIGHT, K_d]:  # move ->
+				if event.key in [K_RIGHT, K_d] and canControl:  # move ->
 					player.motion[0] += 2.0
 					gR = 0
 					personimg = right[player.index]
 					movingRight = True
 					movingLeft = False
-				if event.key in [K_LEFT, K_a]:  # move <-
+				if event.key in [K_LEFT, K_a] and canControl:  # move <-
 					player.motion[0] -= 2.0
 					gL =0
 					time.sleep(.02)
 					personimg = left[player.index]
 					movingLeft = True
 					movingRight = False
-				if event.key in [K_RIGHT and K_a, K_LEFT and K_d]:  # move ->
+				if event.key in [K_RIGHT and K_a, K_LEFT and K_d] and canControl:  # move ->
 					movingRight = False
 					movingLeft = False
-				if event.key in [K_DOWN, K_s]:  # v
+				if event.key in [K_DOWN, K_s] and canControl:  # v
 					player.motion[1] += 0.5
 					player.Crouch()
-				if event.key in [K_UP, K_w] and player.floor:  # ^
+				if event.key in [K_UP, K_w] and player.floor and canControl:  # ^
 					player.vel[1] = -8
 					sfxkey = 1
 					soundEffect(sfxkey)
 					player.floor = False
-				if event.key in [K_LALT, K_e]:
+				if event.key in [K_LALT, K_e] and canControl:
 					bombs = []
 					
 				if event.key == K_r:  # slow down
@@ -2779,7 +2793,7 @@ while Running:
 						muteon = False
 					else:
 						muteon = True
-				if event.key == K_x:
+				if event.key == K_x and canControl:
 					player.Kill()
 				if event.key == K_z:
 					print "Coords: ", player.coords[0], player.coords[1]
@@ -2787,25 +2801,19 @@ while Running:
 					print "Motion: ", player.motion[0], player.motion[1]
 					print "Floored: ", player.floor
 					print "Act, Scene: ", act, scene
-				if event.key == K_g:  # defunct?gravty on and off
-					for i in bombs:
-						i.floor = toggle(player.floor)
-						i.vel[1] = 0
-					player.floor = toggle(player.floor)
-					player.vel[1] = 0
 				if event.key == pygame.K_q:  # quitting
 					inGame = False
-				if event.key == K_p:  # Increment level by 1
+				if event.key == K_p and debugon:  # Increment level by 1
 					currLvl += 1
 					if currLvl > len(levels)-1:
 						currLvl = 0
 					loadSaved(currLvl)
-				if event.key == K_o:
+				if event.key == K_o and debugon:
 					currLvl -= 1
 					if currLvl < 0:
 						currLvl = len(levels) - 1
 					loadSaved(currLvl)
-				if event.key == pygame.K_SPACE:  # exploding
+				if event.key == pygame.K_SPACE and canControl:  # exploding
 					bombsExplode = True
 				if event.key == pygame.K_t:  # print cursor location, useful for putting stuff in the right spot
 					x, y = pygame.mouse.get_pos()
@@ -2893,6 +2901,9 @@ while Running:
 		p1 = center(player)
 		player.coords[0] += player.vel[0]
 		player.coords[1] += player.vel[1]
+
+
+
 		if debugon:
 			pygame.draw.line(debugOverlay, PURPLE, p1, center(player))
 			pygame.draw.rect(debugOverlay, PURPLE, (player.coords[0], player.coords[1], player.size[0], player.size[1]), 1)
@@ -2937,6 +2948,20 @@ while Running:
 					currLvl = 0
 				unlocked[currLvl] = True
 				loadSaved(currLvl)
+				if Story:
+					fal.append(lud(fals[0], (16, 16), [512, 320]))
+					if currLvl == 1:
+						fal[0].coords = [112, 240]
+					if currLvl == 2:
+						fal[0].coords = [112, 384]
+					if currLvl == 3:
+						fal[0].coords = [176, 544]
+					if currLvl == 4:
+						fal[0].coords = [368, 512]
+					if currLvl == 5:
+						fal[0].coords = [128, 496]
+					if currLvl == 6:
+						fal[0].coords = [128, 544]
 
 		if player.vel[0] == 0 and player.vel[1] == 0:
 			movingLeft = False
@@ -3042,8 +3067,6 @@ while Running:
 				a.Collide(i)
 			for a in kings:
 				a.Collide(i)
-			if len(Birds) > 0:
-				Birds[0].Collide(i)
 		for i in grates:
 			if "guy" in i.blocked:
 				player.Collide(i)
@@ -3151,12 +3174,11 @@ while Running:
 				if warrios[1].index == 2:
 					warrios[1].index = 0
 		
-		if len(fal) == 1:
+		if len(fal) != 0:
 			if fal[0].vel[1] < maxFallSpeed:
 				fal[0].vel[1] += gravity
 
-				fal[0].coords[0] += fal[0].vel[0]
-				fal[0].coords[1] += fal[0].vel[1]
+
 
 			if fal[0].vel[0] > 0:
 				falCount += 1
@@ -3176,11 +3198,12 @@ while Running:
 					falCount = 0
 				if fal[0].index == 2:
 					fal[0].index = -1
-
+			fal[0].coords[0] += fal[0].vel[0]
+			fal[0].coords[1] += fal[0].vel[1]
 		for b in Birds:
 			b.coords[0] += b.vel[0]
 			b.coords[1] += b.vel[1]
-			if b.vel[0] == 1:
+			if b.vel[0] > 1:
 				animBird += 1
 				if animBird == 10:
 					b.index += 1
@@ -3188,6 +3211,8 @@ while Running:
 				if b.index == 4:
 					b.index = 0
 					animBird = 0
+			if b.vel[1] < maxFallSpeed and not b.flying:
+				b.vel[1] += gravity
 		
 		
 		for i in bombs:
@@ -3318,6 +3343,15 @@ while Running:
 				paper = True
 				canControl = False
 			screen.blit(p.img, p.coords)
+		
+		if Story:
+			if currLvl == 7:
+				isCutsecne = True
+				canControl = False
+				player.motion = [0, 0]
+				currLvl = -1
+				loadSaved(currLvl)
+				act = 5
 		
 		if isCutsecne:
 			if len(TextObjects) > 0:
