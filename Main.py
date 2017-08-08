@@ -1514,6 +1514,31 @@ createFloor(960, 64, 30, 4)
 DetCurrent = DetKB
 saveLevel(1)
 
+#Chasm Hopping Intro
+#Brett
+entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
+createFloor(0, 400, 2, 26)
+createFloor(608, 400, 2, 26)
+createExit(4, [int(960), int(384)], [int(16), int(16)], exitImg)
+DetCurrent = DetKB
+saveLevel(1)
+
+#Intro to destructables over chasms
+#Brett
+createFloor(0, 0, 45, 2)
+createFloor(992, 0, 45, 2)
+createMovingBlock(32, 688, 8, 2, 1, 300)
+createMovingBlock(160, 640, 3, 3, 1, 300)
+createMovingBlock(208, 576, 4, 4, 1, 300)
+createMovingBlock(272, 496, 5, 5, 1, 300)
+createMovingBlock(352, 400, 6, 6, 1, 300)
+createMovingBlock(448, 288, 7, 7, 1, 300)
+createMovingBlock(560, 160, 8, 8, 1, 300)
+createExit(4, [int(656), int(144)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(64), int(624)], [int(16), int(16)], entranceImg)]
+DetCurrent = DetNorm
+saveLevel(2)
+
 #Moving block intro
 #Colton
 createFloor(0, 560, 10, 64)
