@@ -2618,6 +2618,8 @@ while Running:
 								canControl = True
 								isCutsecne = False
 								fal.append(lud(fals[0],(16,16),[224, 224]))
+								fal[0].text = DispObj(wraptext("Remember that bombs do more damage the closer they are to the center of an object.&Press space to detonate!", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
+
 
 								
 							
@@ -2930,19 +2932,23 @@ while Running:
 					fal.append(lud(fals[0], (16, 16), [512, 320]))
 					if currLvl == 1:
 						fal[0].coords = [112, 240]
-						fal[0].textObject = DispObj(wraptext("HIIIII", 70, font, True), fal[0].coords, False,
-														   [fal[0].coords[0] - 30, fal[0].coords[1] - 30])
+						fal[0].text = DispObj(wraptext("If you jump while you detonate, you can go a bit higher than either alone.", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 
 					if currLvl == 2:
 						fal[0].coords = [112, 384]
+						fal[0].text = DispObj(wraptext("First", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 					if currLvl == 3:
 						fal[0].coords = [176, 544]
+						fal[0].text = DispObj(wraptext("Placing bombs towards the bottom of blocks makes them go further by throwing them in the air.", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 					if currLvl == 4:
 						fal[0].coords = [368, 512]
+						fal[0].text = DispObj(wraptext("Second", 70, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 					if currLvl == 5:
 						fal[0].coords = [128, 496]
+						fal[0].text = DispObj(wraptext("Third", 70, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 					if currLvl == 6:
 						fal[0].coords = [128, 544]
+						fal[0].text = DispObj(wraptext("Purple blocks are mobile, but not so durable.", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 
 		if player.vel[0] == 0 and player.vel[1] == 0:
 			movingLeft = False
