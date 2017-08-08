@@ -2424,6 +2424,7 @@ while Running:
 					canControl = False
 					currLvl = -1
 					loadSaved(currLvl)
+					fal.append(lud(fals[0], (16, 16), [512, 320]))
 					act = 0
 					scene = 1
 
@@ -2559,7 +2560,6 @@ while Running:
 						acttimer -= 1
 						if acttimer <= 0:
 							if act == 0: #Prep for act 1
-								fal.append(lud(fals[0], (16, 16), [512, 320]))
 								TextObjects.append(DispObj(wraptext("", 70, font, True), fal[0].coords, False,
 														   [fal[0].coords[0] - 30, fal[0].coords[1] - 30]))
 								TextObjects.append(DispObj(wraptext("", 700, massive, True), [10, 10], False,
@@ -2576,25 +2576,32 @@ while Running:
 									TextObjects[0].all = wraptext("", 180, font, True)
 									TextObjects[0].refresh()
 
-									if not isOnTop(Birds[0],player):
-										change = goTo(Birds[0].coords, player.coords)
-										Birds[0].vel[0] = 1
-										Birds[0].vel[1] = change * 1
-									else:
-										Birds[0].vel[0] = 5
-										Birds[0].vel[1] = -change * 5
+									if hit(Birds[0].coords, Birds[0].size, player.coords, player.size):
+										Birds[0].vel[0] = 2
+										Birds[0].vel[1] = -5
 										act += 1
 										acttimer = 50
+									else:
+										if Birds[0].coords[1] < player.coords[1]:
+											Birds[0].vel[1] = 1
+										if Birds[0].coords[1] > player.coords[1]:
+											Birds[0].vel[1] = -1
+										if Birds[0].coords[0] < player.coords[0]:
+											Birds[0].vel[0] += 1
+										if Birds[0].coords[0] > player.coords[0]:
+											Birds[0].vel[0] -= 1
 
 
 									# Birds[0].coords[1] -= g
 							if act == 2:
 
 								acttimer -= 1
+								print Birds[0].vel
 								if Birds[0].vel[1] < maxFallSpeed:
 									Birds[0].vel[1] += gravity
-								if acttimer <= 0:
-									Birds[0].vel[0] = 0
+									print "GRAV"
+								'''if acttimer <= 0:
+									Birds[0].vel[0] = 0'''
 								if isOnTop(fal[0], player):
 									fal[0].vel[0] = 0
 									print "yes"
@@ -3035,8 +3042,6 @@ while Running:
 				a.Collide(i)
 			for a in kings:
 				a.Collide(i)
-			if len(Birds) > 0:
-				Birds[0].Collide(i)
 		for i in grates:
 			if "guy" in i.blocked:
 				player.Collide(i)
@@ -3173,7 +3178,7 @@ while Running:
 		for b in Birds:
 			b.coords[0] += b.vel[0]
 			b.coords[1] += b.vel[1]
-			if b.vel[0] == 1:
+			if b.vel[0] > 1:
 				animBird += 1
 				if animBird == 10:
 					b.index += 1
