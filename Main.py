@@ -2595,9 +2595,11 @@ while Running:
 								loadSaved(currLvl)
 								canControl = True
 								isCutsecne = False
+								
 							
 							if act == 5 and currLvl == 5:
-
+								canControl = False
+								isCutsecne = True
 								if acttimer <= 0:
 									if len(warrios) < 1:
 										warrios.append(warrior(warriorImgL[1], (16, 16), [600, 320]))
@@ -2735,6 +2737,7 @@ while Running:
 					print "Velocity: ", player.vel[0], player.vel[1]
 					print "Motion: ", player.motion[0], player.motion[1]
 					print "Floored: ", player.floor
+					print "Act, Scene: ", act, scene
 				if event.key == K_g:  # defunct?gravty on and off
 					for i in bombs:
 						i.floor = toggle(player.floor)
