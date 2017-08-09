@@ -115,12 +115,12 @@ birdImages = [getImg("StupidBird/stupidbird (1)"),getImg("StupidBird/stupidbird 
 crouchImg = [getImg("Dereks/DerekCrouch"),getImg("Dereks/derekcrouchl")]
 
 #Warrior
-warriorImgL = [getImg("Warrior/warrior2l"),getImg("Warrior/warrior3l"),getImg("Warrior/warrior1l")]
-warriorImgR = [getImg("Warrior/warrior1r"),getImg("Warrior/warrior2r"),getImg("Warrior/warrior3r")]
+warriorImgR = [getImg("RockTrollGuard/GuardRT (5)"),getImg("RockTrollGuard/GuardRT (4)"),getImg("RockTrollGuard/GuardRT (6)")]
+warriorImgL = [getImg("RockTrollGuard/GuardRT (2)"),getImg("RockTrollGuard/GuardRT (1)"),getImg("RockTrollGuard/GuardRT (3)")]
 
 #King
-kingImgL = [getImg("King/king2l"),getImg("King/kingl3"),getImg("King/king1l")]
-kingImgR = [getImg("King/king"),getImg("King/king2r"),getImg("King/king1r")]
+kingImgL = [getImg("KingRockTroll/KingRT (2)"),getImg("KingRockTroll/KingRT (1)"),getImg("KingRockTroll/KingRT (3)")]
+kingImgR = [getImg("KingRockTroll/KingRT (5)"),getImg("KingRockTroll/KingRT (4)"),getImg("KingRockTroll/KingRT (6)")]
 #Paper
 paperImg = getImg("paper")
 
