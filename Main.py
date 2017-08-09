@@ -2665,28 +2665,41 @@ while Running:
 									if diaTimer <= 0:
 										print "yes correcto 3"
 										if dialog == 0:
-											fal[0].text = DispObj(wraptext("DEREK!! Are you okay?", 200, font, True),
+											fal[0].text = DispObj(wraptext("I'm glad we came here, it's peaceful.", 200, font, True),
 																  [fal[0].coords[0] - 40, fal[0].coords[1] - 100],
 																  False)
 											print "1"
 										if dialog == 1:
-											fal[0].text = DispObj(wraptext("That Bird attacked you.", 200, font, True),
+											fal[0].text = DispObj(wraptext("I wasn't sure about it.", 200, font, True),
 																  [fal[0].coords[0] - 40, fal[0].coords[1] - 100],
 																  False)
 											print "2"
 										if dialog == 2:
-											player.text = DispObj(
-												wraptext("I can't remember anything oh my gerd, derp derp wooooo", 200,
-														 font, True), [player.coords[0] - 40, player.coords[1] - 30],
-												False)
+											fal[0].text = DispObj(wraptext("Especially when you said that we needed to detonate a path here and back.", 200, font, True),
+																  [fal[0].coords[0] - 40, fal[0].coords[1] - 100],
+																  False)
 										if dialog == 3:
-											player.text = DispObj(
-												wraptext("I can't remember anything oh my gerd, derp derp wooooo", 200,
-														 font, True), [player.coords[0] - 40, player.coords[1] - 30],
-												False)
-											print "3"
+											fal[0].text = DispObj(wraptext("But I had fun. ", 200, font, True),
+																  [fal[0].coords[0] - 40, fal[0].coords[1] - 100],
+																  False)
+										# if dialog == 4:
+										# 	player.text = DispObj(
+										# 		wraptext("I can't remember anything oh my gerd, derp derp wooooo", 200,
+										# 				 font, True), [player.coords[0] - 40, player.coords[1] - 30],
+										# 		False)
+										# if dialog == 5:
+										# 	player.text = DispObj(
+										# 		wraptext("I can't remember anything oh my gerd, derp derp wooooo", 200,
+										# 				 font, True), [player.coords[0] - 40, player.coords[1] - 30],
+										# 		False)
+										# 	print "3"
 										if dialog == 4:
-											player.text = None
+											player.text = DispObj(wraptext(" ", 200, font, True),
+																  [fal[0].coords[0] - 40, fal[0].coords[1] - 100],
+																  False)
+											fal.text =  DispObj(wraptext(" ", 200, font, True),
+																  [fal[0].coords[0] - 40, fal[0].coords[1] - 100],
+																  False)
 											dia = False
 											dialog = 0
 											diaTimer = 100
