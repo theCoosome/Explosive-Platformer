@@ -213,6 +213,7 @@ grateImg = getImg("Bricks/Grate")
 Gplayer = getImg("Bricks/Gplayer")
 Gbomb = getImg("Bricks/Gbomb")
 Gmoving = getImg("Bricks/Gmoving")
+Gboom = getImg("Bricks/Gboom")
 
 #Bombs
 bombImg = getImg("Bombs/Bomb")
@@ -649,6 +650,8 @@ class Grate(object):
 			self.img.all.append(self.overlays[2])
 		if "dest" in self.blocked:
 			self.img.all.append(self.overlays[3])
+		if "boom" in self.blocked:
+			self.img.all.append(self.overlays[4])
 		self.img.all.append(self.base)
 		self.img.refresh()
 			
@@ -658,12 +661,12 @@ class Grate(object):
 		self.vel = (0, 0)
 		self.size = size
 		self.base = DispObj(pygame.transform.scale(grateImg, size), (0, 0), True, size)
-		self.blocked = blocked #blocked is list of strings: ["guy", "bomb", "moving", "dest"]
+		self.blocked = blocked #blocked is list of strings: ["guy", "bomb", "moving", "dest", "boom"]
 		self.img = DispObj([self.base], self.coords, False, self.size)
 		
 		self.sixteens = (size[0]/16, size[1]/16)
 		
-		self.overlays = [DispObj(no_thing, (0, 0), True, size), DispObj(no_thing, (0, 0), True, size), DispObj(no_thing, (0, 0), True, size), DispObj(no_thing, (0, 0), True, size)]
+		self.overlays = [DispObj(no_thing, (0, 0), True, size), DispObj(no_thing, (0, 0), True, size), DispObj(no_thing, (0, 0), True, size), DispObj(no_thing, (0, 0), True, size), DispObj(no_thing, (0, 0), True, size)]
 		
 		for x in range(self.sixteens[0]):
 			for y in range(self.sixteens[1]):
@@ -671,6 +674,7 @@ class Grate(object):
 				self.overlays[1].img.blit(Gbomb, (x*16, y*16))
 				self.overlays[2].img.blit(Gmoving, (x*16, y*16))
 				self.overlays[3].img.blit(Gmoving, (x*16, y*16))
+				self.overlays[4].img.blit(Gboom, (x*16, y*16))
 		
 		self.refresh()
 		
@@ -847,6 +851,17 @@ class bomb(object):
 						if DualLine(cm, cs, x):
 							sight = False
 							pygame.draw.line(debugOverlay, PURPLE, cm, cs)
+				'''for x in movingblocks:
+					if hit(x.coords, x.size, square[0:2], square[2:4]):
+						if DualLine(cm, cs, x):
+							sight = False
+							pygame.draw.line(debugOverlay, PURPLE, cm, cs)'''
+				for x in grates:
+					if "boom" in x.blocked:
+						if hit(x.coords, x.size, square[0:2], square[2:4]):
+							if DualLine(cm, cs, x):
+								sight = False
+								pygame.draw.line(debugOverlay, PURPLE, cm, cs)
 				if sight:
 					mob.vel[0] += (xd / td) * pow
 					mob.vel[1] += (yd / td) * pow
@@ -875,8 +890,13 @@ class bomb(object):
 									if DualLine(cm, cs, c):
 										sight = False
 										pygame.draw.line(debugOverlay, PURPLE, cm, cs)
+							'''for x in movingblocks:
+								if hit(x.coords, x.size, square[0:2], square[2:4]):
+									if DualLine(cm, cs, x):
+										sight = False
+										pygame.draw.line(debugOverlay, PURPLE, cm, cs)'''
 							for c in grates:
-								if "bomb" in c.blocked:
+								if "boom" in c.blocked:
 									if hit(c.coords, c.size, square[0:2], square[2:4]):
 										if DualLine(cm, cs, c):
 											sight = False
@@ -1481,10 +1501,13 @@ saveLevel(1)
 
 #Chasm Hopping Intro
 #Brett
-entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
-createFloor(0, 400, 2, 26)
-createFloor(608, 400, 2, 26)
-createExit(4, [int(960), int(384)], [int(16), int(16)], exitImg)
+createFloor(0, 0, 45, 2)
+createFloor(32, 400, 2, 24)
+createFloor(976, 0, 45, 3)
+createFloor(608, 400, 2, 23)
+createExit(4, [int(896), int(384)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(208), int(384)], [int(16), int(16)], entranceImg)]
+
 DetCurrent = DetKB
 saveLevel(1)
 
@@ -1599,7 +1622,7 @@ createExit(4, [int(144), int(528)], [int(16), int(16)], exitImg)
 entrances = [Entrance(4, [int(256), int(528)], [int(16), int(16)], entranceImg)]
 createMovingBlock(816, 416, 7, 4, 1, 300)
 createMovingBlock(816, 352, 7, 4, 0)
-grates.append(Grate([int(768), int(352)], [int(48), int(192)], ["bomb"]))
+grates.append(Grate([int(768), int(352)], [int(48), int(192)], ["bomb", "boom"]))
 createFloor(768, 176, 11, 10)
 createSensor(816, 480, 7, 4, 0, ["guy"])
 DetCurrent = DetNorm
@@ -1688,49 +1711,51 @@ saveLevel(2, [("sensor", 0) ])
 
 #easy stairs
 #sarah meilinger
-createFloor(0, 384, 21, 19)
-entrances = [Entrance(4, [int(48), int(368)], [int(16), int(16)], entranceImg)]
-createExit(4, [int(944), int(128)], [int(16), int(16)], exitImg)
-createMovingBlock(288, 256, 46, 3, 1) #to break yellow
-createMovingBlock(752, 0, 16, 16, 2, 375) #purples
-createMovingBlock(496, 0, 16, 16, 2, 375)
-createMovingBlock(304, 0, 12, 16, 2, 375)
-createMovingBlock(304, 608, 12, 1, 1) #first yellow step
-createMovingBlock(512, 528, 14, 1, 1)  #second yellow step
-createMovingBlock(752, 452, 16, 1, 1) #third yellow step
-DetCurrent = DetNorm
+createFloor(0, 0, 3, 64)
+createFloor(0, 432, 18, 19)
+createFloor(0, 48, 24, 5)
+createFloor(976, 48, 42, 3)
+createMovingBlock(304, 672, 14, 1, 1)
+createMovingBlock(528, 592, 14, 1, 1)
+createMovingBlock(752, 512, 14, 1, 1)
+createMovingBlock(304, 304, 42, 3, 1)
+createMovingBlock(304, 48, 14, 16, 2, 375)
+createMovingBlock(528, 48, 14, 16, 2, 375)
+createMovingBlock(752, 48, 14, 16, 2, 375)
+createExit(4, [int(864), int(208)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(160), int(416)], [int(16), int(16)], entranceImg)]
 
+DetCurrent = DetNorm
 saveLevel(2)
+
 #swimming pool
 #sarah
-createFloor(32, 656, 4, 1)
-createFloor(48, 608, 7, 1)
-createFloor(64, 560, 10, 1)
-createFloor(80, 512, 13, 1)
-createFloor(96, 464, 16, 1)
-createFloor(112, 416, 19, 1)
-createFloor(128, 368, 22, 1)
-createFloor(144, 320, 25, 1)
-createFloor(160, 272, 28, 1)
-createFloor(176, 224, 31, 1)
-createFloor(192, 176, 34, 1)
-createFloor(208, 128, 37, 1)
-createFloor(224, 80, 40, 1)
 createFloor(0, 0, 4, 64)
-createFloor(896, 64, 41, 8)
-createFloor(0, 64, 41, 2)
-entrances = [Entrance(4, [int(32), int(640)], [int(16), int(16)], entranceImg)]
-grates.append(Grate([int(240), int(704)], [int(656), int(16)], ["moving"]))
-createExit(4, [int(560), int(432)], [int(16), int(16)], exitImg)
-createFloor(240, 192, 1, 4)
-createMovingBlock(288, 576, 11, 2, 0)
-createMovingBlock(480, 432, 4, 16, 0)
-createMovingBlock(384, 432, 4, 5, 0)
+createFloor(0, 656, 4, 20)
+createFloor(960, 64, 41, 4)
+createFloor(0, 64, 37, 4)
+grates.append(Grate([int(320), int(656)], [int(640), int(64)], ["moving"]))
+entrances = [Entrance(4, [int(80), int(640)], [int(16), int(16)], entranceImg)]
+createFloor(112, 608, 3, 13)
+createFloor(128, 560, 3, 12)
+createFloor(144, 512, 3, 11)
+createFloor(160, 464, 3, 10)
+createFloor(176, 416, 3, 9)
+createFloor(192, 368, 3, 8)
+createFloor(208, 320, 3, 7)
+createFloor(224, 272, 3, 6)
+createFloor(240, 224, 3, 9)
+createFloor(256, 176, 3, 1)
+createFloor(272, 128, 6, 3)
+createMovingBlock(384, 624, 11, 2, 0)
+createMovingBlock(560, 432, 4, 14, 0)
+createMovingBlock(480, 544, 4, 5, 0)
+createMovingBlock(624, 416, 2, 3, 1)
+createMovingBlock(656, 432, 3, 2, 1)
+createMovingBlock(624, 384, 3, 2, 1)
+createMovingBlock(672, 384, 2, 3, 1)
+createExit(4, [int(656), int(416)], [int(16), int(16)], exitImg)
 
-createMovingBlock(528, 432, 2, 3, 1, 100)
-createMovingBlock(528, 400, 3, 2, 1, 100)
-createMovingBlock(576, 400, 2, 3, 1, 100)
-createMovingBlock(560, 448, 3, 2, 1, 100)
 
 saveLevel(2)
 
@@ -1823,42 +1848,44 @@ saveLevel(3, [("sensor", 0), ("sensor", 1)])
 
 #fastrun
 #Sarah
-createFloor(864, 384, 1, 10)
-createFloor(32, 688, 1, 7)
-createFloor(832, 688, 1, 12)
-createFloor(0, 560, 1, 12)
-createFloor(80, 432, 1, 7)
-createFloor(0, 656, 1, 55)
-createFloor(880, 608, 1, 9)
-createFloor(0, 576, 5, 1)
-createFloor(144, 400, 2, 3)
-createFloor(0, 352, 1, 62)
-createFloor(144, 528, 1, 55)
-createFloor(144, 448, 5, 1)
-createMovingBlock(160, 688, 6, 1, 1)
-createMovingBlock(272, 688, 6, 1, 1)
-createMovingBlock(384, 688, 6, 1, 1)
-createMovingBlock(496, 688, 6, 1, 1)
-createMovingBlock(608, 688, 6, 1, 1)
-createMovingBlock(720, 688, 6, 1, 1)
-createMovingBlock(704, 560, 8, 1, 1)
-createMovingBlock(544, 560, 8, 1, 1)
-createMovingBlock(384, 560, 8, 1, 1)
-createMovingBlock(224, 560, 8, 1, 1)
-createFloor(1008, 624, 4, 1)
-createFloor(832, 576, 1, 2)
-createFloor(0, 0, 22, 1)
-createFloor(16, 0, 1, 63)
-createFloor(1008, 16, 18, 1)
-createFloor(16, 528, 1, 1)
-createFloor(48, 480, 2, 2)
-createFloor(0, 368, 12, 1)
-entrances = [Entrance(4, [int(64), int(672)], [int(16), int(16)], entranceImg)]
-createExit(4, [int(512), int(144)], [int(16), int(16)], exitImg)
-createMovingBlock(688, 384, 9, 1, 1)
-createMovingBlock(512, 384, 9, 1, 1)
-createMovingBlock(336, 384, 9, 1, 1)
-createMovingBlock(160, 384, 9, 1, 1)
+createFloor(48, 672, 3, 15)
+createMovingBlock(304, 672, 5, 1, 1)
+createMovingBlock(400, 672, 5, 1, 1)
+createMovingBlock(496, 672, 5, 1, 1)
+createMovingBlock(592, 672, 5, 1, 1)
+createMovingBlock(688, 672, 5, 1, 1)
+createMovingBlock(784, 672, 5, 1, 1)
+createFloor(880, 672, 3, 9)
+grates.append(Grate([int(256), int(608)], [int(656), int(48)], ["guy", "boom"]))
+createFloor(912, 544, 2, 3)
+grates.append(Grate([int(848), int(480)], [int(64), int(32)], ["guy", "boom"]))
+createMovingBlock(736, 480, 5, 1, 1)
+createMovingBlock(624, 480, 5, 1, 1)
+createMovingBlock(512, 480, 5, 1, 1)
+createMovingBlock(400, 480, 5, 1, 1)
+createMovingBlock(288, 480, 5, 1, 1)
+grates.append(Grate([int(192), int(480)], [int(64), int(144)], ["guy", "boom"]))
+grates.append(Grate([int(224), int(416)], [int(736), int(48)], ["guy", "boom"]))
+createFloor(48, 480, 9, 9)
+createFloor(144, 368, 3, 6)
+createFloor(48, 416, 4, 4)
+createMovingBlock(256, 320, 8, 1, 1)
+createMovingBlock(416, 320, 8, 1, 1)
+createMovingBlock(576, 320, 8, 1, 1)
+createMovingBlock(736, 320, 8, 1, 1)
+createFloor(960, 320, 22, 4)
+grates.append(Grate([int(896), int(320)], [int(64), int(96)], ["guy", "boom"]))
+createFloor(944, 128, 7, 5)
+createFloor(0, 0, 8, 64)
+createFloor(0, 128, 37, 3)
+createFloor(48, 128, 9, 11)
+createFloor(160, 320, 3, 5)
+createFloor(192, 272, 2, 50)
+createFloor(224, 432, 2, 46)
+createFloor(256, 624, 2, 41)
+createExit(4, [int(528), int(192)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(144), int(656)], [int(16), int(16)], entranceImg)]
+
 detCurrent=DetKB
 saveLevel(3)
 
@@ -1887,61 +1914,25 @@ createExit(4, [int(928), int(608)], [int(16), int(16)], exitImg)
 DetCurrent = DetNorm
 saveLevel(4, [("sensor", 1)])
 
-#Running under launched
-#Colton
-createFloor(0, 448, 17, 64)
-createFloor(0, 0, 12, 20)
-createFloor(0, 384, 4, 7)
-createMovingBlock(320, 288, 4, 4, 1)
-createMovingBlock(320, 368, 4, 5, 0)
-createFloor(160, 336, 3, 10)
-createFloor(384, 240, 9, 11)
-createFloor(384, 0, 13, 11)
-createFloor(624, 0, 24, 25)
-createMovingBlock(560, 368, 4, 5, 0)
-createMovingBlock(560, 288, 4, 4, 1)
-entrances = [Entrance(4, [int(192), int(416)], [int(16), int(16)], entranceImg)]
-createExit(4, [int(768), int(432)], [int(16), int(16)], exitImg)
-DetCurrent = DetKB
-saveLevel(5)
-
 #death jump
 #sarah
-createFloor(0, 64, 12, 15)
-createFloor(320, 0, 16, 44)
-createMovingBlock(240, 0, 5, 16, 1)
-createMovingBlock(208, 704, 9, 1, 1)
-createMovingBlock(128, 544, 5, 2, 1)
-createMovingBlock(352, 544, 5, 2, 1)
-createFloor(240, 336, 2, 5)
-entrances = [Entrance(4, [int(80), int(48)], [int(16), int(16)], entranceImg)]
-createExit(4, [int(272), int(368)], [int(16), int(16)], exitImg)
-createFloor(0, 0, 4, 1)
-createFloor(16, 0, 1, 14)
+createFloor(0, 0, 6, 64)
+entrances = [Entrance(4, [int(416), int(160)], [int(16), int(16)], entranceImg)]
+createMovingBlock(480, 96, 5, 10, 1)
+createFloor(560, 96, 10, 29)
+createFloor(0, 96, 10, 23)
+createFloor(368, 176, 5, 7)
+createFloor(480, 336, 2, 5)
+createExit(4, [int(512), int(368)], [int(16), int(16)], exitImg)
+createMovingBlock(368, 544, 5, 2, 1)
+createMovingBlock(592, 544, 5, 2, 1)
+createMovingBlock(448, 688, 9, 2, 1)
+createFloor(0, 256, 29, 15)
+createFloor(800, 256, 29, 14)
+
 DetCurrent = DetKB
 saveLevel(4)
 
-
-#Multi challenge
-#Colton
-createFloor(0, 0, 45, 5)
-createFloor(80, 608, 7, 59)
-createFloor(80, 448, 3, 21)
-createFloor(416, 544, 1, 1)
-createFloor(464, 544, 1, 1)
-createFloor(80, 0, 8, 45)
-createFloor(800, 0, 31, 14)
-createFloor(480, 336, 10, 20)
-createFloor(192, 272, 4, 34)
-entrances = [Entrance(4, [int(128), int(576)], [int(16), int(16)], entranceImg)]
-createMovingBlock(416, 480, 4, 4, 0)
-rand = Grate([int(736), int(496)], [int(64), int(112)], ["guy", "moving"])
-createSensor(736, 272, 4, 4, 0, ["guy"], rand)
-grates.append(rand)
-createExit(4, [int(912), int(592)], [int(16), int(16)], exitImg)
-
-DetCurrent = DetMulti
-saveLevel(5, [("sensor", 0)])
 		
 #stairs and platforms
 #Sarah
@@ -2174,6 +2165,46 @@ saveLevel(4)
 # entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
 # DetCurrent = DetKB
 # saveLevel(4)
+
+
+#Running under launched
+#Colton
+createFloor(0, 448, 17, 64)
+createFloor(0, 0, 12, 20)
+createFloor(0, 384, 4, 7)
+createMovingBlock(320, 288, 4, 4, 1)
+createMovingBlock(320, 368, 4, 5, 0)
+createFloor(160, 336, 3, 10)
+createFloor(384, 240, 9, 11)
+createFloor(384, 0, 13, 11)
+createFloor(624, 0, 24, 25)
+createMovingBlock(560, 368, 4, 5, 0)
+createMovingBlock(560, 288, 4, 4, 1)
+entrances = [Entrance(4, [int(192), int(416)], [int(16), int(16)], entranceImg)]
+createExit(4, [int(768), int(432)], [int(16), int(16)], exitImg)
+DetCurrent = DetKB
+saveLevel(5)
+
+#Multi challenge
+#Colton
+createFloor(0, 0, 45, 5)
+createFloor(80, 608, 7, 59)
+createFloor(80, 448, 3, 21)
+createFloor(416, 544, 1, 1)
+createFloor(464, 544, 1, 1)
+createFloor(80, 0, 8, 45)
+createFloor(800, 0, 31, 14)
+createFloor(480, 336, 10, 20)
+createFloor(192, 272, 4, 34)
+entrances = [Entrance(4, [int(128), int(576)], [int(16), int(16)], entranceImg)]
+createMovingBlock(416, 480, 4, 4, 0)
+rand = Grate([int(736), int(496)], [int(64), int(112)], ["guy", "moving"])
+createSensor(736, 272, 4, 4, 0, ["guy"], rand)
+grates.append(rand)
+createExit(4, [int(912), int(592)], [int(16), int(16)], exitImg)
+
+DetCurrent = DetMulti
+saveLevel(5, [("sensor", 0)])
 
 #Dropping movables down
 createFloor(0, 688, 2, 64)
