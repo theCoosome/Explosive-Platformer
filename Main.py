@@ -2644,8 +2644,8 @@ while Running:
 		player.collided = [0, 0]
 		bombType = 1
 		screen.fill(WHITE)
-		startTimer = False
 
+		startTimer = False
 		if isCutsecne:
 			cutsecnetimer -= 1
 			if cutsecnetimer <= 0:
