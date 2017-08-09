@@ -938,13 +938,14 @@ DetDest = detonator(4, 1, 1, 20, 30, 4, getImg("UI/DetDestructive"), getImg("Bom
 
 
 class lud(object):
-	def __init__(self,img,size,coords):
+	def __init__(self,img,size,coords,textObject = None):
 		self.img = img
 		self.size = size
 		self.coords = coords
 		self.vel = [0,0]
 		self.dualColliding = False
 		self.index = -1
+		self.text = textObject
 	def Collide(self, i):
 		if collide(i.coords, i.size, self.coords, self.size):  # UP
 
@@ -1064,48 +1065,7 @@ class king(object):
 				pygame.draw.line(debugOverlay, GREEN, p1, center(self))
 		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
 			self.floor = True
-class lud(object):
-	def __init__(self,img,size,coords):
-		self.img = img
-		self.size = size
-		self.coords = coords
-		self.vel = [0,0]
-		self.dualColliding = False
-		self.index = -1
-	def Collide(self, i):
-		if collide(i.coords, i.size, self.coords, self.size):  # UP
 
-			if self.dualColliding:
-				self.Kill()
-			if type(i) == movingBlock:
-				if i.vel[1] > 5 and center(player)[1] > center(i)[1]:
-					self.Kill()
-				self.dualColliding = True
-
-			p1 = center(self)
-			if self.vel[1] > 0 and self.coords[1] <= i.coords[1]: #FLOOR
-				self.coords[1] = i.coords[1] - self.size[1]
-				if self.vel[1] > 0:
-					self.vel[1] = 0
-				self.floor = True
-				pygame.draw.line(debugOverlay, BLUE, p1, center(self))
-			if collide(self.coords, self.size, (i.coords[0], i.coords[1] + 3), (i.size[0], i.size[1] - 3)):  # LEFT / RIGHT
-				p1 = center(self)
-				if self.coords[0] <= i.coords[0]:
-					self.coords[0] = i.coords[0] - self.size[0]
-					self.vel[0] = 0
-					pygame.draw.line(debugOverlay, YELLOW, p1, center(self))
-				if self.coords[0] + self.size[0] >= i.coords[0] + i.size[0]:
-					self.coords[0] = i.coords[0] + i.size[0]
-					self.vel[0] = 0
-					pygame.draw.line(debugOverlay, RED, p1, center(self))
-			p1 = center(self)
-			if self.vel[1] < 0 and self.coords[1] + self.size[1] >= i.coords[1] + i.size[1]: #CEILING
-				self.coords[1] = i.coords[1] + i.size[1]
-				self.vel[1] = 0
-				pygame.draw.line(debugOverlay, GREEN, p1, center(self))
-		if collide(self.coords, (self.size[0], self.size[1] + 1), i.coords, i.size):
-			self.floor = True
 
 DetCurrent = DetGod
 
@@ -1297,9 +1257,10 @@ def saveLevel(difficulty, links = []): #links: list of tuples, ("sensor", 1)
 	
 	if difficulty > 0:
 		levels.append({"bricks":bricks[:], "movingblocks":movingblocks[:], "sensors":sensors[:], "switches":switches[:], "grates":grates[:], "exits":exits[:], "spawn":entrances[0].coords[:], "Det":DetCurrent, "pairs":links, "Imgs":[rand2, rand], "difficulty":difficulty})
+		unlocked.append(False)
 	else:
 		cutScenes.append({"bricks":bricks[:], "movingblocks":movingblocks[:], "sensors":sensors[:], "switches":switches[:], "grates":grates[:], "exits":exits[:], "spawn":entrances[0].coords[:], "Det":DetCurrent, "pairs":links, "Imgs":[rand2, rand], "difficulty":difficulty})
-	unlocked.append(False)
+	
 	
 	wipeFloor()
 	
@@ -1739,6 +1700,38 @@ createMovingBlock(752, 452, 16, 1, 1) #third yellow step
 DetCurrent = DetNorm
 
 saveLevel(2)
+#swimming pool
+#sarah
+createFloor(32, 656, 4, 1)
+createFloor(48, 608, 7, 1)
+createFloor(64, 560, 10, 1)
+createFloor(80, 512, 13, 1)
+createFloor(96, 464, 16, 1)
+createFloor(112, 416, 19, 1)
+createFloor(128, 368, 22, 1)
+createFloor(144, 320, 25, 1)
+createFloor(160, 272, 28, 1)
+createFloor(176, 224, 31, 1)
+createFloor(192, 176, 34, 1)
+createFloor(208, 128, 37, 1)
+createFloor(224, 80, 40, 1)
+createFloor(0, 0, 4, 64)
+createFloor(896, 64, 41, 8)
+createFloor(0, 64, 41, 2)
+entrances = [Entrance(4, [int(32), int(640)], [int(16), int(16)], entranceImg)]
+grates.append(Grate([int(240), int(704)], [int(656), int(16)], ["moving"]))
+createExit(4, [int(560), int(432)], [int(16), int(16)], exitImg)
+createFloor(240, 192, 1, 4)
+createMovingBlock(288, 576, 11, 2, 0)
+createMovingBlock(480, 432, 4, 16, 0)
+createMovingBlock(384, 432, 4, 5, 0)
+
+createMovingBlock(528, 432, 2, 3, 1, 100)
+createMovingBlock(528, 400, 3, 2, 1, 100)
+createMovingBlock(576, 400, 2, 3, 1, 100)
+createMovingBlock(560, 448, 3, 2, 1, 100)
+
+saveLevel(2)
 
 #launching a block
 #Colton
@@ -1781,11 +1774,6 @@ grates.append(Grate([int(800), int(176)], [int(80), int(96)], ["guy"]))
 
 DetCurrent = detonator(2, 16, 30, 1, 20, 10,getImg("UI/DetJumper"), getImg("Bombs/Tosser"), getImg("Bombs/ArmTosser/ArmBlipTosser (1)"))
 saveLevel(2)
-# DetCurrent = detonator(2, 16, 30, 1, 20, 10, getImg("UI/DetJumper"), getImg("Bombs/tosser"), getImg("Bombs/ArmTosser/ArmBlipTosser(2)"))
-# #saveLevel(2)
-#
-# DetCurrent = detonator(2, 16, 30, 1, 20, 10, getImg("UI/DetJumper"), getImg("Bombs/tosser"), getImg("Bombs/ArmTosser/ArmBlipTosser(2)"))
-# #saveLevel(2)
 
 
 #grate over a pit
@@ -2134,22 +2122,33 @@ createMovingBlock(208, 640, 3, 3, 1, 500)
 createMovingBlock(784, 320, 3, 3, 1, 500)
 createMovingBlock(368, 256, 3, 3, 1, 500)
 createSensor(912, 128, 3, 3, 0, ["guy"])
-
 DetCurrent = DetNorm
-
 saveLevel(3, [("sensor", 9)])
 
-createMovingBlock(16, 400, 10, 2, 1)
-createMovingBlock(96, 256, 6, 2, 1)
-createMovingBlock(320, 176, 11, 2, 1)
-createMovingBlock(480, 320, 7, 2, 1)
-createMovingBlock(656, 160, 2, 12, 1)
-createMovingBlock(688, 320, 8, 2, 1)
-createMovingBlock(784, 624, 13, 3, 1)
-createExit(4, [int(960), int(608)], [int(16), int(16)], exitImg)
-entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
-DetCurrent = DetKB
-saveLevel(4)
+#1 square sensors
+#sarah
+createFloor(48, 576, 1, 12)
+createFloor(0, 288, 27, 3)
+createFloor(960, 0, 45, 4)
+createFloor(160, 0, 5, 50)
+#createMovingBlock(0, 576, 15, 1, 1) replaced with floor
+createMovingBlock(192, 544, 3, 2, 0)
+stepOn1 = grates.append(Grate([int(224), int(512)], [int(416), int(16)], []))#triggered by bf #pixels from side, pixels from top, length in pixels, width in pixels
+#createFloor(560, 432, 1, 10)
+createMovingBlock(560, 432, 10, 1, 1, 10) # NOT also replaced with above floor
+createMovingBlock(560, 400, 3, 2, 2, 220)
+stepOn2 = grates.append(Grate([int(640), int(416)], [int(192), int(16)], [])) #triggered by pm
+createFloor(832, 336, 2, 8)
+createFloor(0, 272, 1, 51)
+createFloor(0, 0, 9, 10)
+doAwayWith = grates.append(Grate([int(0), int(144)], [int(160), int(128)], ["guy", "bomb", "dest"])) #be cleared by pl
+createExit(4, [int(64), int(240)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(64), int(560)], [int(16), int(16)], entranceImg)]
+createMovingBlock(656, 96, 5, 8, 2, 6000) #large purple #triggered by bf #pixels from side, pixels from top, length in blocks, width in blocks
+createSensor(296, 592, 1, 1, 0, ["guy", "bomb"], stepOn1) #blue first
+createSensor(800, 528, 1, 1, 2, ["guy", "bomb"], stepOn2) #purple middle
+createSensor(192, 192, 4, 4, 2, ["guy", "bomb"]) #purple last
+saveLevel(3, [("sensor", 0), ("sensor", 1), ("sensor", 2) ]) #[("sensor", 0), ("sensor", 1)])
 
 createMovingBlock(16, 400, 10, 2, 1)
 createMovingBlock(96, 256, 6, 2, 1)
@@ -2162,6 +2161,18 @@ createExit(4, [int(960), int(608)], [int(16), int(16)], exitImg)
 entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
 DetCurrent = DetKB
 saveLevel(4)
+#
+# createMovingBlock(16, 400, 10, 2, 1)
+# createMovingBlock(96, 256, 6, 2, 1)
+# createMovingBlock(320, 176, 11, 2, 1)
+# createMovingBlock(480, 320, 7, 2, 1)
+# createMovingBlock(656, 160, 2, 12, 1)
+# createMovingBlock(688, 320, 8, 2, 1)
+# createMovingBlock(784, 624, 13, 3, 1)
+# createExit(4, [int(960), int(608)], [int(16), int(16)], exitImg)
+# entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
+# DetCurrent = DetKB
+# saveLevel(4)
 
 #Dropping movables down
 createFloor(0, 688, 2, 64)
@@ -2648,7 +2659,7 @@ while Running:
 										Birds[0].vel[0] = 3
 										Birds[0].vel[1] = -10
 										act += 1
-										acttimer = 50
+										acttimer = 300
 										Birds[0].flying = False
 									else:
 										if Birds[0].coords[1] < player.coords[1]:
@@ -2701,13 +2712,19 @@ while Running:
 								canControl = True
 								isCutsecne = False
 								fal.append(lud(fals[0],(16,16),[224, 224]))
+								fal[0].text = DispObj(wraptext("Remember that bombs do more damage the closer they are to the center of an object.&Press space to detonate!", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
+
 
 								
 							
-							if act == 5 and currLvl == 5:
+							if act == 5:
+								print "YES ITS WORKING"
 								canControl = False
 								isCutsecne = True
+								acttimer -= 1
+
 								if acttimer <= 0:
+									print acttimer
 									if len(warrios) < 1:
 										warrios.append(warrior(warriorImgL[1], (16, 16), [600, 320]))
 									act += 1
@@ -2732,7 +2749,7 @@ while Running:
 												[kings[0].coords[0] - 10, kings[0].coords[1] - 30]))
 									act += 1
 							if act == 9:
-								if TextObjects[3].dialog == -1:
+								if TextObjects[3].dialog == 0:
 									TextObjects[3].dialog = 1
 									print TextObjects[3].dialog
 								if TextObjects[3].dialog == 5:
@@ -2847,16 +2864,29 @@ while Running:
 					print "Act, Scene: ", act, scene
 				if event.key == pygame.K_q:  # quitting
 					inGame = False
-				if event.key == K_p and debugon:  # Increment level by 1
-					currLvl += 1
-					if currLvl > len(levels)-1:
-						currLvl = 0
-					loadSaved(currLvl)
-				if event.key == K_o and debugon:
-					currLvl -= 1
-					if currLvl < 0:
-						currLvl = len(levels) - 1
-					loadSaved(currLvl)
+				if event.key == K_p:
+					if False in unlocked:
+						if (debugon or unlocked[currLvl+1]):  # Increment level by 1
+							currLvl += 1
+							if currLvl > len(levels)-1:
+								currLvl = 0
+							loadSaved(currLvl)
+					else:
+						currLvl += 1
+						if currLvl > len(levels)-1:
+							currLvl = 0
+						loadSaved(currLvl)
+				if event.key == K_o:
+					if currLvl > 0:
+						if (debugon or unlocked[currLvl-1]):
+							currLvl -= 1
+							if currLvl < 0:
+								currLvl = len(levels) - 1
+							loadSaved(currLvl)
+					elif currLvl == 0 and unlocked[len(levels)-1]:
+							currLvl = len(levels) - 1
+							loadSaved(currLvl)
+						
 				if event.key == pygame.K_SPACE and canControl:  # exploding
 					bombsExplode = True
 				if event.key == pygame.K_t:  # print cursor location, useful for putting stuff in the right spot
@@ -2996,16 +3026,23 @@ while Running:
 					fal.append(lud(fals[0], (16, 16), [512, 320]))
 					if currLvl == 1:
 						fal[0].coords = [112, 240]
+						fal[0].text = DispObj(wraptext("If you jump while you detonate, you can go a bit higher than either alone.&You can get up here if you try!", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
+
 					if currLvl == 2:
 						fal[0].coords = [112, 384]
+						fal[0].text = DispObj(wraptext("For future reference:&If you press E or LALT you can disarm your bombs.", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 					if currLvl == 3:
-						fal[0].coords = [176, 544]
+						fal[0].coords = [832, 320]
+						fal[0].text = DispObj(wraptext("Placing many bombs in one spot is more effective than one at a time.", 150, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 					if currLvl == 4:
 						fal[0].coords = [368, 512]
+						fal[0].text = DispObj(wraptext("These are grates. They can block your way, and the path of other things as well. You will get used to what blocks what.", 300, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 					if currLvl == 5:
 						fal[0].coords = [128, 496]
+						fal[0].text = DispObj(wraptext("Placing bombs towards the bottom of blocks makes them go further by tossing them in the air.", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 					if currLvl == 6:
 						fal[0].coords = [128, 544]
+						fal[0].text = DispObj(wraptext("Purple blocks are mobile, but not so durable.&Remember how placement effects damage and knockback!", 350, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 
 		if player.vel[0] == 0 and player.vel[1] == 0:
 			movingLeft = False
@@ -3119,8 +3156,13 @@ while Running:
 					p.Collide(i)
 			if "moving" in i.blocked:
 				for p in movingblocks:
-					if (p.type == 0) or ("dest" in i.blocked and p.type == 2):
+					if p.type == 0:
 						p.Collide(i)
+			if "dest" in i.blocked:
+				for p in movingblocks:
+					if p.type == 2:
+						p.Collide(i)
+				
 		
 		for i in kings:
 			if stopRight == False:
@@ -3388,6 +3430,17 @@ while Running:
 				canControl = False
 			screen.blit(p.img, p.coords)
 		
+		if Story:
+			if currLvl == 7:
+				isCutsecne = True
+				canControl = False
+				player.motion = [0, 0]
+				act = 5
+				acttimer = 100
+				currLvl = -1
+				loadSaved(currLvl)
+				fal.append(lud(fals[0], (16, 16), [224, 224]))
+
 		if isCutsecne:
 			if len(TextObjects) > 0:
 				if TextObjects[0].dialog >= 0:
@@ -3519,6 +3572,10 @@ while Running:
 		
 		for o in TextObjects:
 			screen.blit(o.img, o.size)
+
+		for f in fal:
+			if f.text != None:
+				screen.blit(f.text.img,f.text.coords)
 		#UI display
 		
 		screen.blit(personimg, player.coords)
