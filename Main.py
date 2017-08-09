@@ -1480,10 +1480,13 @@ saveLevel(1)
 
 #Chasm Hopping Intro
 #Brett
-entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
-createFloor(0, 400, 2, 26)
-createFloor(608, 400, 2, 26)
-createExit(4, [int(960), int(384)], [int(16), int(16)], exitImg)
+createFloor(0, 0, 45, 2)
+createFloor(32, 400, 2, 24)
+createFloor(976, 0, 45, 3)
+createFloor(608, 400, 2, 23)
+createExit(4, [int(896), int(384)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(208), int(384)], [int(16), int(16)], entranceImg)]
+
 DetCurrent = DetKB
 saveLevel(1)
 
@@ -1687,49 +1690,51 @@ saveLevel(2, [("sensor", 0) ])
 
 #easy stairs
 #sarah meilinger
-createFloor(0, 384, 21, 19)
-entrances = [Entrance(4, [int(48), int(368)], [int(16), int(16)], entranceImg)]
-createExit(4, [int(944), int(128)], [int(16), int(16)], exitImg)
-createMovingBlock(288, 256, 46, 3, 1) #to break yellow
-createMovingBlock(752, 0, 16, 16, 2, 375) #purples
-createMovingBlock(496, 0, 16, 16, 2, 375)
-createMovingBlock(304, 0, 12, 16, 2, 375)
-createMovingBlock(304, 608, 12, 1, 1) #first yellow step
-createMovingBlock(512, 528, 14, 1, 1)  #second yellow step
-createMovingBlock(752, 452, 16, 1, 1) #third yellow step
-DetCurrent = DetNorm
+createFloor(0, 0, 3, 64)
+createFloor(0, 432, 18, 19)
+createFloor(0, 48, 24, 5)
+createFloor(976, 48, 42, 3)
+createMovingBlock(304, 672, 14, 1, 1)
+createMovingBlock(528, 592, 14, 1, 1)
+createMovingBlock(752, 512, 14, 1, 1)
+createMovingBlock(304, 304, 42, 3, 1)
+createMovingBlock(304, 48, 14, 16, 2, 375)
+createMovingBlock(528, 48, 14, 16, 2, 375)
+createMovingBlock(752, 48, 14, 16, 2, 375)
+createExit(4, [int(864), int(208)], [int(16), int(16)], exitImg)
+entrances = [Entrance(4, [int(160), int(416)], [int(16), int(16)], entranceImg)]
 
+DetCurrent = DetNorm
 saveLevel(2)
+
 #swimming pool
 #sarah
-createFloor(32, 656, 4, 1)
-createFloor(48, 608, 7, 1)
-createFloor(64, 560, 10, 1)
-createFloor(80, 512, 13, 1)
-createFloor(96, 464, 16, 1)
-createFloor(112, 416, 19, 1)
-createFloor(128, 368, 22, 1)
-createFloor(144, 320, 25, 1)
-createFloor(160, 272, 28, 1)
-createFloor(176, 224, 31, 1)
-createFloor(192, 176, 34, 1)
-createFloor(208, 128, 37, 1)
-createFloor(224, 80, 40, 1)
 createFloor(0, 0, 4, 64)
-createFloor(896, 64, 41, 8)
-createFloor(0, 64, 41, 2)
-entrances = [Entrance(4, [int(32), int(640)], [int(16), int(16)], entranceImg)]
-grates.append(Grate([int(240), int(704)], [int(656), int(16)], ["moving"]))
-createExit(4, [int(560), int(432)], [int(16), int(16)], exitImg)
-createFloor(240, 192, 1, 4)
-createMovingBlock(288, 576, 11, 2, 0)
-createMovingBlock(480, 432, 4, 16, 0)
-createMovingBlock(384, 432, 4, 5, 0)
+createFloor(0, 656, 4, 20)
+createFloor(960, 64, 41, 4)
+createFloor(0, 64, 37, 4)
+grates.append(Grate([int(320), int(656)], [int(640), int(64)], ["moving"]))
+entrances = [Entrance(4, [int(80), int(640)], [int(16), int(16)], entranceImg)]
+createFloor(112, 608, 3, 13)
+createFloor(128, 560, 3, 12)
+createFloor(144, 512, 3, 11)
+createFloor(160, 464, 3, 10)
+createFloor(176, 416, 3, 9)
+createFloor(192, 368, 3, 8)
+createFloor(208, 320, 3, 7)
+createFloor(224, 272, 3, 6)
+createFloor(240, 224, 3, 9)
+createFloor(256, 176, 3, 1)
+createFloor(272, 128, 6, 3)
+createMovingBlock(384, 624, 11, 2, 0)
+createMovingBlock(560, 432, 4, 14, 0)
+createMovingBlock(480, 544, 4, 5, 0)
+createMovingBlock(624, 416, 2, 3, 1)
+createMovingBlock(656, 432, 3, 2, 1)
+createMovingBlock(624, 384, 3, 2, 1)
+createMovingBlock(672, 384, 2, 3, 1)
+createExit(4, [int(656), int(416)], [int(16), int(16)], exitImg)
 
-createMovingBlock(528, 432, 2, 3, 1, 100)
-createMovingBlock(528, 400, 3, 2, 1, 100)
-createMovingBlock(576, 400, 2, 3, 1, 100)
-createMovingBlock(560, 448, 3, 2, 1, 100)
 
 saveLevel(2)
 
@@ -1906,17 +1911,20 @@ saveLevel(5)
 
 #death jump
 #sarah
-createFloor(0, 64, 12, 15)
-createFloor(320, 0, 16, 44)
-createMovingBlock(240, 0, 5, 16, 1)
-createMovingBlock(208, 704, 9, 1, 1)
-createMovingBlock(128, 544, 5, 2, 1)
-createMovingBlock(352, 544, 5, 2, 1)
-createFloor(240, 336, 2, 5)
-entrances = [Entrance(4, [int(80), int(48)], [int(16), int(16)], entranceImg)]
-createExit(4, [int(272), int(368)], [int(16), int(16)], exitImg)
-createFloor(0, 0, 4, 1)
-createFloor(16, 0, 1, 14)
+createFloor(0, 0, 6, 64)
+entrances = [Entrance(4, [int(416), int(160)], [int(16), int(16)], entranceImg)]
+createMovingBlock(480, 96, 5, 10, 1)
+createFloor(560, 96, 10, 29)
+createFloor(0, 96, 10, 23)
+createFloor(368, 176, 5, 7)
+createFloor(480, 336, 2, 5)
+createExit(4, [int(512), int(368)], [int(16), int(16)], exitImg)
+createMovingBlock(368, 544, 5, 2, 1)
+createMovingBlock(592, 544, 5, 2, 1)
+createMovingBlock(448, 688, 9, 2, 1)
+createFloor(0, 256, 29, 15)
+createFloor(800, 256, 29, 14)
+
 DetCurrent = DetKB
 saveLevel(4)
 
