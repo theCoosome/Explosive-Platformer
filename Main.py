@@ -2537,7 +2537,7 @@ while Running:
 					loadSaved(currLvl)
 					fal.append(lud(fals[0], (16, 16), [512, 320]))
 					act = 0
-					scene = 1
+					scene = 0
 			if pointCollide((100, 300), (200, 28), mousepos): #levels
 				mouseImg = OnImg
 				if mouse_down:
@@ -2654,14 +2654,47 @@ while Running:
 					if act == 0:
 						if len(fal) > 0:
 							if isOnTop(player, fal[0]):
+								print "yes correcto"
 								player.motion[0] = 0
 								player.motion[1] = 0
-								TextObjects[0].dialog = 0
-
-								if acttimer <= 0:
-									scene += 1
-									acttimer = 500
-									act = 0
+								dia = True
+								if dia:
+									diaTimer -= 1
+									print "yes correcto 2"
+									print diaTimer
+									if diaTimer <= 0:
+										print "yes correcto 3"
+										if dialog == 0:
+											fal[0].text = DispObj(wraptext("DEREK!! Are you okay?", 200, font, True),
+																  [fal[0].coords[0] - 40, fal[0].coords[1] - 100],
+																  False)
+											print "1"
+										if dialog == 1:
+											fal[0].text = DispObj(wraptext("That Bird attacked you.", 200, font, True),
+																  [fal[0].coords[0] - 40, fal[0].coords[1] - 100],
+																  False)
+											print "2"
+										if dialog == 2:
+											player.text = DispObj(
+												wraptext("I can't remember anything oh my gerd, derp derp wooooo", 200,
+														 font, True), [player.coords[0] - 40, player.coords[1] - 30],
+												False)
+										if dialog == 3:
+											player.text = DispObj(
+												wraptext("I can't remember anything oh my gerd, derp derp wooooo", 200,
+														 font, True), [player.coords[0] - 40, player.coords[1] - 30],
+												False)
+											print "3"
+										if dialog == 4:
+											player.text = None
+											dia = False
+											dialog = 0
+											diaTimer = 100
+											act = 0
+											scene += 1
+										print dialog
+										diaTimer = 100
+										dialog += 1
 							else:
 								player.motion[0] = 1
 								player.motion[1] = 0
@@ -2777,18 +2810,11 @@ while Running:
 									acttimer = 100
 									act += 1
 							if act == 8:
-
 								if isOnTop(kings[0], warrios[1]):
-									TextObjects.append(
-										DispObj(wraptext("", 700, font, True), [10, 10], False,
-												[kings[0].coords[0] - 10, kings[0].coords[1] - 30]))
 									act += 1
 							if act == 9:
-								if TextObjects[3].dialog == 0:
-									TextObjects[3].dialog = 1
-									print TextObjects[3].dialog
-								if TextObjects[3].dialog == 5:
-									act += 1
+
+								act += 1
 							if act == 10:
 								stopRight = True
 								if len(kings) == 1:
