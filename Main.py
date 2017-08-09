@@ -2439,8 +2439,6 @@ while Running:
 					fal.append(lud(fals[0], (16, 16), [512, 320]))
 					act = 0
 					scene = 1
-
-					pass
 			if pointCollide((100, 300), (200, 28), mousepos): #levels
 				mouseImg = OnImg
 				if mouse_down:
