@@ -2692,12 +2692,21 @@ while Running:
 												fal[0].text = DispObj(wraptext("DEREK!! Are you okay?", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 
 											if dialog == 1:
-												fal[0].text = DispObj(wraptext("That Bird attacked you.", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
+												fal[0].text = DispObj(wraptext("That bird just ATTACKED you. I wouldn't have though it possible but there it is. You got attacked by a BIRD", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 											if dialog == 2:
-												player.text = DispObj(wraptext("I can't remember anything oh my gerd, derp derp wooooo", 200, font, True), [player.coords[0] - 40, player.coords[1] - 30], False)
+												fal[0].text = DispObj(wraptext("You were hit by a BIRD",200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 											if dialog == 3:
-												player.text = DispObj(wraptext("I can't remember anything oh my gerd, derp derp wooooo", 200, font, True), [player.coords[0] - 40, player.coords[1] - 30], False)
+												player.text = DispObj(wraptext("....", 200, font, True), [player.coords[0] - 40, player.coords[1] - 30], False)
 											if dialog == 4:
+												player.text = DispObj(wraptext("I don't feel so good.", 200, font, True), [player.coords[0] - 40, player.coords[1] - 30], False)
+											if dialog == 5:
+												fal[0].text = DispObj(wraptext("Do you think you can get back? We have a few obstacles to get through to get back home.",200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
+											if dialog == 6:
+												player.text = DispObj(wraptext("I'll need some help. I don't really remember...how to do anything.", 200, font, True),[player.coords[0] - 40, player.coords[1] - 30], False)
+											if dialog == 7:
+												fal[0].text = DispObj(wraptext("Okay. I think doing this yourself will jog your memory, so I'll walk you through it.",200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
+
+											if dialog == 8:
 												player.text = None
 
 												act+=1
@@ -2717,6 +2726,52 @@ while Running:
 								isCutsecne = False
 								fal.append(lud(fals[0],(16,16),[224, 224]))
 								fal[0].text = DispObj(wraptext("Remember that bombs do more damage the closer they are to the center of an object.&Press space to detonate!", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
+								if dia:
+									diaTimer -= 1
+
+									if diaTimer <= 0:
+										if dialog == 0:
+											fal[0].text = DispObj(wraptext("DEREK!! Are you okay?", 200, font, True),
+																  [fal[0].coords[0] - 40, fal[0].coords[1] - 100],
+																  False)
+
+										if dialog == 1:
+											fal[0].text = DispObj(wraptext(
+												"That bird just ATTACKED you. I wouldn't have though it possible but there it is. You got attacked by a BIRD",
+												200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100],
+																  False)
+										if dialog == 2:
+											fal[0].text = DispObj(wraptext("You were hit by a BIRD", 200, font, True),
+																  [fal[0].coords[0] - 40, fal[0].coords[1] - 100],
+																  False)
+										if dialog == 3:
+											player.text = DispObj(wraptext("....", 200, font, True),
+																  [player.coords[0] - 40, player.coords[1] - 30], False)
+										if dialog == 4:
+											player.text = DispObj(wraptext("I don't feel so good.", 200, font, True),
+																  [player.coords[0] - 40, player.coords[1] - 30], False)
+										if dialog == 5:
+											fal[0].text = DispObj(wraptext(
+												"Do you think you can get back? We have a few obstacles to get through to get back home.",
+												200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100],
+																  False)
+										if dialog == 6:
+											player.text = DispObj(wraptext(
+												"I'll need some help. I don't really remember...how to do anything.",
+												200, font, True), [player.coords[0] - 40, player.coords[1] - 30], False)
+										if dialog == 7:
+											fal[0].text = DispObj(wraptext(
+												"Okay. I think doing this yourself will jog your memory, so I'll walk you through it.",
+												200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100],
+																  False)
+
+										if dialog == 8:
+											player.text = None
+
+											act += 1
+										diaTimer = 100
+										dialog += 1
+										print dialog
 
 
 								
