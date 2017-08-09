@@ -3028,7 +3028,7 @@ while Running:
 
 					if currLvl == 2:
 						fal[0].coords = [112, 384]
-						fal[0].text = DispObj(wraptext("For future reference:&If you press E or LALT you can disarm your bombs.", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
+						fal[0].text = DispObj(wraptext("For future reference:&If you press E or LALT you can disarm and get rid of your bombs.", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 					if currLvl == 3:
 						fal[0].coords = [832, 320]
 						fal[0].text = DispObj(wraptext("Placing many bombs in one spot is more effective than one at a time.", 150, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
@@ -3040,7 +3040,7 @@ while Running:
 						fal[0].text = DispObj(wraptext("Placing bombs towards the bottom of blocks makes them go further by tossing them in the air.", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 					if currLvl == 6:
 						fal[0].coords = [128, 544]
-						fal[0].text = DispObj(wraptext("Purple blocks are mobile, but not so durable.&Remember how placement effects damage and knockback!", 350, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
+						fal[0].text = DispObj(wraptext("Purple blocks are mobile, but not so durable.&Remember how placement effects damage and knockback! &To reset a level, press X", 350, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 
 		if player.vel[0] == 0 and player.vel[1] == 0:
 			movingLeft = False
