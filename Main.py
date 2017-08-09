@@ -343,9 +343,10 @@ class Person(object):
 		self.index = 0
 		self.img = 0
 		self.hasKey = hasKey
-
+		self.text = None
 		self.dualColliding = False
 		self.collided = [0, 0] #x, y pushed
+		self.text = None
 
 	def Crouch(self):
 		self.crouch = True
@@ -2598,7 +2599,8 @@ while Running:
 		pygame.display.update()
 		clock.tick(fps)
 
-		
+	diaTimer = 100
+	dialog = 0
 	mouseImg = AimImg
 	while inGame and Running:
 		mousepos = pygame.mouse.get_pos()
@@ -2650,9 +2652,6 @@ while Running:
 							if act == 1:
 
 								if acttimer <= 0:
-									TextObjects[0].all = wraptext("", 180, font, True)
-									TextObjects[0].refresh()
-
 									if hit(Birds[0].coords, Birds[0].size, player.coords, player.size):
 										Birds[0].vel[0] = 3
 										Birds[0].vel[1] = -10
@@ -2673,38 +2672,45 @@ while Running:
 									# Birds[0].coords[1] -= g
 							if act == 2:
 
-								acttimer -= 1
+
 								'''if acttimer <= 0:
 									Birds[0].vel[0] = 0'''
+
+
 								if isOnTop(fal[0], player):
+
+
+									dia = True
 									fal[0].vel[0] = 0
-									act += 1
-									print "Yes"
+
+
+									if dia:
+										diaTimer -= 1
+
+										if diaTimer <= 0:
+											if dialog == 0:
+												fal[0].text = DispObj(wraptext("DEREK!! Are you okay?", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
+
+											if dialog == 1:
+												fal[0].text = DispObj(wraptext("That Bird attacked you.", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
+											if dialog == 2:
+												player.text = DispObj(wraptext("I can't remember anything oh my gerd, derp derp wooooo", 200, font, True), [player.coords[0] - 40, player.coords[1] - 30], False)
+											if dialog == 3:
+												player.text = DispObj(wraptext("I can't remember anything oh my gerd, derp derp wooooo", 200, font, True), [player.coords[0] - 40, player.coords[1] - 30], False)
+											if dialog == 4:
+												player.text = None
+
+												act+=1
+											diaTimer = 100
+											dialog += 1
+											print dialog
+
 								else:
 									fal[0].vel[0] = -1
 
 
+
 							if act == 3:
-								if isOnTop(fal[0], player):
-									print len(TextObjects)
-									if len(TextObjects) < 3:
-										TextObjects.append(
-											DispObj(wraptext("", 700, font, True), [10, 10], False,
-													[fal[0].coords[0] - 10, fal[0].coords[1] - 30]))
-										TextObjects.append(
-											DispObj(wraptext("", 700, font, True), [10, 10], False,
-													[player.coords[0] - 50, player.coords[1] - 30]))
-										# TextObjects[0].all = wraptext("", 180, font, True)
-										TextObjects[1].dialog = 0
-									if TextObjects[1].dialog == 2:
-										TextObjects[2].dialog = 0
-									if TextObjects[2].dialog == 3:
-										act += 1
-										acttimer = 100
-								else:
-									print "SOMETHING OFF"
-							
-							if act == 4:
 								currLvl = 0
 								loadSaved(currLvl)
 								canControl = True
@@ -3439,141 +3445,14 @@ while Running:
 				loadSaved(currLvl)
 				fal.append(lud(fals[0], (16, 16), [224, 224]))
 
-		if isCutsecne:
-			if len(TextObjects) > 0:
-				if TextObjects[0].dialog >= 0:
-					if TextObjects[0].time >= 0:
-						TextObjects[0].time -= 1
-					if TextObjects[0].time <= 0:
-						if TextObjects[0].dialog == 0:
-							TextObjects[0].all = wraptext("I was wondering where you have been!", 180, font, True)
-						elif TextObjects[0].dialog == 1:
-							TextObjects[0].all = wraptext("What do you want for dinner dear?", 180, font, True)
-						elif TextObjects[0].dialog == 2:
-							TextObjects[0].all = wraptext("TahkoBombs sound really good. Great choice!", 220, font, True)
-						elif TextObjects[0].dialog == 3:
-							TextObjects[0].all = wraptext("I was thinking we could maybe explode and chill, later tonight.", 260, font, True)
-						elif TextObjects[0].dialog == 4:
-							TextObjects[0].all = wraptext("I like when you explode stuff", 180, font, True)
-						elif TextObjects[0].dialog == 5:
-							TextObjects[0].all = wraptext("Derek!!!", 180, font, True)
-						elif TextObjects[0].dialog == 6:
-							TextObjects[0].all = wraptext("Are you okay?!?!", 180, font, True)
-						TextObjects[0].dialog += 1
-						TextObjects[0].time = 100
-						TextObjects[0].refresh()
-				if len(TextObjects) >=2:
-					if TextObjects[1].dialog >= 0:
-						if TextObjects[1].time >= 0:
-							TextObjects[1].time -= 1
-						if TextObjects[1].time <= 0:
-							if TextObjects[1].dialog == 0:
-								TextObjects[1].all = wraptext("Derek!", 180, font, True)
-							elif TextObjects[1].dialog == 1:
-								TextObjects[1].all = wraptext("Are you okay?!?!", 180, font, True)
-							elif TextObjects[1].dialog == 2:
-								TextObjects[1].all = wraptext("...", 180, font, True)
-							elif TextObjects[1].dialog == 3:
-								TextObjects[1].all = wraptext("", 180, font, True)
-
-							TextObjects[1].dialog += 1
-							TextObjects[1].time = 100
-							TextObjects[1].refresh()
-				if len(TextObjects) >=3:
-					if TextObjects[1].dialog >= 2:
-						if TextObjects[2].dialog >= 0:
-							if TextObjects[2].time >= 0:
-								TextObjects[2].time -= 1
-							if TextObjects[2].time <= 0:
-								if TextObjects[2].dialog == 0:
-									TextObjects[2].all = wraptext("Hello?", 180, font, True)
-								elif TextObjects[2].dialog == 1:
-									TextObjects[2].all = wraptext("Where am I?", 180, font, True)
-								elif TextObjects[2].dialog == 2:
-									TextObjects[2].all = wraptext("Falicia is that you?", 180, font, True)
-								elif TextObjects[2].dialog == 3:
-									TextObjects[2].all = wraptext("...", 180, font, True)
-
-								TextObjects[2].dialog += 1
-								TextObjects[2].time = 100
-								TextObjects[2].refresh()
-				if len(TextObjects) >=4:
-					if TextObjects[3].dialog >= 0:
-						if TextObjects[3].time >=0:
-
-							TextObjects[3].time -= 1
-						if TextObjects[3].time <= 0:
-
-
-							if TextObjects[3].dialog == 1:
-								TextObjects[3].all = wraptext("HAHAHAHA", 180, font, True)
-
-
-							if TextObjects[3].dialog == 2:
-								TextObjects[3].all = wraptext("Take this girl away!", 180, font, True)
-
-
-							if TextObjects[3].dialog == 3:
-								TextObjects[3].all = wraptext("Goodbye Derek", 180, font, True)
-
-
-							if TextObjects[3].dialog == 5:
-								TextObjects[3].all = wraptext("", 180, font, True)
-
-
-							if TextObjects[3].dialog == 4:
-								TextObjects[2].all = wraptext("Curse you Perry the King!", 180, font, True)
-							if TextObjects[3].dialog == 5:
-								TextObjects[2].all = wraptext("", 180, font, True)
-
-							TextObjects[3].dialog += 1
-
-							TextObjects[3].time = 100
-							TextObjects[3].refresh()
-				if len(TextObjects) >=5:
-					if TextObjects[4].dialog >= 0:
-						if TextObjects[4].time >=0:
-
-							TextObjects[4].time -= 1
-						if TextObjects[4].time <= 0:
-
-
-							if TextObjects[4].dialog == 1:
-								TextObjects[4].all = wraptext("USE D to move forwad", 180, font, True)
-
-
-							if TextObjects[4].dialog == 2:
-								TextObjects[4].all = wraptext("USE A to move backward", 180, font, True)
-
-
-							if TextObjects[4].dialog == 3:
-								TextObjects[4].all = wraptext("USE S to crouch", 180, font, True)
-
-
-							if TextObjects[4].dialog == 5:
-								TextObjects[4].all = wraptext("USE W to jump", 180, font, True)
-							if TextObjects[4].dialog == 6:
-								TextObjects[4].all = wraptext("Pick up the paper!", 180, font, True)
-								if TextObjects[4].dialog == 7:
-									if paper == True:
-										TextObjects[4].all = wraptext("Paper: Use 1,2,3,4 to cycle through bombs...", 180, font, True)
-										TextObjects[4].all = wraptext("Paper: Use left click to throw bomb", 180, font, True)
-										TextObjects[4].all = wraptext("Paper: Use spacebar to explode bombs!", 180, font, True)
-
-
-
-							TextObjects[4].dialog += 1
-							TextObjects[4].time = 100
-							TextObjects[4].refresh()
-
-
-		
 		for o in TextObjects:
 			screen.blit(o.img, o.size)
 
 		for f in fal:
 			if f.text != None:
 				screen.blit(f.text.img,f.text.coords)
+		if player.text != None:
+			screen.blit(player.text.img,player.text.coords)
 		#UI display
 		
 		screen.blit(personimg, player.coords)
