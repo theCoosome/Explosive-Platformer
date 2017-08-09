@@ -2145,7 +2145,7 @@ doAwayWith = grates.append(Grate([int(0), int(144)], [int(160), int(128)], ["guy
 createExit(4, [int(64), int(240)], [int(16), int(16)], exitImg)
 entrances = [Entrance(4, [int(64), int(560)], [int(16), int(16)], entranceImg)]
 createMovingBlock(656, 96, 5, 8, 2, 6000) #large purple #triggered by bf #pixels from side, pixels from top, length in blocks, width in blocks
-createSensor(272, 592, 1, 1, 0, ["guy", "bomb"], stepOn1) #blue first
+createSensor(296, 592, 1, 1, 0, ["guy", "bomb"], stepOn1) #blue first
 createSensor(800, 528, 1, 1, 2, ["guy", "bomb"], stepOn2) #purple middle
 createSensor(192, 192, 4, 4, 2, ["guy", "bomb"]) #purple last
 saveLevel(3, [("sensor", 0), ("sensor", 1), ("sensor", 2) ]) #[("sensor", 0), ("sensor", 1)])
@@ -2161,18 +2161,18 @@ createExit(4, [int(960), int(608)], [int(16), int(16)], exitImg)
 entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
 DetCurrent = DetKB
 saveLevel(4)
-
-createMovingBlock(16, 400, 10, 2, 1)
-createMovingBlock(96, 256, 6, 2, 1)
-createMovingBlock(320, 176, 11, 2, 1)
-createMovingBlock(480, 320, 7, 2, 1)
-createMovingBlock(656, 160, 2, 12, 1)
-createMovingBlock(688, 320, 8, 2, 1)
-createMovingBlock(784, 624, 13, 3, 1)
-createExit(4, [int(960), int(608)], [int(16), int(16)], exitImg)
-entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
-DetCurrent = DetKB
-saveLevel(4)
+#
+# createMovingBlock(16, 400, 10, 2, 1)
+# createMovingBlock(96, 256, 6, 2, 1)
+# createMovingBlock(320, 176, 11, 2, 1)
+# createMovingBlock(480, 320, 7, 2, 1)
+# createMovingBlock(656, 160, 2, 12, 1)
+# createMovingBlock(688, 320, 8, 2, 1)
+# createMovingBlock(784, 624, 13, 3, 1)
+# createExit(4, [int(960), int(608)], [int(16), int(16)], exitImg)
+# entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
+# DetCurrent = DetKB
+# saveLevel(4)
 
 #Dropping movables down
 createFloor(0, 688, 2, 64)
