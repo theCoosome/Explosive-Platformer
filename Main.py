@@ -115,12 +115,12 @@ birdImages = [getImg("StupidBird/stupidbird (1)"),getImg("StupidBird/stupidbird 
 crouchImg = [getImg("Dereks/DerekCrouch"),getImg("Dereks/derekcrouchl")]
 
 #Warrior
-warriorImgL = [getImg("Warrior/warrior2l"),getImg("Warrior/warrior3l"),getImg("Warrior/warrior1l")]
-warriorImgR = [getImg("Warrior/warrior1r"),getImg("Warrior/warrior2r"),getImg("Warrior/warrior3r")]
+warriorImgR = [getImg("RockTrollGuard/GuardRT (5)"),getImg("RockTrollGuard/GuardRT (4)"),getImg("RockTrollGuard/GuardRT (6)")]
+warriorImgL = [getImg("RockTrollGuard/GuardRT (2)"),getImg("RockTrollGuard/GuardRT (1)"),getImg("RockTrollGuard/GuardRT (3)")]
 
 #King
-kingImgL = [getImg("King/king2l"),getImg("King/kingl3"),getImg("King/king1l")]
-kingImgR = [getImg("King/king"),getImg("King/king2r"),getImg("King/king1r")]
+kingImgL = [getImg("KingRockTroll/KingRT (2)"),getImg("KingRockTroll/KingRT (1)"),getImg("KingRockTroll/KingRT (3)")]
+kingImgR = [getImg("KingRockTroll/KingRT (5)"),getImg("KingRockTroll/KingRT (4)"),getImg("KingRockTroll/KingRT (6)")]
 #Paper
 paperImg = getImg("paper")
 
@@ -1701,6 +1701,38 @@ createMovingBlock(752, 452, 16, 1, 1) #third yellow step
 DetCurrent = DetNorm
 
 saveLevel(2)
+#swimming pool
+#sarah
+createFloor(32, 656, 4, 1)
+createFloor(48, 608, 7, 1)
+createFloor(64, 560, 10, 1)
+createFloor(80, 512, 13, 1)
+createFloor(96, 464, 16, 1)
+createFloor(112, 416, 19, 1)
+createFloor(128, 368, 22, 1)
+createFloor(144, 320, 25, 1)
+createFloor(160, 272, 28, 1)
+createFloor(176, 224, 31, 1)
+createFloor(192, 176, 34, 1)
+createFloor(208, 128, 37, 1)
+createFloor(224, 80, 40, 1)
+createFloor(0, 0, 4, 64)
+createFloor(896, 64, 41, 8)
+createFloor(0, 64, 41, 2)
+entrances = [Entrance(4, [int(32), int(640)], [int(16), int(16)], entranceImg)]
+grates.append(Grate([int(240), int(704)], [int(656), int(16)], ["moving"]))
+createExit(4, [int(560), int(432)], [int(16), int(16)], exitImg)
+createFloor(240, 192, 1, 4)
+createMovingBlock(288, 576, 11, 2, 0)
+createMovingBlock(480, 432, 4, 16, 0)
+createMovingBlock(384, 432, 4, 5, 0)
+
+createMovingBlock(528, 432, 2, 3, 1, 100)
+createMovingBlock(528, 400, 3, 2, 1, 100)
+createMovingBlock(576, 400, 2, 3, 1, 100)
+createMovingBlock(560, 448, 3, 2, 1, 100)
+
+saveLevel(2)
 
 #launching a block
 #Colton
@@ -1743,11 +1775,6 @@ grates.append(Grate([int(800), int(176)], [int(80), int(96)], ["guy"]))
 
 DetCurrent = detonator(2, 16, 30, 1, 20, 10,getImg("UI/DetJumper"), getImg("Bombs/Tosser"), getImg("Bombs/ArmTosser/ArmBlipTosser (1)"))
 saveLevel(2)
-# DetCurrent = detonator(2, 16, 30, 1, 20, 10, getImg("UI/DetJumper"), getImg("Bombs/tosser"), getImg("Bombs/ArmTosser/ArmBlipTosser(2)"))
-# #saveLevel(2)
-#
-# DetCurrent = detonator(2, 16, 30, 1, 20, 10, getImg("UI/DetJumper"), getImg("Bombs/tosser"), getImg("Bombs/ArmTosser/ArmBlipTosser(2)"))
-# #saveLevel(2)
 
 
 #grate over a pit
@@ -2119,7 +2146,7 @@ doAwayWith = grates.append(Grate([int(0), int(144)], [int(160), int(128)], ["guy
 createExit(4, [int(64), int(240)], [int(16), int(16)], exitImg)
 entrances = [Entrance(4, [int(64), int(560)], [int(16), int(16)], entranceImg)]
 createMovingBlock(656, 96, 5, 8, 2, 6000) #large purple #triggered by bf #pixels from side, pixels from top, length in blocks, width in blocks
-createSensor(272, 592, 1, 1, 0, ["guy", "bomb"], stepOn1) #blue first
+createSensor(296, 592, 1, 1, 0, ["guy", "bomb"], stepOn1) #blue first
 createSensor(800, 528, 1, 1, 2, ["guy", "bomb"], stepOn2) #purple middle
 createSensor(192, 192, 4, 4, 2, ["guy", "bomb"]) #purple last
 saveLevel(3, [("sensor", 0), ("sensor", 1), ("sensor", 2) ]) #[("sensor", 0), ("sensor", 1)])
@@ -2135,18 +2162,18 @@ createExit(4, [int(960), int(608)], [int(16), int(16)], exitImg)
 entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
 DetCurrent = DetKB
 saveLevel(4)
-
-createMovingBlock(16, 400, 10, 2, 1)
-createMovingBlock(96, 256, 6, 2, 1)
-createMovingBlock(320, 176, 11, 2, 1)
-createMovingBlock(480, 320, 7, 2, 1)
-createMovingBlock(656, 160, 2, 12, 1)
-createMovingBlock(688, 320, 8, 2, 1)
-createMovingBlock(784, 624, 13, 3, 1)
-createExit(4, [int(960), int(608)], [int(16), int(16)], exitImg)
-entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
-DetCurrent = DetKB
-saveLevel(4)
+#
+# createMovingBlock(16, 400, 10, 2, 1)
+# createMovingBlock(96, 256, 6, 2, 1)
+# createMovingBlock(320, 176, 11, 2, 1)
+# createMovingBlock(480, 320, 7, 2, 1)
+# createMovingBlock(656, 160, 2, 12, 1)
+# createMovingBlock(688, 320, 8, 2, 1)
+# createMovingBlock(784, 624, 13, 3, 1)
+# createExit(4, [int(960), int(608)], [int(16), int(16)], exitImg)
+# entrances = [Entrance(4, [int(48), int(384)], [int(16), int(16)], entranceImg)]
+# DetCurrent = DetKB
+# saveLevel(4)
 
 #Dropping movables down
 createFloor(0, 688, 2, 64)
@@ -2171,6 +2198,73 @@ switches.append(Switch('Switch', [int(992), int(352)], [int(16), int(16)], switc
 
 DetCurrent = DetMulti
 saveLevel(6)
+
+#Hell?
+#Natalie's Level
+createMovingBlock(336, 432, 7, 3, 0)
+createMovingBlock(240, 496, 2, 12, 1)
+createMovingBlock(400, 496, 2, 12, 1)
+createFloor(0, 464, 2, 7)
+createMovingBlock(336, 304, 7, 3, 0)
+createMovingBlock(400, 368, 2, 3, 2)
+createMovingBlock(224, 368, 2, 3, 2)
+createMovingBlock(144, 368, 4, 3, 1)
+createMovingBlock(448, 368, 4, 3, 1)
+createFloor(96, 240, 9, 2)
+createFloor(0, 208, 10, 2)
+createFloor(64, 368, 1, 2)
+createFloor(272, 496, 7, 1)
+createFloor(304, 544, 5, 1)
+createFloor(336, 496, 6, 1)
+createFloor(368, 496, 4, 1)
+createMovingBlock(208, 432, 7, 3, 0)
+createMovingBlock(272, 368, 7, 3, 0)
+createMovingBlock(208, 304, 7, 3, 0)
+createMovingBlock(112, 192, 8, 2, 1)
+createMovingBlock(240, 144, 8, 2, 1)
+createMovingBlock(368, 96, 7, 2, 1)
+createMovingBlock(496, 64, 1, 1, 1)
+createMovingBlock(528, 192, 1, 1, 1)
+createMovingBlock(640, 256, 1, 1, 1)
+createMovingBlock(816, 176, 1, 1, 1)
+createMovingBlock(816, 192, 1, 1, 1)
+createFloor(864, 704, 1, 9)
+createMovingBlock(144, 560, 1, 1, 1)
+createMovingBlock(880, 96, 1, 1, 1)
+createMovingBlock(912, 96, 1, 1, 1)
+createMovingBlock(944, 96, 1, 1, 1)
+createMovingBlock(976, 96, 1, 1, 1)
+createMovingBlock(912, 64, 1, 1, 1)
+createMovingBlock(944, 64, 1, 1, 1)
+createMovingBlock(880, 48, 7, 1, 2)
+createMovingBlock(992, 272, 1, 2, 1)
+createMovingBlock(704, 336, 1, 1, 1)
+createMovingBlock(784, 288, 1, 1, 1)
+createMovingBlock(880, 80, 5, 1, 0)
+createMovingBlock(976, 224, 2, 3, 2)
+createMovingBlock(880, 32, 7, 1, 0)
+createMovingBlock(608, 640, 1, 1, 1)
+createMovingBlock(752, 528, 1, 1, 1)
+createMovingBlock(624, 640, 1, 1, 1)
+entrances = [Entrance(4, [int(32), int(656)], [int(16), int(16)], entranceImg)]
+grates.append(Grate([int(832), int(0)], [int(16), int(720)], ["guy"]))
+createExit(4, [int(928), int(672)], [int(16), int(16)], exitImg)
+createMovingBlock(368, 608, 1, 1, 0)
+createMovingBlock(368, 624, 1, 1, 1)
+grates.append(Grate([int(240), int(496)], [int(192), int(192)], ["guy", "bomb"]))
+grates.append(Grate([int(240), int(496)], [int(192), int(192)], ["guy", "bomb"]))
+createFloor(1008, 0, 45, 1)
+createFloor(0, 704, 1, 34)
+createFloor(592, 496, 1, 15)
+createFloor(864, 688, 1, 1)
+createSensor(880, 624, 7, 1, 0, ["guy"])
+createSensor(368, 640, 1, 1, 0, ["guy"])
+createSensor(880, 368, 5, 1, 2, ["guy"])
+
+
+DetCurrent = detonator(3, 1, 10, 2, 0, 5, getImg("UI/DetMulti"), getImg("Bombs/Multi"), getImg("Bombs/ArmMulti/ArmBlipMulti (4)"))
+saveLevel(5, [("sensor", 1), ("sensor", 2), ("sensor", 0)])
+
 
 def soundEffect(sfxkey):
 	if not muteon:
@@ -2413,8 +2507,6 @@ while Running:
 					fal.append(lud(fals[0], (16, 16), [512, 320]))
 					act = 0
 					scene = 1
-
-					pass
 			if pointCollide((100, 300), (200, 28), mousepos): #levels
 				mouseImg = OnImg
 				if mouse_down:
@@ -2938,23 +3030,23 @@ while Running:
 					fal.append(lud(fals[0], (16, 16), [512, 320]))
 					if currLvl == 1:
 						fal[0].coords = [112, 240]
-						fal[0].text = DispObj(wraptext("If you jump while you detonate, you can go a bit higher than either alone.", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
+						fal[0].text = DispObj(wraptext("If you jump while you detonate, you can go a bit higher than either alone.&You can get up here if you try!", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 
 					if currLvl == 2:
 						fal[0].coords = [112, 384]
-						fal[0].text = DispObj(wraptext("First", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
+						fal[0].text = DispObj(wraptext("For future reference:&If you press E or LALT you can disarm and get rid of your bombs.", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 					if currLvl == 3:
-						fal[0].coords = [176, 544]
-						fal[0].text = DispObj(wraptext("Placing bombs towards the bottom of blocks makes them go further by throwing them in the air.", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
+						fal[0].coords = [832, 320]
+						fal[0].text = DispObj(wraptext("Placing many bombs in one spot is more effective than one at a time.", 150, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 					if currLvl == 4:
 						fal[0].coords = [368, 512]
-						fal[0].text = DispObj(wraptext("Second", 70, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
+						fal[0].text = DispObj(wraptext("These are grates. They can block your way, and the path of other things as well. You will get used to what blocks what.", 300, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 					if currLvl == 5:
 						fal[0].coords = [128, 496]
-						fal[0].text = DispObj(wraptext("Third", 70, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
+						fal[0].text = DispObj(wraptext("Placing bombs towards the bottom of blocks makes them go further by tossing them in the air.", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 					if currLvl == 6:
 						fal[0].coords = [128, 544]
-						fal[0].text = DispObj(wraptext("Purple blocks are mobile, but not so durable.", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
+						fal[0].text = DispObj(wraptext("Purple blocks are mobile, but not so durable.&Remember how placement effects damage and knockback! &To reset a level, press X", 350, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 
 		if player.vel[0] == 0 and player.vel[1] == 0:
 			movingLeft = False

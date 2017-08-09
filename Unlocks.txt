@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 True
 True
 True
@@ -27,3 +28,5 @@ False
 False
 False
 False
+=======
+>>>>>>> origin/master
