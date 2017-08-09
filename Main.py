@@ -1745,8 +1745,8 @@ createFloor(192, 368, 3, 8)
 createFloor(208, 320, 3, 7)
 createFloor(224, 272, 3, 6)
 createFloor(240, 224, 3, 9)
-createFloor(256, 176, 3, 1)
-createFloor(272, 128, 6, 3)
+createFloor(256, 176, 3, 4)
+createFloor(272, 128, 3, 3)
 createMovingBlock(384, 624, 11, 2, 0)
 createMovingBlock(560, 432, 4, 14, 0)
 createMovingBlock(480, 544, 4, 5, 0)
@@ -2257,26 +2257,26 @@ createMovingBlock(368, 96, 7, 2, 1)
 createMovingBlock(496, 64, 1, 1, 1)
 createMovingBlock(528, 192, 1, 1, 1)
 createMovingBlock(640, 256, 1, 1, 1)
-createMovingBlock(816, 176, 1, 1, 1)
-createMovingBlock(816, 192, 1, 1, 1)
+createFloor(816, 176, 1, 1)
+createFloor(816, 192, 1, 1)
 createFloor(864, 704, 1, 9)
-createMovingBlock(144, 560, 1, 1, 1)
+createFloor(144, 592, 1, 1)
 createMovingBlock(880, 96, 1, 1, 1)
-createMovingBlock(912, 96, 1, 1, 1)
-createMovingBlock(944, 96, 1, 1, 1)
-createMovingBlock(976, 96, 1, 1, 1)
+createMovingBlock(912, 96, 1, 1, 1) #nope
+createMovingBlock(944, 96, 1, 1, 1) #nope
+createMovingBlock(976, 96, 1, 1, 1)#nope
 createMovingBlock(912, 64, 1, 1, 1)
-createMovingBlock(944, 64, 1, 1, 1)
+createMovingBlock(944, 64, 1, 1, 1) #nope
 createMovingBlock(880, 48, 7, 1, 2)
 createMovingBlock(992, 272, 1, 2, 1)
-createMovingBlock(704, 336, 1, 1, 1)
-createMovingBlock(784, 288, 1, 1, 1)
+createFloor(704, 336, 1, 1)
+createFloor(784, 288, 1, 1)
 createMovingBlock(880, 80, 5, 1, 0)
 createMovingBlock(976, 224, 2, 3, 2)
 createMovingBlock(880, 32, 7, 1, 0)
-createMovingBlock(608, 640, 1, 1, 1)
+createFloor(608, 640, 1, 1)
 createMovingBlock(752, 528, 1, 1, 1)
-createMovingBlock(624, 640, 1, 1, 1)
+createFloor(624, 640, 1, 1)
 entrances = [Entrance(4, [int(32), int(656)], [int(16), int(16)], entranceImg)]
 grates.append(Grate([int(832), int(0)], [int(16), int(720)], ["guy"]))
 createExit(4, [int(928), int(672)], [int(16), int(16)], exitImg)
@@ -2697,15 +2697,15 @@ while Running:
 											player.text = DispObj(wraptext(" ", 200, font, True),
 																  [fal[0].coords[0] - 40, fal[0].coords[1] - 100],
 																  False)
-											fal.text =  DispObj(wraptext(" ", 200, font, True),
+											fal[0].text =  DispObj(wraptext(" ", 200, font, True),
 																  [fal[0].coords[0] - 40, fal[0].coords[1] - 100],
 																  False)
-											dia = False
 											dialog = 0
-											diaTimer = 100
+											diaTimer = 200
 											act = 0
 											scene += 1
 										print dialog
+										dia = False
 										diaTimer = 100
 										dialog += 1
 							else:
@@ -3165,13 +3165,13 @@ while Running:
 						fal[0].text = DispObj(wraptext("Placing many bombs in one spot is more effective than one at a time.", 150, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 					if currLvl == 4:
 						fal[0].coords = [368, 512]
-						fal[0].text = DispObj(wraptext("These are grates. They can block your way, and the path of other things as well. You will get used to what blocks what.", 300, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
+						fal[0].text = DispObj(wraptext("These are grates. They can block your way, and the path of other things as well. You will get used to which blocks do what.", 300, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 					if currLvl == 5:
 						fal[0].coords = [128, 496]
 						fal[0].text = DispObj(wraptext("Placing bombs towards the bottom of blocks makes them go further by tossing them in the air.", 200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 					if currLvl == 6:
 						fal[0].coords = [128, 544]
-						fal[0].text = DispObj(wraptext("Purple blocks are mobile, but not so durable.&Remember how placement effects damage and knockback! &To reset a level, press X", 350, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
+						fal[0].text = DispObj(wraptext("Purple blocks are mobile, but not so durable.&Remember how placement effects damage and knockback! &To reset a level, press X", 350, font, True), [fal[0].coords[0] - 50, fal[0].coords[1] - 100], False)
 
 		if player.vel[0] == 0 and player.vel[1] == 0:
 			movingLeft = False
