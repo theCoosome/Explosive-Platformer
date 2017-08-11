@@ -39,7 +39,7 @@ screen = pygame.display.set_mode(size)
 
 
 clock = pygame.time.Clock()
-pygame.display.set_caption("Explosive Platformer")
+pygame.display.set_caption("Derek: the Explosive Platformer")
 
 debugOverlay = pygame.Surface(size, pygame.SRCALPHA, 32).convert_alpha()
 
@@ -1137,6 +1137,8 @@ def wipeFloor():
 	global Birds
 	global keys
 	global exits
+	global warrios
+	warrios = []
 	keys = []
 	crates = []
 	global grates
@@ -2545,6 +2547,7 @@ while Running:
 					Story = False
 					canControl = True
 					mouse_down = False
+					player.motion = [0, 0]
 			if pointCollide((100, 400), (200, 28), mousepos): #controls
 				mouseImg = OnImg
 				if mouse_down:
@@ -2654,14 +2657,12 @@ while Running:
 					if act == 0:
 						if len(fal) > 0:
 							if isOnTop(player, fal[0]):
-								print "yes correcto"
 								player.motion[0] = 0
 								player.motion[1] = 0
 								dia = True
 								if dia:
 									diaTimer -= 1
-									print "yes correcto 2"
-									print diaTimer
+									#print diaTimer
 									if diaTimer <= 0:
 										print "yes correcto 3"
 										if dialog == 0:
@@ -2779,7 +2780,7 @@ while Running:
 											if dialog == 5:
 												fal[0].text = DispObj(wraptext("Do you think you can get back? We have a few obstacles to get through to get back home.",200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 											if dialog == 6:
-												player.text = DispObj(wraptext("I'll need some help. I don't really remember...how to do anything.", 200, font, True),[player.coords[0] - 40, player.coords[1] - 30], False)
+												player.text = DispObj(wraptext("I'll need some help. I don't really remember...how to do anything.", 250, font, True),[player.coords[0] - 40, player.coords[1] - 30], False)
 											if dialog == 7:
 												fal[0].text = DispObj(wraptext("Okay. I think doing this yourself will jog your memory, so I'll walk you through it.",200, font, True), [fal[0].coords[0] - 40, fal[0].coords[1] - 100], False)
 
@@ -2904,8 +2905,10 @@ while Running:
 
 								if len(fal) == 1:
 									if fal[0].coords != [600, 336]:
+										print "exact pos NOT"
 										fal[0].vel = [1, 0]
 									else:
+										print "exact pos YES"
 										papers.append(Paper(paperImg,
 															fal[0].coords, (16, 16)))
 										fal.remove(fal[0])
