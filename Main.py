@@ -1572,7 +1572,7 @@ saveLevel(2, [("sensor", 0)])
 
 #Intro to bomb grates
 #Sarah
-createFloor(16, 0, 1, 63)
+'''createFloor(16, 0, 1, 63)
 createFloor(0, 560, 10, 64)
 createFloor(1008, 16, 34, 1)
 createFloor(0, 0, 35, 1)
@@ -1583,7 +1583,7 @@ entrances = [Entrance(4, [int(352), int(544)], [int(16), int(16)], entranceImg)]
 createMovingBlock(744, 48, 15, 11, 0) #blue
 createMovingBlock(720, 384, 18, 3, 1) #yellow
 createSensor(792, 448, 9, 5, 0, ["guy"], gyah)
-saveLevel(2, [("sensor",0)])
+saveLevel(2, [("sensor",0)])'''
 
 #jumping down
 #sarah
@@ -2381,7 +2381,7 @@ netSize = 0
 mouse_down = False
 scrollMom, scrollMod = 0, 0
 
-DTitle = massive.render("Explosive Platformer", True, BLACK)
+DTitle = getImg("DEREK")
 Dstory = fontComp.render("Story Mode", False, BLACK)
 Dselect = fontComp.render("Level Select", False, BLACK)
 Dcontrols = fontComp.render("Controls & Options", False, BLACK)
@@ -2521,7 +2521,7 @@ while Running:
 
 					
 		if Screen == 0:   #Main title
-			screen.blit(DTitle, (50, 100))
+			screen.blit(DTitle, (150, 50))
 			screen.blit(Dstory, (100, 200))
 			screen.blit(Dselect, (100, 300))
 			screen.blit(Dcontrols, (100, 400))
