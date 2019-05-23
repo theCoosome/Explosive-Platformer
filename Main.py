@@ -275,7 +275,7 @@ def pointCollide(p1, p2, p3):
 	if p1[0] + p2[0] > p3[0] and p1[0] < p3[0] and p1[1] + p2[1] > p3[1] and p1[1] < p3[1]:
 		return True
 		
-def within(p1, p2, p3): #if value 1 is within p2 and p3
+def within(p1, p2, p3): #if value 1 is within the values p2 and p3
 	if p2 > p3:
 		if p1 < p2 and p1 > p3:
 			return True
@@ -872,6 +872,7 @@ class bomb(object):
 			netforce = [0, 0]
 			netpow = 0
 			
+			#test to see if the block is even close enough to continue with more complex calculations
 			if hit(mob.coords, mob.size, (cs[0]-self.detRange, cs[1]-self.detRange), (2*self.detRange, 2*self.detRange)):
 				pow = 0
 				for x in xrange(mob.sixteens[0]):
@@ -1250,6 +1251,7 @@ def saveLevel(difficulty, links = []): #links: list of tuples, ("sensor", 1)
 	global entrances
 	global DetCurrent
 	
+	#create the locked and unlocked images for the level selector 
 	rand = pygame.Surface((64, 45), pygame.SRCALPHA, 32).convert_alpha()
 	rand2 = pygame.Surface((64, 45), pygame.SRCALPHA, 32).convert_alpha()
 	rand.fill(WHITE)
@@ -2295,8 +2297,13 @@ createSensor(368, 640, 1, 1, 0, ["guy"])
 createSensor(880, 368, 5, 1, 2, ["guy"])
 
 
+
+
 DetCurrent = detonator(3, 1, 10, 2, 0, 5, getImg("UI/DetMulti"), getImg("Bombs/Multi"), getImg("Bombs/ArmMulti/ArmBlipMulti (4)"))
 saveLevel(5, [("sensor", 1), ("sensor", 2), ("sensor", 0)])
+
+
+#???
 
 
 def soundEffect(sfxkey):
@@ -2875,7 +2882,7 @@ while Running:
 									acttimer = 400
 							if act == 7:
 								if acttimer <= 0:
-									kings.append(king(kingImgL[1], (16, 16), [600, 320]))
+									kings.append(king(kingImgL[1], (32, 32), [600, 320]))
 									acttimer = 100
 									act += 1
 							if act == 8:
@@ -2887,26 +2894,27 @@ while Running:
 							if act == 10:
 								stopRight = True
 								if len(kings) == 1:
-									if kings[0].coords != [600, 336]:
-										kings[0].vel = [1, 0]
+									if kings[0].coords[0] != 600:
+										kings[0].vel[0] = 1
 									else:
 										kings.remove(kings[0])
 								if len(warrios) == 1:
-									if warrios[0].coords != [600, 336]:
-										warrios[0].vel = [1, 0]
+									if warrios[0].coords[0] != 600:
+										warrios[0].vel[0] = 1
 									else:
 										act += 1
 										warrios.remove(warrios[0])
 								if len(warrios) == 2:
-									if warrios[1].coords != [600, 336]:
-										warrios[1].vel = [1, 0]
+									if warrios[1].coords[0] != 600:
+										warrios[1].vel[0] = 1
 									else:
 										warrios.remove(warrios[1])
 
 								if len(fal) == 1:
-									if fal[0].coords != [600, 336]:
-										print "exact pos NOT"
-										fal[0].vel = [1, 0]
+									if fal[0].coords[0] != 600:
+										print "exact pos NOT" #, fal[0].coords
+										#fal[0].vel = [1, 0]
+										fal[0].vel[0] = 1
 									else:
 										print "exact pos YES"
 										papers.append(Paper(paperImg,
@@ -2954,11 +2962,11 @@ while Running:
 				if event.key in [K_LEFT, K_a] and canControl:  # move <-
 					player.motion[0] -= 2.0
 					gL =0
-					time.sleep(.02)
+					#time.sleep(.02)
 					personimg = left[player.index]
 					movingLeft = True
 					movingRight = False
-				if event.key in [K_RIGHT and K_a, K_LEFT and K_d] and canControl:  # move ->
+				if event.key in [K_RIGHT and K_a, K_LEFT and K_d] and canControl:  # no movement?
 					movingRight = False
 					movingLeft = False
 				if event.key in [K_DOWN, K_s] and canControl:  # v
@@ -2997,13 +3005,7 @@ while Running:
 				if event.key == pygame.K_q:  # quitting
 					inGame = False
 				if event.key == K_p:
-					if False in unlocked:
-						if (debugon or unlocked[currLvl+1]):  # Increment level by 1
-							currLvl += 1
-							if currLvl > len(levels)-1:
-								currLvl = 0
-							loadSaved(currLvl)
-					else:
+					if (debugon or unlocked[currLvl+1]):  # Increment level by 1
 						currLvl += 1
 						if currLvl > len(levels)-1:
 							currLvl = 0
